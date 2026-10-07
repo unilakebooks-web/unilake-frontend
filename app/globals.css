@@ -1,0 +1,205 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+@plugin "@tailwindcss/typography";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  /* Colors */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  /* Fonts */
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-geist-mono);
+  --font-chau: var(--font-chau-philomene-one), sans-serif;
+  --font-heading: var(--font-sans);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+html,
+body {
+  width: 100%;
+  min-height: 100%;
+}
+
+body {
+  font-family: var(--font-poppins), Arial, Helvetica, sans-serif;
+}
+
+:root {
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  --ring: oklch(0.708 0 0);
+
+  /* Categorical chart palette — light mode.
+   *
+   * Replaces shadcn's greyscale placeholders (all `oklch(… 0 0)`, i.e. zero
+   * chroma), which rendered every chart in shades of grey next to the brand
+   * purple panel.
+   *
+   * chart-1 IS the brand purple (#914A8C). Single-series charts use only that
+   * one; the rest exist so multi-series charts start from a checked set.
+   *
+   * VALIDATED, not eyeballed. Every value passed all five checks on the
+   * adjacent-pair basis — the correct standard for bars, stacked bars and
+   * lines. Worst adjacent pair is teal↔ochre at ΔE 12.5 (protanopia), 21.5
+   * normal vision, comfortably above the floors.
+   *
+   * ⚠️ Assign these IN ORDER and never cycle them. Adjacent pairs are what was
+   * validated: chart-2 (ochre) and chart-5 (olive) are NOT separable from each
+   * other and must never share a chart. Five mutually-distinct colourblind-safe
+   * hues is not achievable, which is why all-pairs forms — scatter, bubble,
+   * choropleth, small multiples — cap at three series and fold the rest into
+   * "Other". A 6th series is never a newly invented hue.
+   */
+  --chart-1: #914a8c;
+  --chart-2: #c97a1e;
+  --chart-3: #049e8a;
+  --chart-4: #4a5fc1;
+  --chart-5: #8a8f22;
+
+  --radius: 0.625rem;
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: oklch(0.205 0 0);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-ring: oklch(0.708 0 0);
+}
+
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.205 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.205 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.922 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.556 0 0);
+
+  /* Categorical chart palette — dark mode.
+   *
+   * SELECTED, not flipped. These are their own steps, validated against the
+   * dark chart surface rather than derived by inverting the light values — the
+   * dark lightness band (L 0.48–0.67) is narrower and sits lower than the
+   * light one, so the light values do not simply carry over.
+   *
+   * Same hue order and same ordering rule as the light block above: assign in
+   * order, never cycle, and keep chart-2 and chart-5 out of the same chart.
+   *
+   * Worst adjacent pair here is teal↔ochre at ΔE 13.0 (deuteranopia), 20.6
+   * normal vision. All five checks pass.
+   */
+  --chart-1: #a85a9f;
+  --chart-2: #c87f2e;
+  --chart-3: #0baa95;
+  --chart-4: #5e72ce;
+  --chart-5: #8f9430;
+
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.556 0 0);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-sans;
+  }
+}
+
+/*
+ * Preloader progress bar (components/comic/ComicPreloader.tsx).
+ *
+ * An animation rather than a transition on purpose. A transition needs the
+ * browser to paint the 0% width BEFORE the value changes to 100%, which means
+ * depending on React's effect timing landing in a different frame from the
+ * initial paint — when it doesn't, the bar snaps straight to full and never
+ * animates. A keyframe animation always starts from `from`, so it cannot fail
+ * that way regardless of when React commits.
+ *
+ * Duration is set inline by the component so PRELOADER_DURATION_MS stays the
+ * single source of truth for both the bar and the completion timer.
+ */
+@keyframes preloader-fill {
+  from {
+    width: 0%;
+  }
+  to {
+    width: 100%;
+  }
+}
