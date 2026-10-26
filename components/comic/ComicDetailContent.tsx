@@ -84,26 +84,41 @@ export default function ComicDetailContent({ comic }: ComicDetailContentProps) {
             )}
 
             <div className="flex flex-col lg:flex-row gap-12 lg:gap-16 items-start">
-              {/* Left Column: Carousel + Info Cards */}
+              {/* Left Column: Carousel, then (lg and up only) Info Cards +
+                  Photo Guidelines.
+
+                  Below lg the columns stack, and the form should come right
+                  after the carousel — so the tiles and guidelines are hidden
+                  here and rendered again under the form instead (see the
+                  right column). Only one copy is ever displayed. */}
               <div className="w-full lg:w-[45%] flex flex-col items-center lg:items-start lg:sticky lg:top-24">
                 <ComicThumbnailCarousel
                   images={comic.coverThumbnailUrls}
                   videoUrl={comic.previewVideoUrl}
                 />
-                <ComicInfoCards />
-                <PhotoGuidelines />
+                <div className="hidden lg:block w-full">
+                  <ComicInfoCards />
+                  <PhotoGuidelines />
+                </div>
               </div>
 
-              {/* Right Column: Form */}
-              <div className="w-full lg:w-[55%] flex justify-center lg:justify-start">
-                <ComicPersonalizeForm 
-                  comic={comic} 
+              {/* Right Column: Form, then (below lg only) the text guidelines
+                  and the four tiles. The example image is not repeated here —
+                  on these screens it opens from the form's "Photo guidelines"
+                  button, just above the consent checkbox. */}
+              <div className="w-full lg:w-[55%] flex flex-col items-center lg:items-start">
+                <ComicPersonalizeForm
+                  comic={comic}
                   onSuccess={(_name, url) => {
                     const sessionId = url.split("/")[2];
                     if (sessionId) setShowPreloader(sessionId);
                     router.push(url);
                   }}
                 />
+                <div className="lg:hidden w-full">
+                  <PhotoGuidelines showImage={false} />
+                  <ComicInfoCards />
+                </div>
               </div>
             </div>
           </>

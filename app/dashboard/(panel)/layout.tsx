@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 import { useAuth } from "@/app/hooks/useAuth";
 import { DashboardSidebar } from "@/components/dashboard/DashboardSidebar";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
@@ -65,8 +67,19 @@ export default function DashboardLayout({
             <div className="flex min-h-screen w-full bg-[#F8E7D2] font-poppins selection:bg-[#914A8C] selection:text-white">
                 <DashboardSidebar />
                 <div className="flex-1 flex flex-col h-screen overflow-hidden">
-                    <header className="h-14 border-b border-[#914A8C]/20 flex items-center px-4 bg-white/50 backdrop-blur-sm shrink-0">
+                    <header className="h-14 border-b border-[#914A8C]/20 flex items-center justify-between gap-3 px-4 bg-white/50 backdrop-blur-sm shrink-0">
                         <SidebarTrigger className="text-[#914A8C] hover:bg-[#914A8C]/10 cursor-pointer" />
+                        {/* The dashboard has no site header, so this is the way
+                            back to the storefront. In the top bar rather than
+                            the sidebar because the sidebar is hidden on phones
+                            until opened; this is visible at every width. */}
+                        <Link
+                            href="/"
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-bold text-[#914A8C] hover:bg-[#914A8C]/10 transition-colors"
+                        >
+                            <ArrowLeft size={16} className="shrink-0" />
+                            Back to Home
+                        </Link>
                     </header>
                     <main className="flex-1 overflow-y-auto p-6 md:p-8">
                         <div className="mx-auto max-w-6xl">

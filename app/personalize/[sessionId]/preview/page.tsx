@@ -7,10 +7,12 @@ import ComicPreloader from "@/components/comic/ComicPreloader";
 import { usePublicComic } from "@/hooks/usePublicComics";
 import HomeHeaderSection from "@/components/home/HomeHeaderSection";
 import Footer from "@/components/home/Footer";
-import { AlertTriangle, CheckCircle2, Loader2 } from "lucide-react";
+import { AlertTriangle, CheckCircle2, Eye, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { clearSession, isValidSessionId, consumeShowPreloader, getSessionBySessionId } from "@/app/lib/session-storage";
+import { useAuth } from "@/app/hooks/useAuth";
+import { UserRole } from "@/app/types/auth";
 
 function PreviewErrorState({
   title,
@@ -37,9 +39,31 @@ function PreviewErrorState({
   );
 }
 
-export default function PreviewPage({ params }: { params: Promise<{ sessionId: string }> }) {
+export default function PreviewPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ sessionId: string }>;
+  searchParams: Promise<{ view?: string | string[] }>;
+}) {
   const resolvedParams = use(params);
+  const resolvedSearchParams = use(searchParams);
   const router = useRouter();
+
+  // Read-only admin view, opened from the "View customer's book" button on the
+  // admin order page (`?view=admin`). It only takes effect for an actual admin:
+  // a customer who adds the parameter to their own link just sees their normal
+  // page. While auth is still loading it is assumed ON, so the action buttons
+  // never flash in front of the admin before their role is known — for anyone
+  // else they appear a moment later, once auth resolves.
+  //
+  // This hides buttons; it is not a permission. The backend's own checks are
+  // unchanged, and an admin is no more able to act on a session from here than
+  // anyone else holding its link.
+  const { user, loading: authLoading } = useAuth();
+  const adminViewRequested = resolvedSearchParams.view === "admin";
+  const adminView =
+    adminViewRequested && (authLoading || user?.role === UserRole.ADMIN);
 
   // The ID comes off the URL, so it can be anything. A malformed one 500s on the server
   // rather than 404ing (§13.1), so screen it here and never make the call at all.
@@ -128,6 +152,11 @@ export default function PreviewPage({ params }: { params: Promise<{ sessionId: s
     // Generation is a one-way door (§13.10). Don't walk through it for a comic that has
     // nothing to generate, or for a session whose socket will never connect.
     if (hasNoPreviewPages || isExpired) return;
+    // Starting generation is the customer's action, never the admin's. (Orders only
+    // exist from checkout onward, so an admin should never land here at
+    // PHOTO_UPLOADED — this is the guard in case one ever does.) Checked against the
+    // requested view, not `adminView`, so a slow auth load can't let it through.
+    if (adminViewRequested) return;
 
     triggerGeneration().catch((err) => {
       console.error("Failed to auto-trigger generation:", err);
@@ -135,7 +164,7 @@ export default function PreviewPage({ params }: { params: Promise<{ sessionId: s
         "We couldn't start creating your preview. Please refresh the page to try again."
       );
     });
-  }, [status, hasNoPreviewPages, isExpired, triggerGeneration]);
+  }, [status, hasNoPreviewPages, isExpired, adminViewRequested, triggerGeneration]);
 
   const handleStartAgain = () => {
     if (snapshot?.comicId) {
@@ -195,7 +224,10 @@ export default function PreviewPage({ params }: { params: Promise<{ sessionId: s
 
     // Checked before anything else about the session, because everything downstream —
     // live updates, regeneration — depends on a socket that will now be refused (§1.2).
-    if (isExpired) {
+    // Not for the admin view: an admin looking into an order (a paid book that
+    // failed and later aged past its window, say) needs to see its pages, and the
+    // read-only view uses none of what expiry breaks.
+    if (isExpired && !adminView) {
       return (
         <PreviewErrorState
           title="This preview has expired"
@@ -231,7 +263,22 @@ export default function PreviewPage({ params }: { params: Promise<{ sessionId: s
     // and say what actually happened.
     return (
       <>
-        {status === "FAILED" && !isExpired && (
+        {adminView && (
+          <div className="w-full max-w-2xl mx-auto mt-24 px-4">
+            <div className="flex items-start gap-2 rounded-2xl bg-[#914A8C]/10 border border-[#914A8C]/30 px-4 py-3 text-sm text-[#5e2f5b]">
+              <Eye size={16} className="shrink-0 mt-0.5" />
+              <span>
+                <strong>Admin view — read-only.</strong> This is the
+                customer&apos;s book exactly as they see it (status:{" "}
+                <span className="font-mono">{status}</span>). Regenerate,
+                checkout and Send to Print are hidden. Browsing versions here
+                changes nothing for the customer.
+              </span>
+            </div>
+          </div>
+        )}
+
+        {status === "FAILED" && !isExpired && !adminView && (
           <div className="w-full max-w-2xl mx-auto mt-4 px-4">
             <div className="flex items-start gap-2 rounded-2xl bg-amber-50 border border-amber-200 px-4 py-3 text-sm text-amber-900">
               <AlertTriangle size={16} className="shrink-0 mt-0.5" />
@@ -244,7 +291,8 @@ export default function PreviewPage({ params }: { params: Promise<{ sessionId: s
           </div>
         )}
 
-        {isSentToPrint && (
+        {/* Customer-facing: its button goes to the viewer's OWN orders. */}
+        {isSentToPrint && !adminView && (
           <div className="w-full max-w-2xl mx-auto mt-24 px-4">
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 rounded-2xl bg-emerald-50 border border-emerald-200 px-4 py-3 text-sm text-emerald-900">
               <CheckCircle2 size={18} className="shrink-0 text-emerald-600" />
@@ -283,6 +331,7 @@ export default function PreviewPage({ params }: { params: Promise<{ sessionId: s
           isSentToPrint={isSentToPrint}
           paidPagesReady={paidPagesReady}
           totalPaidPages={totalPaidPages}
+          adminView={adminView}
         />
       </>
     );

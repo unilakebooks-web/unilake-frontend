@@ -65,7 +65,9 @@ export default function AddressPicker({ sessionId, snapshot, onAddressApplied }:
   const { mutateAsync: updateAddressAsync } = useUpdateAddress();
   const { mutateAsync: deleteAddressAsync } = useDeleteAddress();
 
-  const [selectedAddressId, setSelectedAddressId] = useState<string | null>(null);
+  // Which card's "Use this address" is in flight, so only that card shows the
+  // spinner. Every card's button is disabled while any apply runs (isApplying).
+  const [applyingAddressId, setApplyingAddressId] = useState<string | null>(null);
   const [formMode, setFormMode] = useState<FormMode>(null);
   const [editingAddress, setEditingAddress] = useState<SavedAddress | null>(null);
   const [addressToDelete, setAddressToDelete] = useState<SavedAddress | null>(null);
@@ -99,18 +101,10 @@ export default function AddressPicker({ sessionId, snapshot, onAddressApplied }:
     }
   }, [selectedCountryCode, form]);
 
-  // Both derived from the address list rather than synced into state by an
-  // effect, so they are right on the very first render and after any refetch:
-  //
-  // - The selection falls back to the default address (or the first) whenever
-  //   nothing valid is picked — on load, or after the picked one is deleted.
-  // - With no saved addresses at all (first visit, or the last was deleted)
-  //   the add form shows on its own; there is no list to go back to.
-  const selectedId =
-    addresses?.some((a) => a.id === selectedAddressId)
-      ? selectedAddressId
-      : ((addresses?.find((a) => a.isDefault) ?? addresses?.[0])?.id ?? null);
-
+  // Derived from the address list rather than synced into state by an effect,
+  // so it is right on the very first render and after any refetch: with no
+  // saved addresses at all (first visit, or the last was deleted) the add form
+  // shows on its own; there is no list to go back to.
   const activeFormMode: FormMode =
     formMode ?? (addresses && addresses.length === 0 ? "add" : null);
 
@@ -140,15 +134,15 @@ export default function AddressPicker({ sessionId, snapshot, onAddressApplied }:
     }
   };
 
-  const handleSelectAddress = (id: string) => {
-    setSelectedAddressId(id);
-  };
-
-  const handleUseSelected = async () => {
-    if (!selectedId) return;
-    const addr = addresses?.find(a => a.id === selectedId);
-    if (!addr) return;
-    await applyAddressToSession(addr);
+  // Each saved address carries its own "Use this address" button — there is no
+  // separate select-then-confirm step.
+  const handleUseAddress = async (addr: SavedAddress) => {
+    setApplyingAddressId(addr.id);
+    try {
+      await applyAddressToSession(addr);
+    } finally {
+      setApplyingAddressId(null);
+    }
   };
 
   // Blank form every time — a previous, abandoned entry must not linger.
@@ -163,7 +157,6 @@ export default function AddressPicker({ sessionId, snapshot, onAddressApplied }:
     form.reset(addressToForm(addr));
     autofill.resetAutofill();
     setEditingAddress(addr);
-    setSelectedAddressId(addr.id);
     setFormMode("edit");
   };
 
@@ -188,7 +181,6 @@ export default function AddressPicker({ sessionId, snapshot, onAddressApplied }:
 
       // 2. Apply to session
       await applyAddressToSession(saved);
-      setSelectedAddressId(saved.id);
       closeForm();
     } catch (error) {
       console.error("Failed to save address:", error);
@@ -312,99 +304,131 @@ export default function AddressPicker({ sessionId, snapshot, onAddressApplied }:
         </div>
       )}
 
-      {/* Back out of a change without touching the applied address. */}
-      {!showAppliedCard && hasFullShipping && (
-        <div className="flex justify-end mb-4">
-          <button
-            type="button"
-            onClick={stopChanging}
-            disabled={isApplying}
-            className="text-sm font-semibold text-[#3F3C95] hover:underline disabled:opacity-50"
-          >
-            Keep current address
-          </button>
-        </div>
-      )}
+      {/* Toolbar above the list (or the form):
+            left  — "Keep current address": back out of a change without
+                    touching the applied address. Only when one is applied.
+            right — "+ Add new address". Only while the list is showing; the
+                    form has its own Cancel to get back. */}
+      {!showAppliedCard &&
+        (hasFullShipping || (activeFormMode === null && hasAddresses)) && (
+          <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
+            {hasFullShipping ? (
+              <button
+                type="button"
+                onClick={stopChanging}
+                disabled={isApplying}
+                className="text-sm font-semibold text-[#3F3C95] hover:underline disabled:opacity-50"
+              >
+                Keep current address
+              </button>
+            ) : (
+              <span />
+            )}
+
+            {activeFormMode === null && hasAddresses && (
+              <Button
+                type="button"
+                variant="outline"
+                onClick={openAddForm}
+                disabled={isApplying}
+                className="ml-auto h-9 px-4 rounded-full border-2 border-[#3F3C95] text-[#3F3C95] text-sm font-bold hover:bg-[#3F3C95]/5"
+              >
+                <Plus size={16} className="mr-1" /> Add new address
+              </Button>
+            )}
+          </div>
+        )}
 
       {!showAppliedCard && activeFormMode === null && hasAddresses && (
         <div className="space-y-4">
-          <div className="grid gap-3">
-            {addresses.map((addr) => (
-              <div
-                key={addr.id}
-                onClick={() => handleSelectAddress(addr.id)}
-                className={`p-4 rounded-xl border-2 cursor-pointer transition-all ${
-                  selectedId === addr.id
-                    ? "border-[#3F3C95] bg-[#3F3C95]/5"
-                    : "border-gray-200 hover:border-gray-300"
-                }`}
-              >
-                <div className="flex justify-between items-start gap-3 mb-1">
-                  <div className="flex items-center gap-2 min-w-0">
-                    <span className="font-bold text-gray-800 truncate">{addr.name}</span>
-                    {addr.label && (
-                      <span className="text-xs font-semibold px-2 py-0.5 bg-gray-100 text-gray-600 rounded-md shrink-0">
-                        {addr.label}
-                      </span>
-                    )}
+          {/* grid-cols-1 = minmax(0, 1fr). A bare `grid` gives an `auto`
+              column, which cannot shrink below its widest unbreakable content —
+              the card's one-line header row — so on a phone the card spilled
+              out of this panel and pushed the whole page sideways. */}
+          <div className="grid grid-cols-1 gap-3">
+            {addresses.map((addr) => {
+              // Edit/Delete are rendered in two places: beside the name from
+              // sm up, and on the card's bottom row on phones, where the
+              // header row has no room for them. Only one copy is ever
+              // displayed; `hidden` also removes the other from the
+              // accessibility tree.
+              const actions = (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => openEditForm(addr)}
+                    disabled={isApplying}
+                    className="flex items-center gap-1 text-xs font-semibold text-[#3F3C95] hover:bg-[#3F3C95]/10 px-2 py-1 rounded-md transition-colors disabled:opacity-50"
+                    aria-label={`Edit address for ${addr.name}`}
+                  >
+                    <Pencil size={14} /> Edit
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setAddressToDelete(addr)}
+                    disabled={isApplying}
+                    className="flex items-center gap-1 text-xs font-semibold text-red-600 hover:bg-red-50 px-2 py-1 rounded-md transition-colors disabled:opacity-50"
+                    aria-label={`Delete address for ${addr.name}`}
+                  >
+                    <Trash2 size={14} /> Delete
+                  </button>
+                </>
+              );
+
+              const isThisApplying = applyingAddressId === addr.id;
+
+              // Not clickable: each card is chosen with its own button, so
+              // there is no selected/highlighted state any more.
+              return (
+                <div
+                  key={addr.id}
+                  className="min-w-0 p-4 rounded-xl border-2 border-gray-200"
+                >
+                  <div className="flex justify-between items-start gap-3 mb-1">
+                    <div className="flex items-center gap-2 min-w-0">
+                      <span className="font-bold text-gray-800 truncate">{addr.name}</span>
+                      {addr.label && (
+                        <span className="text-xs font-semibold px-2 py-0.5 bg-gray-100 text-gray-600 rounded-md shrink-0">
+                          {addr.label}
+                        </span>
+                      )}
+                    </div>
+
+                    <div className="hidden sm:flex items-center gap-1 shrink-0">{actions}</div>
+                  </div>
+                  <div className="text-sm text-gray-600 space-y-0.5 wrap-break-word">
+                    <p>{addr.line1}</p>
+                    {addr.line2 && <p>{addr.line2}</p>}
+                    <p>{addr.city}, {addr.state} {addr.zip}</p>
+                    <p>{addr.country}</p>
+                    <p className="pt-1 text-gray-500">📞 {addr.phone}</p>
                   </div>
 
-                  {/* stopPropagation: these sit inside the clickable card, and
-                      editing or deleting is not the same as selecting. */}
-                  <div className="flex items-center gap-1 shrink-0">
-                    <button
+                  {/* Bottom row: Edit/Delete on the left (phones only — from
+                      sm up they sit beside the name) and this card's own
+                      "Use this address" pill on the right. flex-wrap so that
+                      on the narrowest phones the pill drops to its own line,
+                      still right-aligned via ml-auto, instead of overflowing.
+                      -ml-2 lines Edit's text up with the address above,
+                      cancelling its own px-2 hover padding. */}
+                  <div className="flex flex-wrap items-center gap-2 mt-3">
+                    <div className="flex sm:hidden items-center gap-2 -ml-2">{actions}</div>
+                    <Button
                       type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        openEditForm(addr);
-                      }}
+                      onClick={() => handleUseAddress(addr)}
                       disabled={isApplying}
-                      className="flex items-center gap-1 text-xs font-semibold text-[#3F3C95] hover:bg-[#3F3C95]/10 px-2 py-1 rounded-md transition-colors disabled:opacity-50"
-                      aria-label={`Edit address for ${addr.name}`}
+                      className="ml-auto h-9 px-4 rounded-full bg-[#3F3C95] hover:bg-[#3F3C95]/90 text-white text-sm font-bold"
                     >
-                      <Pencil size={14} /> Edit
-                    </button>
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setAddressToDelete(addr);
-                      }}
-                      disabled={isApplying}
-                      className="flex items-center gap-1 text-xs font-semibold text-red-600 hover:bg-red-50 px-2 py-1 rounded-md transition-colors disabled:opacity-50"
-                      aria-label={`Delete address for ${addr.name}`}
-                    >
-                      <Trash2 size={14} /> Delete
-                    </button>
+                      {isThisApplying ? (
+                        <Loader2 className="animate-spin" size={16} />
+                      ) : (
+                        "Use this address"
+                      )}
+                    </Button>
                   </div>
                 </div>
-                <div className="text-sm text-gray-600 space-y-0.5">
-                  <p>{addr.line1}</p>
-                  {addr.line2 && <p>{addr.line2}</p>}
-                  <p>{addr.city}, {addr.state} {addr.zip}</p>
-                  <p>{addr.country}</p>
-                  <p className="pt-1 text-gray-500">📞 {addr.phone}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div className="flex flex-col sm:flex-row gap-3 pt-2">
-            <Button
-              onClick={handleUseSelected}
-              disabled={isApplying || !selectedId}
-              className="flex-1 bg-[#3F3C95] hover:bg-[#3F3C95]/90 text-white rounded-full font-bold h-12"
-            >
-              {isApplying ? <Loader2 className="animate-spin" size={20} /> : "Use this address"}
-            </Button>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={openAddForm}
-              className="flex-1 rounded-full font-bold h-12 border-2 border-gray-200 text-gray-600 hover:bg-gray-50"
-            >
-              <Plus size={18} className="mr-2" /> Add new address
-            </Button>
+              );
+            })}
           </div>
         </div>
       )}

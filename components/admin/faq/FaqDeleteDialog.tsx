@@ -44,12 +44,22 @@ export function FaqDeleteDialog({ open, onOpenChange, faq, onConfirm }: FaqDelet
           </p>
           {faq && (
             <div className="mt-4 p-3 bg-gray-50 rounded-lg text-left border border-gray-100">
-              <p className="font-bold text-gray-800 text-sm truncate">{faq.question}</p>
+              {/* Two lines max, full text on hover. Not `truncate` — see the
+                  same fix in BlogDeleteDialog for why a no-wrap line here
+                  pushed the dialog's contents off its right edge. */}
+              <p
+                title={faq.question}
+                className="font-bold text-gray-800 text-sm line-clamp-2 wrap-anywhere"
+              >
+                {faq.question}
+              </p>
             </div>
           )}
         </div>
 
-        <DialogFooter className="px-6 py-4 bg-gray-50 border-t border-gray-100 flex gap-2 sm:justify-end">
+        {/* m-0 cancels DialogFooter's built-in negative margins — see the
+            same fix in BlogDeleteDialog. */}
+        <DialogFooter className="m-0 px-6 py-4 bg-gray-50 border-t border-gray-100 flex gap-2 sm:justify-end">
           <button
             type="button"
             onClick={() => onOpenChange(false)}

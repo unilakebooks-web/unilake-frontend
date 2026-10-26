@@ -34,6 +34,7 @@ import { saveSession } from "@/app/lib/session-storage";
 import { normalizePhoto } from "@/app/lib/photo-normalize";
 import { checkPhoto } from "@/app/lib/photo-validate";
 import ImageCropModal from "./ImageCropModal";
+import { PhotoGuidelinesButton } from "./PhotoGuidelines";
 import { MAX_NAME_LENGTH } from "@/lib/dialogueTokens";
 
 interface ComicPersonalizeFormProps {
@@ -454,6 +455,13 @@ export default function ComicPersonalizeForm({ comic, onSuccess }: ComicPersonal
       ) : (
         <div className="mb-6" />
       )}
+
+      {/* Below lg the guidelines card sits under this form (see
+          ComicDetailContent), so the example photos are one tap away here.
+          From lg up the full card is beside the form and this is hidden. */}
+      <div className="lg:hidden mb-4">
+        <PhotoGuidelinesButton />
+      </div>
 
       {/* Consent Checkbox */}
       <div className="flex items-start gap-3 mb-8">

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { format } from "date-fns";
-import { ArrowLeft, Check, Copy } from "lucide-react";
+import { ArrowLeft, BookOpen, Check, Copy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { AdminOrderDetail } from "@/app/types/order";
 import { OrderStatusBadge } from "./OrderStatusBadge";
@@ -53,9 +53,23 @@ export function OrderDetailHeader({ order }: { order: AdminOrderDetail }) {
           </div>
         </div>
 
-        <div className="text-right text-xs text-neutral-500 font-medium">
-          <div>Created {format(new Date(order.createdAt), "MMM d, yyyy · h:mm a")}</div>
-          <div>Updated {format(new Date(order.updatedAt), "MMM d, yyyy · h:mm a")}</div>
+        <div className="flex flex-col items-end gap-2">
+          {/* The customer's own preview page, in its read-only admin mode
+              (`?view=admin` — see app/personalize/[sessionId]/preview). New tab
+              so the admin keeps this order open. */}
+          <a
+            href={`/personalize/${order.session.id}/preview?view=admin`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#914A8C] hover:bg-[#7a3e75] text-white font-semibold text-sm transition-colors"
+          >
+            <BookOpen className="w-4 h-4" />
+            View customer&apos;s book
+          </a>
+          <div className="text-right text-xs text-neutral-500 font-medium">
+            <div>Created {format(new Date(order.createdAt), "MMM d, yyyy · h:mm a")}</div>
+            <div>Updated {format(new Date(order.updatedAt), "MMM d, yyyy · h:mm a")}</div>
+          </div>
         </div>
       </div>
     </div>

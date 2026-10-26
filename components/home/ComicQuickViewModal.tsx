@@ -53,7 +53,9 @@ function formatAmount(value: number): string {
 }
 
 /**
- * Quick look at a comic, opened from StoryCard's Personalise button.
+ * Quick look at a comic, opened from the "Read more" at the end of
+ * StoryCard's description. (StoryCard's own Personalise button links straight
+ * to /comic/[id]; this popup's button goes to the same place.)
  *
  * Shows what the card has to clip — the full description in particular — and
  * hands off to /comic/[id] for the actual personalisation form. Everything here

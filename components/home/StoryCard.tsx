@@ -2,6 +2,7 @@
 
 import { useState, useLayoutEffect, useRef } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { PublicComicListItem } from "@/app/types/comic";
 import { CoverType } from "@/app/types/comic";
 import { useCountryStore } from "@/stores/useCountryStore";
@@ -10,13 +11,28 @@ import { resolveMrp } from "@/lib/utils";
 import { formatAgeRange } from "@/lib/comicTags";
 import ComicQuickViewModal from "@/components/home/ComicQuickViewModal";
 
+/** Shared by the Personalise link and its disabled stand-in. */
+const PERSONALISE_CLASSES = `
+  block w-[80%]
+  bg-gradient-to-b from-[#3F3C95] to-[#2B2882]
+  text-white
+  text-[4.74cqw] leading-[1.5] font-extrabold
+  uppercase tracking-wider
+  py-[2.1cqw]
+  rounded-full
+  border-b-[4px] border-[#C8942A]
+  shadow-[0_4px_10px_rgba(63,60,149,0.3)]
+  transition-all
+  text-center
+`;
+
 interface StoryCardProps {
   comic: PublicComicListItem;
 }
 
 export default function StoryCard({ comic }: StoryCardProps) {
-  // Personalise opens a quick-view popup; the popup's own button is what
-  // navigates to /comic/[id].
+  // Personalise goes straight to /comic/[id]. The quick-view popup is opened
+  // by the "Read more" at the end of the description instead.
   const [isQuickViewOpen, setIsQuickViewOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
@@ -30,7 +46,7 @@ export default function StoryCard({ comic }: StoryCardProps) {
 
   // How many lines the title actually wrapped to (1 or 2). The title and
   // description share one fixed-height block, so a one-line title frees room
-  // for a third line of description instead of leaving a blank gap. CSS can't
+  // for a second line of description instead of leaving a blank gap. CSS can't
   // tell how many lines text wrapped to, so it is measured.
   //
   // ResizeObserver rather than a one-off read: the line count changes when the
@@ -257,19 +273,21 @@ export default function StoryCard({ comic }: StoryCardProps) {
           </span>
         </div>
 
-        {/* Title + description — one block with a FIXED height, so the price
-            and button below sit at the same height on every card in a row.
-            The height is the worst case, a two-line title plus a two-line
-            description, at 380 wide:
-              title 2 × 20px × 1.25   = 50px    (13.15cqw)
-              gap                     = 3.8px  (1cqw)
-              description 2 × 14px × 1.375 = 38.5px (10.12cqw)
-                                      = 92.3px (24.3cqw)
-            Inside it the description follows the title directly — no reserved
-            gap. With a one-line title it may use a third line instead:
-            25 + 3.8 + 57.75 = 86.55px, still inside the block. Change a font
-            size or line-height here and this sum must be redone. */}
-        <div className="h-[24.3cqw] mb-[2cqw] overflow-hidden">
+        {/* Title + description + "Read more" — one block with a FIXED height,
+            so the price and button below sit at the same height on every card
+            in a row. The height is the worst case at 380 wide:
+              title 2 × 20px × 1.25        = 50px    (13.15cqw)
+              gap                          = 3.8px   (1cqw)
+              description 1 × 14px × 1.375 = 19.25px (5.06cqw)
+              "Read more" 1 × 14px × 1.375 = 19.25px (5.06cqw)
+                                           = 92.3px  (24.3cqw)
+            With a one-line title the description gets a second line instead:
+            25 + 3.8 + 38.5 + 19.25 = 86.55px, still inside the block.
+            "Read more" is pinned to the block's bottom (mt-auto), so it sits in
+            exactly the same spot on every card whatever the title or
+            description length — that is the point of giving it its own line.
+            Change a font size or line-height here and this sum must be redone. */}
+        <div className="h-[24.3cqw] mb-[2cqw] overflow-hidden flex flex-col">
           {/* 20px at 380 wide. At most two lines, then an ellipsis; the full
               title is in the tooltip. */}
           <h3
@@ -280,12 +298,25 @@ export default function StoryCard({ comic }: StoryCardProps) {
             {comic.title}
           </h3>
 
-          {/* 14px at 380 wide. Three lines when the title took one, else two. */}
+          {/* 14px at 380 wide. Two lines when the title took one, else one —
+              the line "Read more" now takes. line-clamp supplies the ellipsis
+              when the text is cut off. */}
           <p
-            className={`${poppins.className} text-[3.68cqw] font-normal text-[#000000]/[0.74] leading-snug ${titleLines === 1 ? "line-clamp-3" : "line-clamp-2"}`}
+            className={`${poppins.className} text-[3.68cqw] font-normal text-[#000000]/[0.74] leading-snug ${titleLines === 1 ? "line-clamp-2" : "line-clamp-1"}`}
           >
             {comic.description || "A personalized storybook adventure for your child."}
           </p>
+
+          {/* Opens the quick-view popup. Same size and line height as the
+              description (one 5.06cqw line, counted in the sum above); pinned
+              bottom-right of the block on every card. */}
+          <button
+            type="button"
+            onClick={() => setIsQuickViewOpen(true)}
+            className={`${poppins.className} mt-auto self-end text-[3.68cqw] leading-snug font-semibold text-[#3F3C95] hover:underline cursor-pointer`}
+          >
+            Read more
+          </button>
         </div>
 
         {/* Price row — discounted price, then the struck-through MRP beside it
@@ -324,32 +355,28 @@ export default function StoryCard({ comic }: StoryCardProps) {
             fixed height — the tag row cannot wrap, and the title, description
             and price rows each reserve an explicit height. So the button lands
             at the same place on every card by simply flowing after them.
-            Text is 18px at 380 wide; see the sizing note at the top. */}
+            Text is 18px at 380 wide; see the sizing note at the top.
+
+            Goes straight to the comic page — a real link, so it can be opened
+            in a new tab. Not sold in this country: a disabled button instead,
+            since a link cannot be disabled. */}
         <div className="flex justify-center w-full">
-          <button
-            onClick={() => setIsQuickViewOpen(true)}
-            disabled={!pricing}
-            className={`
-              w-[80%]
-              bg-gradient-to-b from-[#3F3C95] to-[#2B2882]
-              text-white
-              text-[4.74cqw] leading-[1.5] font-extrabold
-              uppercase tracking-wider
-              py-[2.1cqw]
-              rounded-full
-              border-b-[4px] border-[#C8942A]
-              shadow-[0_4px_10px_rgba(63,60,149,0.3)]
-              transition-all
-              text-center
-              ${
-                !pricing
-                  ? "opacity-50 cursor-not-allowed pointer-events-none"
-                  : "hover:brightness-110 active:translate-y-[2px] active:border-b-[2px] cursor-pointer"
-              }
-            `}
-          >
-            Personalise
-          </button>
+          {pricing ? (
+            <Link
+              href={`/comic/${comic.id}`}
+              className={`${PERSONALISE_CLASSES} hover:brightness-110 active:translate-y-[2px] active:border-b-[2px] cursor-pointer`}
+            >
+              Personalise
+            </Link>
+          ) : (
+            <button
+              type="button"
+              disabled
+              className={`${PERSONALISE_CLASSES} opacity-50 cursor-not-allowed pointer-events-none`}
+            >
+              Personalise
+            </button>
+          )}
         </div>
       </div>
 

@@ -4,7 +4,7 @@ import { useCoverPricing } from "@/hooks/useCoverPricing";
 import { frutiger, poppins } from "@/app/fonts";
 import Image from "next/image";
 
-import { Loader2 } from "lucide-react";
+import { Check, Loader2 } from "lucide-react";
 import { resolveMrp } from "@/lib/utils";
 import type { CoverFormat } from "@/hooks/useCheckoutFlow";
 
@@ -63,6 +63,8 @@ const SIZES = {
     row: "flex-col md:flex-row gap-3 md:gap-4 mb-5 mt-4",
     card: "gap-3 px-3 py-2.5 rounded-[18px] max-w-[280px]",
     cardSelected: "border-[4px]",
+    badge: "-top-2.5 -right-2.5 w-6 h-6",
+    badgeIcon: 14,
     tagline: "text-[11px] whitespace-nowrap mb-1",
     picture: "w-[104px] rounded-lg",
     right: "gap-1.5",
@@ -86,6 +88,9 @@ const SIZES = {
     row: "flex-row gap-1 sm:gap-3 mb-2.5 mt-2",
     card: "flex-1 min-w-0 gap-1.5 sm:gap-2.5 px-1.5 sm:px-2.5 py-1.5 rounded-xl max-w-[240px]",
     cardSelected: "border-[3px]",
+    // Absolutely positioned, so it costs none of the 360px phone budget above.
+    badge: "-top-2 -right-2 w-4 h-4 sm:w-5 sm:h-5",
+    badgeIcon: 10,
     tagline: "text-[9px] sm:text-[10px] sm:whitespace-nowrap text-center mb-0.5",
     picture: "w-[44px] sm:w-[84px] rounded-md",
     right: "gap-1",
@@ -173,6 +178,11 @@ export default function PricingSection({
    * One selectable cover option. Tagline + close-up on the left, name + price
    * on the right. A real <button> so it is reachable and selectable from the
    * keyboard; `aria-pressed` tells screen readers which one is chosen.
+   *
+   * The selected card is marked three ways: the purple border, a light purple
+   * tint and a ✓ badge on its corner. The border alone did not read as a
+   * selection — it is the same #914BBC as the section's own outline, so the
+   * chosen card blended into its frame.
    */
   const renderOption = (format: CoverFormat, rule: typeof softcoverRule) => {
     const option = COVER_OPTIONS[format];
@@ -186,14 +196,23 @@ export default function PricingSection({
         onClick={() => !isDisabled && !locked && onSelectFormat(format)}
         disabled={isDisabled}
         aria-pressed={isSelected}
-        className={`${s.card} grid grid-cols-[auto_1fr] items-center w-full text-black transition-all ${
+        className={`${s.card} relative grid grid-cols-[auto_1fr] items-center w-full text-black transition-all ${
           isDisabled
             ? "opacity-50 cursor-not-allowed border border-gray-200"
             : isSelected
-              ? `${s.cardSelected} border-[#914BBC] scale-[1.02] ${locked ? "cursor-default" : "cursor-pointer"}`
-              : "border border-black hover:border-gray-500 cursor-pointer"
+              ? `${s.cardSelected} border-[#914BBC] bg-[#914BBC]/10 scale-[1.02] ${locked ? "cursor-default" : "cursor-pointer"}`
+              : "border border-black bg-white hover:border-gray-500 cursor-pointer"
         }`}
       >
+        {isSelected && !isDisabled && (
+          <span
+            aria-hidden="true"
+            className={`${s.badge} absolute z-10 flex items-center justify-center rounded-full bg-[#914BBC] text-white ring-2 ring-white`}
+          >
+            <Check size={s.badgeIcon} strokeWidth={3} />
+          </span>
+        )}
+
         {/* Left: tagline over the close-up picture. */}
         <div className="flex flex-col items-center">
           <span className={`${s.tagline} leading-tight`}>{option.tagline}</span>

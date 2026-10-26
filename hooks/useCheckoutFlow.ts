@@ -122,7 +122,10 @@ export function useCheckoutFlow({
       // 1. PATCH coverType
       await updateSession(sessionId, { coverType: selectedFormat });
 
-      // 2. Check auth
+      // 2. Check auth. The popup's login returns the customer straight to the
+      //    checkout page (see PreviewViewer), which links the session to the
+      //    account itself — so step 3 below only runs for someone who was
+      //    already logged in.
       if (!isAuthenticated) {
         setShowLoginModal(true);
         setIsUpdating(false);

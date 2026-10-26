@@ -9,7 +9,7 @@ import type { PublicOrderStatusCode, UserOrderTracking } from "@/app/types/order
 // caller, since neither describes a parcel in motion.
 const STEPS: { code: PublicOrderStatusCode; label: string; blurb: string }[] = [
   { code: "PREPARING", label: "Preparing your book", blurb: "We're putting your story together." },
-  { code: "PROCESSING", label: "Getting ready to ship", blurb: "Your book is printed and being packed." },
+  { code: "PROCESSING", label: "Getting ready to ship", blurb: "Your book is getting printed and will be shipped soon" },
   { code: "SHIPPED", label: "On the way", blurb: "Your parcel is with the courier." },
   { code: "DELIVERED", label: "Delivered", blurb: "Enjoy the story!" },
 ];

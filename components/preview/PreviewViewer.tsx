@@ -47,6 +47,14 @@ interface PreviewViewerProps {
   isSentToPrint?: boolean;
   paidPagesReady?: number;
   totalPaidPages?: number;
+  /**
+   * An admin looking at a customer's book from the admin order page. Shows
+   * the pages exactly as the customer sees them, but with every action
+   * removed: no regenerate (costs RunPod money and uses the customer's
+   * variant slots), no change-photo, no checkout, no send-to-print. Browsing
+   * variants still works — that is local to this tab and saves nothing.
+   */
+  adminView?: boolean;
 }
 
 export default function PreviewViewer({
@@ -60,6 +68,7 @@ export default function PreviewViewer({
   isSentToPrint = false,
   paidPagesReady = 0,
   totalPaidPages = 0,
+  adminView = false,
 }: PreviewViewerProps) {
   const { data: comicDetail } = usePublicComic(snapshot.comicId);
 
@@ -192,11 +201,15 @@ export default function PreviewViewer({
 
   // Which full-size section sits below the last page — and so which floating
   // bar mirrors it. Null once the book has been sent to print: nothing to do.
-  const bottomSection: "checkout" | "print" | null = !isPaid
-    ? "checkout"
-    : showSendToPrint
-      ? "print"
-      : null;
+  // Also null in the admin view, which takes away both sections, both floating
+  // bars and the dialogs they open.
+  const bottomSection: "checkout" | "print" | null = adminView
+    ? null
+    : !isPaid
+      ? "checkout"
+      : showSendToPrint
+        ? "print"
+        : null;
 
   // ── Floating bar visibility (checkout before payment, print after) ────────
   //
@@ -306,8 +319,9 @@ export default function PreviewViewer({
           )}
 
           {/* Instructions for a book still being made and picked. Once it is
-              printed there is nothing to watch or choose, so they go. */}
-          {!isSentToPrint && (
+              printed there is nothing to watch or choose, so they go. They
+              speak to the customer, so the admin view drops them too. */}
+          {!isSentToPrint && !adminView && (
             <div className="mt-4 flex flex-col items-center gap-2 text-gray-500 text-sm md:text-base font-medium">
               <span className="flex items-center gap-2">
                 <ImageIcon size={18} className="text-[#3F3C95]" /> Watch the story come alive one page at a time!
@@ -369,8 +383,9 @@ export default function PreviewViewer({
             No JS is needed to stop at the footer: a sticky element is bound by
             its parent's box, and this column ends before the Footer. */}
         {/* Also hidden while awaiting payment: a fresh session from here would
-            leave the unpaid order behind, and this session's photo is locked. */}
-        {!isPaid && !isAwaitingPayment && (
+            leave the unpaid order behind, and this session's photo is locked.
+            And in the admin view — changing the photo is the customer's call. */}
+        {!isPaid && !isAwaitingPayment && !adminView && (
           <div className="hidden lg:block sticky top-24 z-20 h-0 w-full -mb-4 pointer-events-none relative">
             <div className="absolute right-[calc(100%+1.5rem)] xl:right-[calc(100%+2.5rem)] top-0 pointer-events-auto">
               <UploadAnotherPhotoBanner
@@ -384,7 +399,7 @@ export default function PreviewViewer({
 
         {/* Mobile fallback. There is no room for a side rail at phone widths,
             so below lg it is a normal block above the first page. */}
-        {!isPaid && !isAwaitingPayment && (
+        {!isPaid && !isAwaitingPayment && !adminView && (
           <div className="lg:hidden w-full">
             <UploadAnotherPhotoBanner
               sessionId={snapshot.id}
@@ -416,7 +431,7 @@ export default function PreviewViewer({
                 onVariantChange={handleVariantChange}
                 generatingFact={generatingFact}
                 readOnly={isSentToPrint}
-                canRegenerate={!isAwaitingPayment}
+                canRegenerate={!isAwaitingPayment && !adminView}
               />
               <ChevronDown size={32} className="text-gray-300 mt-4" />
             </div>
@@ -454,10 +469,14 @@ export default function PreviewViewer({
         />
       )}
 
-      {/* Exactly one, shared by the checkout bar and the full section. */}
+      {/* Exactly one, shared by the checkout bar and the full section.
+          After login the customer lands straight on the address page instead
+          of back here — the cover is already saved before this opens, and
+          CheckoutPage links the session to the new account on arrival. */}
       <LoginModal
         isOpen={checkout.showLoginModal}
         onOpenChange={checkout.setShowLoginModal}
+        callbackPath={`/personalize/${snapshot.id}/checkout`}
       />
 
       {/* Exactly one of each, shared by the print bar and the full section. */}

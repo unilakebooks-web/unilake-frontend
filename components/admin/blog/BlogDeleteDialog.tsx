@@ -44,12 +44,27 @@ export function BlogDeleteDialog({ open, onOpenChange, blog, onConfirm }: BlogDe
           </p>
           {blog && (
             <div className="mt-4 p-3 bg-gray-50 rounded-lg text-left border border-gray-100">
-              <p className="font-bold text-gray-800 text-sm truncate">{blog.title}</p>
+              {/* Not `truncate`: its no-wrap line set the width of the
+                  dialog's grid column, so a long title widened the column past
+                  the dialog and clipped the message and the Delete button.
+                  Wrapping lets it fit; two lines max, full title on hover.
+                  wrap-anywhere also breaks a single unbroken word (a pasted
+                  URL), which would otherwise force the same overflow. */}
+              <p
+                title={blog.title}
+                className="font-bold text-gray-800 text-sm line-clamp-2 wrap-anywhere"
+              >
+                {blog.title}
+              </p>
             </div>
           )}
         </div>
 
-        <DialogFooter className="px-6 py-4 bg-gray-50 border-t border-gray-100 flex gap-2 sm:justify-end">
+        {/* m-0 cancels DialogFooter's built-in -mx-4 -mb-4, which exists to
+            undo DialogContent's default p-4. This dialog sets p-0, so those
+            negative margins pushed the footer past the dialog's bottom and
+            sides, where overflow-hidden clipped its padding away. */}
+        <DialogFooter className="m-0 px-6 py-4 bg-gray-50 border-t border-gray-100 flex gap-2 sm:justify-end">
           <button
             type="button"
             onClick={() => onOpenChange(false)}

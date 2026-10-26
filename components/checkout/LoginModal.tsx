@@ -88,6 +88,11 @@ interface LoginModalProps {
     /** Defaults suit checkout; override when logging in for something else. */
     title?: string;
     description?: string;
+    /**
+     * Same-origin path to land on after the OAuth round trip, e.g.
+     * "/personalize/{id}/checkout". Omit it to come back to the current page.
+     */
+    callbackPath?: string;
 }
 
 export default function LoginModal({
@@ -95,6 +100,7 @@ export default function LoginModal({
     onOpenChange,
     title = "Log in to continue",
     description = "You need to be signed in to complete your purchase",
+    callbackPath,
 }: LoginModalProps) {
     const { login } = useAuth();
     const [redirectingTo, setRedirectingTo] = useState<OAuthProvider | null>(null);
@@ -106,8 +112,11 @@ export default function LoginModal({
         setRedirectingTo(provider);
         setError(null);
         try {
-            // Set callback URL to current page so they land right back here
-            const callbackURL = window.location.href;
+            // Absolute URL either way, as before: the OAuth callback is handled
+            // by the backend, so a bare path would resolve against its origin.
+            const callbackURL = callbackPath
+                ? `${window.location.origin}${callbackPath}`
+                : window.location.href;
             await login(provider, callbackURL);
         } catch (err) {
             setError(err instanceof Error ? err.message : "Unable to initiate login.");

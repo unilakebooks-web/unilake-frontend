@@ -170,6 +170,15 @@ export function OrderInfoCards({ order }: { order: AdminOrderDetail }) {
                 regenerated before the PDF can be downloaded again.
               </p>
             ) : (
+              // The saved filename ("Aarav_Hardcover_The_Magic_Treehouse_3f6a1c2e.pdf")
+              // comes from the Content-Disposition header R2 stores on the PDF at
+              // compile time — not from here. The `download` attribute would not
+              // help: browsers ignore it for cross-origin URLs, and R2 is one.
+              //
+              // target="_blank" stays on purpose. PDFs compiled after the header
+              // was added download straight away (the browser drops the blank tab);
+              // older ones have no header and keep opening in a tab as before,
+              // instead of navigating the admin away from this page.
               <a
                 href={pdf.pdfDownloadUrl}
                 target="_blank"
