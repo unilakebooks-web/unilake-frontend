@@ -31,9 +31,19 @@ interface StoryCardProps {
 }
 
 export default function StoryCard({ comic }: StoryCardProps) {
-  // Personalise goes straight to /comic/[id]. The quick-view popup is opened
-  // by the "Read more" at the end of the description instead.
+  // A click anywhere on the card opens the quick-view popup, except Personalise,
+  // which goes straight to /comic/[id]. "Read more" opens the popup too and is
+  // the keyboard path to it — the card itself is not focusable, since a
+  // focusable wrapper around a link and a button is invalid nesting.
   const [isQuickViewOpen, setIsQuickViewOpen] = useState(false);
+
+  const handleCardClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    // The popup is portalled to <body> but is still this card's child in the
+    // React tree, so its clicks (close button, overlay, its own Personalise)
+    // bubble up here. Only clicks on the card's own DOM open it.
+    if (!e.currentTarget.contains(e.target as Node)) return;
+    setIsQuickViewOpen(true);
+  };
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   const selectedCountry = useCountryStore((state) => state.selectedCountry);
@@ -133,9 +143,11 @@ export default function StoryCard({ comic }: StoryCardProps) {
         aspect-[427/623]
         overflow-visible
         transition-all duration-300 hover:-translate-y-2
+        cursor-pointer
         group
         ${hankenGrotesk.className}
       `}
+      onClick={handleCardClick}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
@@ -307,9 +319,10 @@ export default function StoryCard({ comic }: StoryCardProps) {
             {comic.description || "A personalized storybook adventure for your child."}
           </p>
 
-          {/* Opens the quick-view popup. Same size and line height as the
-              description (one 5.06cqw line, counted in the sum above); pinned
-              bottom-right of the block on every card. */}
+          {/* Opens the quick-view popup, like any click on the card — kept as a
+              visible hint and as the keyboard-reachable way in. Same size and
+              line height as the description (one 5.06cqw line, counted in the
+              sum above); pinned bottom-right of the block on every card. */}
           <button
             type="button"
             onClick={() => setIsQuickViewOpen(true)}
@@ -358,12 +371,16 @@ export default function StoryCard({ comic }: StoryCardProps) {
             Text is 18px at 380 wide; see the sizing note at the top.
 
             Goes straight to the comic page — a real link, so it can be opened
-            in a new tab. Not sold in this country: a disabled button instead,
-            since a link cannot be disabled. */}
+            in a new tab. stopPropagation keeps the card's click handler from
+            also opening the popup on the way out. Not sold in this country: a
+            disabled button instead, since a link cannot be disabled. Its
+            pointer-events-none lets the click fall through to the card, so it
+            opens the popup, which explains why the comic can't be bought. */}
         <div className="flex justify-center w-full">
           {pricing ? (
             <Link
               href={`/comic/${comic.id}`}
+              onClick={(e) => e.stopPropagation()}
               className={`${PERSONALISE_CLASSES} hover:brightness-110 active:translate-y-[2px] active:border-b-[2px] cursor-pointer`}
             >
               Personalise
@@ -386,7 +403,8 @@ export default function StoryCard({ comic }: StoryCardProps) {
         comic={comic}
         open={isQuickViewOpen}
         onOpenChange={setIsQuickViewOpen}
-        coverImage={images[0]}
+        // The two covers this card shows — default and hover — and no others.
+        coverImages={images.slice(0, 2)}
         pages={pages}
         pricing={
           pricing

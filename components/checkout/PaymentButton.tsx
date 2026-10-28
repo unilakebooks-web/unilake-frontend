@@ -54,7 +54,7 @@ export default function PaymentButton({
         amount: checkoutData.amount, // in paise
         currency: checkoutData.currency,
         order_id: checkoutData.razorpayOrderId,
-        name: "UniLake",
+        name: "UniLake Creations",
         description: `Order: ${comicDetail.title}`,
         prefill: {
           name: snapshot.shippingName || undefined,

@@ -10,6 +10,19 @@ import { UserRole } from "@/app/types/auth";
 import { useCountryStore } from "@/stores/useCountryStore";
 import { useCountryHydration } from "@/hooks/useCountryHydration";
 
+/**
+ * The site's main links — one list for both the desktop bar and the phone
+ * menu, so the two cannot drift apart.
+ */
+const NAV_LINKS = [
+  { name: "Home", href: "/" },
+  { name: "Our Books", href: "/comic" },
+  { name: "How it works", href: "/how_it_work" },
+  { name: "FAQ", href: "/#faq" },
+  { name: "Blogs", href: "/blog" },
+  { name: "Contact us", href: "/contact" },
+];
+
 interface HeaderProps {
   topOffset?: number;
   hideBulbForced?: boolean;
@@ -143,14 +156,7 @@ export default function Header({ topOffset = 0, hideBulbForced = false, flatBack
 
         {/* Zone 2 — Center: Main Navigation */}
         <ul className="hidden lg:flex items-center justify-center gap-6 xl:gap-8 2xl:gap-10 text-white text-[15px] font-medium tracking-wide select-none whitespace-nowrap">
-          {[
-            { name: "Home", href: "/" },
-            { name: "Our Books", href: "/comic" },
-            { name: "How it works", href: "/how_it_work" },
-            { name: "FAQ", href: "/#faq" },
-            { name: "Blogs", href: "/blog" },
-            { name: "Contact us", href: "/contact" }
-          ].map((item) => (
+          {NAV_LINKS.map((item) => (
             <li key={item.name} className={`${isActive(item.href) ? "text-[#FFD54A]" : "hover:text-[#FFD54A]"} cursor-pointer transition-colors duration-200`}>
               <Link href={item.href}>{item.name}</Link>
             </li>
@@ -367,15 +373,8 @@ export default function Header({ topOffset = 0, hideBulbForced = false, flatBack
 
         {/* Main Links */}
         <div className="flex flex-col gap-1.5">
-          {[
-            { name: "Home", href: "/" },
-            { name: "Our Books", href: "/comic" },
-            { name: "How its works", href: "/how_it_work" },
-            { name: "Faq", href: "/#faq" },
-            { name: "Blogs", href: "/blog" },
-            { name: "Team", href: "/team" }
-          ].map((item) => (
-            <Link 
+          {NAV_LINKS.map((item) => (
+            <Link
               key={item.name} 
               href={item.href} 
               onClick={() => setIsMobileMenuOpen(false)}

@@ -281,7 +281,7 @@ export default function ComicPersonalizeForm({ comic, onSuccess }: ComicPersonal
         {/* Name */}
         <div className="flex flex-col gap-1.5">
           <label className="text-sm text-[#333333] font-medium">
-            Child&apos;s Name *
+            Child&apos;s First Name *
             <span className="ml-1 font-normal text-gray-400">
               (max {MAX_NAME_LENGTH} characters)
             </span>

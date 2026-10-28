@@ -58,7 +58,7 @@ export default function PhotoGuidelines({ showImage = true }: PhotoGuidelinesPro
 
       {/* Text rules */}
       <ul className={`list-disc list-inside space-y-0.5 text-xs text-[#333] ${showImage ? "mb-3" : ""}`}>
-        <li>Choose a clear, smiling photo.</li>
+        <li>Upload clear photo with closed mouth.</li>
         <li>Make sure the child’s full face is clearly visible.</li>
         <li>No hats, sunglasses, hands or objects should obstruct the face</li>
         <li>Avoid funny/distorted expressions and blurry photos.</li>

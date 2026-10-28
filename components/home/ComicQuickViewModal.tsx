@@ -1,8 +1,9 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { XIcon } from "lucide-react";
+import { ChevronLeft, ChevronRight, XIcon } from "lucide-react";
 import {
   Dialog,
   DialogClose,
@@ -26,8 +27,11 @@ interface ComicQuickViewModalProps {
   comic: PublicComicListItem;
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  /** The card's first cover, fallback included. Only one cover is shown here. */
-  coverImage: string;
+  /**
+   * The covers the card shows — its default and its hover image, fallback
+   * included — so one or two entries. Shown as a slider.
+   */
+  coverImages: string[];
   pages: number;
   pricing: QuickViewPrice | null;
   countryName: string | undefined;
@@ -45,6 +49,10 @@ const PERSONALISE_BUTTON = `
   transition-all
 `;
 
+/** Same yellow-and-indigo arrows as the comic page's ComicThumbnailCarousel, sized for the popup. */
+const SLIDER_ARROW =
+  "absolute top-1/2 -translate-y-1/2 z-10 flex items-center justify-center size-9 bg-[#FFD54A] border-[3px] border-[#3F3C95] rounded-full text-[#3F3C95] shadow-lg hover:scale-110 transition-transform cursor-pointer";
+
 function formatAmount(value: number): string {
   return value.toLocaleString(undefined, {
     minimumFractionDigits: 0,
@@ -53,9 +61,103 @@ function formatAmount(value: number): string {
 }
 
 /**
- * Quick look at a comic, opened from the "Read more" at the end of
- * StoryCard's description. (StoryCard's own Personalise button links straight
- * to /comic/[id]; this popup's button goes to the same place.)
+ * The popup's cover box: one image at a time, with arrows and dots when there
+ * is more than one.
+ *
+ * Rendered inside DialogContent, which unmounts on close, so the slider is back
+ * on the first cover — the one the card shows — every time the popup opens.
+ *
+ * Every image stays mounted and only the active one is visible, so switching
+ * is instant instead of waiting on a fresh load.
+ */
+function CoverSlider({
+  images,
+  title,
+  isBestseller,
+}: {
+  images: string[];
+  title: string;
+  isBestseller: boolean;
+}) {
+  const [index, setIndex] = useState(0);
+  const hasMany = images.length > 1;
+
+  const previous = () => setIndex((i) => (i === 0 ? images.length - 1 : i - 1));
+  const next = () => setIndex((i) => (i === images.length - 1 ? 0 : i + 1));
+
+  return (
+    <div className="flex flex-col items-center gap-3">
+      <div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden bg-[#F8E7D2]">
+        {/* object-contain so the whole cover shows. The card crops covers
+            to fit its blackboard; here the point is to see all of it. */}
+        {images.map((src, i) => (
+          <Image
+            key={`${i}-${src}`}
+            src={src}
+            alt={hasMany ? `${title} — cover ${i + 1} of ${images.length}` : title}
+            fill
+            sizes="(max-width: 768px) 92vw, 340px"
+            aria-hidden={i !== index}
+            className={`object-contain transition-opacity duration-300 ${
+              i === index ? "opacity-100" : "opacity-0"
+            }`}
+          />
+        ))}
+
+        {isBestseller && (
+          <span className="absolute top-3 left-3 whitespace-nowrap text-[11px] leading-[1.5] font-extrabold text-[#3F3C95] bg-[#FFD54A] border border-[#3F3C95]/30 rounded-full px-3 py-1 uppercase tracking-wide shadow-sm">
+            ★ Bestseller
+          </span>
+        )}
+
+        {hasMany && (
+          <>
+            <button
+              type="button"
+              onClick={previous}
+              aria-label="Previous cover"
+              className={`${SLIDER_ARROW} left-2`}
+            >
+              <ChevronLeft size={20} strokeWidth={3} />
+            </button>
+            <button
+              type="button"
+              onClick={next}
+              aria-label="Next cover"
+              className={`${SLIDER_ARROW} right-2`}
+            >
+              <ChevronRight size={20} strokeWidth={3} />
+            </button>
+          </>
+        )}
+      </div>
+
+      {hasMany && (
+        <div className="flex items-center gap-2">
+          {images.map((src, i) => (
+            <button
+              key={`${i}-${src}`}
+              type="button"
+              onClick={() => setIndex(i)}
+              aria-label={`Show cover ${i + 1}`}
+              aria-current={i === index}
+              className={`transition-all duration-300 rounded-full cursor-pointer ${
+                i === index
+                  ? "w-8 h-2 bg-[#914A8C]"
+                  : "w-2 h-2 bg-[#914A8C]/30 hover:bg-[#914A8C]/50"
+              }`}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/**
+ * Quick look at a comic, opened by clicking anywhere on a StoryCard (or its
+ * "Read more"). StoryCard's own Personalise button links straight to
+ * /comic/[id]; this popup's button goes to the same place.
  *
  * Shows what the card has to clip — the full description in particular — and
  * hands off to /comic/[id] for the actual personalisation form. Everything here
@@ -70,7 +172,7 @@ export default function ComicQuickViewModal({
   comic,
   open,
   onOpenChange,
-  coverImage,
+  coverImages,
   pages,
   pricing,
   countryName,
@@ -115,22 +217,11 @@ export default function ComicQuickViewModal({
           <div className="flex flex-col md:flex-row gap-5 md:gap-8 min-w-0">
             {/* ── Cover ──────────────────────────────────────────────── */}
             <div className="w-full md:w-[45%] shrink-0 min-w-0">
-              {/* object-contain so the whole cover shows. The card crops covers
-                  to fit its blackboard; here the point is to see all of it. */}
-              <div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden bg-[#F8E7D2]">
-                <Image
-                  src={coverImage}
-                  alt={comic.title}
-                  fill
-                  sizes="(max-width: 768px) 92vw, 340px"
-                  className="object-contain"
-                />
-                {comic.isBestseller && (
-                  <span className="absolute top-3 left-3 whitespace-nowrap text-[11px] leading-[1.5] font-extrabold text-[#3F3C95] bg-[#FFD54A] border border-[#3F3C95]/30 rounded-full px-3 py-1 uppercase tracking-wide shadow-sm">
-                    ★ Bestseller
-                  </span>
-                )}
-              </div>
+              <CoverSlider
+                images={coverImages}
+                title={comic.title}
+                isBestseller={comic.isBestseller}
+              />
             </div>
 
             {/* ── Details ────────────────────────────────────────────── */}

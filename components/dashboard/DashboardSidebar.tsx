@@ -41,7 +41,9 @@ export function DashboardSidebar() {
   };
 
   return (
-    <Sidebar collapsible="icon" className="border-r border-[#914A8C]/20 bg-[#F8E7D2]">
+    // Starts below the site header (86px, fixed) rendered by the dashboard
+    // layout — same offset as AdminSidebar.
+    <Sidebar collapsible="icon" className="border-r border-[#914A8C]/20 bg-[#F8E7D2] !top-[86px] !h-[calc(100vh-86px)]">
       <SidebarHeader className="p-4 border-b border-[#914A8C]/20 flex flex-row items-center gap-2 overflow-hidden">
         <div className="shrink-0 flex items-center justify-center w-8 h-8 rounded-md bg-[#914A8C] text-[#FFD54A]">
           <span className="font-bold">{user?.name?.charAt(0).toUpperCase() || "U"}</span>

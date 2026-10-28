@@ -296,7 +296,7 @@ export default function NewPhotoForm({ previousSession }: NewPhotoFormProps) {
               Photo guidelines:
             </h2>
             <ul className="list-disc list-inside space-y-0.5 text-[11px] lg:text-xs text-[#333]">
-              <li>Choose a clear, smiling photo.</li>
+              <li>Upload clear photo with closed mouth.</li>
               <li>Make sure the child’s full face is clearly visible.</li>
               <li>No hats, sunglasses, hands or objects should obstruct the face</li>
               <li>Avoid funny/distorted expressions and blurry photos.</li>
