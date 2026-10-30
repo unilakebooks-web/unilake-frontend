@@ -85,6 +85,33 @@ export async function fetchOrderLabel(orderId: string): Promise<LabelResponse> {
   return data;
 }
 
+/**
+ * Downloads an order's Bill of Supply PDF. The backend builds it on every
+ * request and stores nothing, so this always reflects the order as it is.
+ *
+ * Raw file, not the JSON envelope — fetched as a Blob and handed to the
+ * browser as a download, same as downloadCustomersCsv. The file name is set
+ * here because Content-Disposition is not readable cross-origin.
+ */
+export async function downloadBillOfSupply(
+  orderId: string,
+  billNumber: string
+): Promise<void> {
+  const { data } = await api.get<Blob>(
+    `/api/admin/orders/${orderId}/bill-of-supply`,
+    { responseType: "blob" }
+  );
+
+  const url = URL.createObjectURL(data);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = `${billNumber}.pdf`;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+}
+
 export async function refreshTracking(orderId: string): Promise<RefreshTrackingResponse> {
   const { data } = await api.post<RefreshTrackingResponse>(
     `/api/admin/orders/${orderId}/refresh-tracking`

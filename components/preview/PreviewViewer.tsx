@@ -177,12 +177,6 @@ export default function PreviewViewer({
     return { selections: sel, blockedPages: blocked, hasInFlight: inFlight };
   }, [snapshot.pages, overrides]);
 
-  // The backend requires exactly one selection per Comic.pageCount. If an admin
-  // created fewer Page rows than pageCount, send-to-print can never succeed and
-  // no amount of regenerating fixes it. Undefined while the comic is loading.
-  const pageCountMismatch =
-    comicDetail !== undefined && snapshot.pages.length !== comicDetail.pageCount;
-
   // Send to Print is offered from the moment payment lands, not only once every
   // page is done: while pages are still being made (the first paid run, or a
   // regeneration) the button stays visible and a click explains the wait.
@@ -196,7 +190,6 @@ export default function PreviewViewer({
     selections,
     blockedPages,
     isGenerating: isGeneratingPaid || hasInFlight,
-    pageCountMismatch,
   });
 
   // Which full-size section sits below the last page — and so which floating

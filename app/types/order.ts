@@ -136,6 +136,17 @@ export interface AdminOrderDetail {
     razorpayPaymentId: string | null;
   };
 
+  /**
+   * Bill of Supply. Null when the order has none — non-INR orders, and orders
+   * paid before billing existed. The download is only offered when set.
+   */
+  bill: {
+    /** e.g. "BOS-26-00001" (printed with a leading "#"). */
+    billNumber: string;
+    /** The payment time — the bill's Date of Issue. */
+    billIssuedAt: string;
+  } | null;
+
   pdf: {
     pdfUrl: string | null;
     pdfDownloadUrl: string | null;

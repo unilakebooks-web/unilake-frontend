@@ -33,7 +33,6 @@ interface UseSendToPrintFlowArgs {
    * the confirm dialog.
    */
   isGenerating: boolean;
-  pageCountMismatch: boolean;
 }
 
 /**
@@ -52,7 +51,6 @@ export function useSendToPrintFlow({
   selections,
   blockedPages,
   isGenerating,
-  pageCountMismatch,
 }: UseSendToPrintFlowArgs) {
   const router = useRouter();
   const { mutateAsync, isPending } = useSendToPrint(sessionId);
@@ -66,17 +64,20 @@ export function useSendToPrintFlow({
 
   const busy = isPending || isRedirecting;
 
-  // Reasons that DISABLE the button, each shown in the amber note. Order
-  // matters: the data problem is unfixable by the user, so it outranks the one
-  // they can act on.
+  // The reason that DISABLES the button, shown in the amber note.
   //
-  // Generation in progress is deliberately NOT one of them — the button stays
+  // Generation in progress is deliberately NOT one — the button stays
   // clickable and explains itself (see handleClick). Failed pages only count
   // once generation has finished, since until then "no ready image yet" just
   // means "not made yet".
-  const blockReason = pageCountMismatch
-    ? "This book's pages don't match its configured length, so we can't send it to print. Please contact support — we'll sort it out."
-    : !isGenerating && blockedPages.length > 0
+  //
+  // There is no page-count check here: the book's pages come from the
+  // session's own frozen page list, which is exactly what the backend counts
+  // selections against, so the two cannot disagree. (Comparing against the
+  // comic's page count would wrongly block a book started before the admin
+  // added a page.)
+  const blockReason =
+    !isGenerating && blockedPages.length > 0
       ? `${blockedPages.length === 1 ? "Page" : "Pages"} ${formatPageList(blockedPages)} didn't come out right. Please regenerate ${blockedPages.length === 1 ? "it" : "them"} before sending your book to print.`
       : null;
 
