@@ -6,6 +6,7 @@ import { AlertCircle, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAdminOrder } from "@/hooks/useOrders";
 import { OrderDetailHeader } from "@/components/admin/order/OrderDetailHeader";
+import { SupersededPaymentNotice } from "@/components/admin/order/SupersededPaymentNotice";
 import { OrderInfoCards } from "@/components/admin/order/OrderInfoCards";
 import { ShipmentSection } from "@/components/admin/order/ShipmentSection";
 import { WebhookEventsLog } from "@/components/admin/order/WebhookEventsLog";
@@ -71,6 +72,7 @@ export default function OrderDetailPage({
   return (
     <div className="max-w-6xl mx-auto py-2 space-y-6">
       <OrderDetailHeader order={order} />
+      <SupersededPaymentNotice order={order} />
       <ShipmentSection order={order} />
       <OrderInfoCards order={order} />
       <WebhookEventsLog events={order.webhookEvents} />

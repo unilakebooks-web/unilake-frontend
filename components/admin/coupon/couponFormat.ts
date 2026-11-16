@@ -41,7 +41,7 @@ export function describeValidity(coupon: Coupon): string {
   if (from && to) return `${from} to ${to}`;
   if (from) return `From ${from}`;
   if (to) return `Until ${to}`;
-  return "No dates";
+  return "Always valid";
 }
 
 export type CouponStatus = "active" | "off" | "expired" | "scheduled" | "used up";

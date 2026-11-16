@@ -48,6 +48,9 @@ export default function CheckoutPage({ sessionId, initialSnapshot }: CheckoutPag
     initialSnapshot.coupon?.code ?? null
   );
 
+  // The code the server refused at Pay, until another one is applied.
+  const [rejectedCode, setRejectedCode] = useState<string | null>(null);
+
   const router = useRouter();
   const { user, isAuthenticated, loading: authLoading } = useAuth();
   // AuthContext builds a new `user` object every render; the id is stable.
@@ -146,7 +149,14 @@ export default function CheckoutPage({ sessionId, initialSnapshot }: CheckoutPag
   };
 
   const handleCouponApplied = (coupon: AppliedCoupon) => {
+    setRejectedCode(null);
     setApplied({ coupon, country: snapshot.shippingCountry });
+  };
+
+  // Kept on screen (not just a toast) so the customer knows why the price went back up.
+  const handleCouponRejected = () => {
+    setRejectedCode(couponToSend ?? null);
+    setApplied(null);
   };
 
   const handlePaymentDismissed = (status: string) => {
@@ -200,10 +210,15 @@ export default function CheckoutPage({ sessionId, initialSnapshot }: CheckoutPag
               notice={
                 couponIsStale
                   ? "Your delivery country changed, so the code was removed. Apply it again if it still applies."
-                  : null
+                  : rejectedCode
+                    ? `Your code ${rejectedCode} is no longer valid, so the full price applies.`
+                    : null
               }
               onApplied={handleCouponApplied}
-              onRemoved={() => setApplied(null)}
+              onRemoved={() => {
+                setRejectedCode(null);
+                setApplied(null);
+              }}
             />
             <PaymentButton 
               sessionId={sessionId} 
@@ -212,7 +227,7 @@ export default function CheckoutPage({ sessionId, initialSnapshot }: CheckoutPag
               onPaymentDismissed={handlePaymentDismissed}
               couponCode={couponToSend}
               onCheckoutStarted={setOrderCouponCode}
-              onCouponRejected={() => setApplied(null)}
+              onCouponRejected={handleCouponRejected}
             />
             
             {paymentStatus === "AWAITING_PAYMENT" && (

@@ -42,7 +42,8 @@ export function useUpdateCoupon() {
 export function useToggleCouponStatus() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: toggleCouponStatus,
+    mutationFn: ({ id, isActive }: { id: string; isActive: boolean }) =>
+      toggleCouponStatus(id, isActive),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["coupons"] });
     },

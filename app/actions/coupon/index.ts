@@ -32,8 +32,9 @@ export async function updateCoupon(id: string, payload: Partial<CouponInput>): P
   return data;
 }
 
-export async function toggleCouponStatus(id: string): Promise<Coupon> {
-  const { data } = await api.patch<Coupon>(`/api/admin/coupons/${id}/status`);
+/** Sends the state the admin chose, so a double click or a stale page cannot flip it the wrong way. */
+export async function toggleCouponStatus(id: string, isActive: boolean): Promise<Coupon> {
+  const { data } = await api.patch<Coupon>(`/api/admin/coupons/${id}/status`, { isActive });
   return data;
 }
 

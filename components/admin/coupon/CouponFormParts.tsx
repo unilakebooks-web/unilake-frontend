@@ -2,9 +2,20 @@
 
 import type { ReactNode } from "react";
 
-export const labelClass = "block text-xs font-bold uppercase tracking-wide text-[#914A8C] mb-1.5";
+export const labelClass = "block text-[13px] font-bold uppercase tracking-wide text-neutral-800 mb-1.5";
+export const hintClass = "text-[13px] text-neutral-600 mt-1";
 export const selectClass =
   "h-10 w-full rounded-lg border border-input bg-white px-3 text-sm font-medium focus:outline-none focus:border-[#914A8C]";
+
+/** A message under a field, in plain words; renders nothing when the field is fine. */
+export function FieldError({ id, message }: { id: string; message: string | null }) {
+  if (!message) return null;
+  return (
+    <p id={id} role="alert" className="text-[13px] font-medium text-red-700 mt-1">
+      {message}
+    </p>
+  );
+}
 
 /** A titled group of related fields inside the coupon form. */
 export function FormSection({ title, children }: { title: string; children: ReactNode }) {
@@ -46,7 +57,7 @@ export function ScopePicker({
     onSelectedChange(selected.includes(value) ? selected.filter((v) => v !== value) : [...selected, value]);
 
   const segment = (active: boolean) =>
-    `px-3.5 py-1.5 text-xs font-bold rounded-full transition-colors cursor-pointer ${
+    `px-3.5 py-2 min-h-10 sm:min-h-0 sm:py-1.5 text-[13px] font-bold rounded-full transition-colors cursor-pointer ${
       active ? "bg-[#914A8C] text-white" : "text-[#914A8C] hover:bg-[#914A8C]/10"
     }`;
 
@@ -72,10 +83,10 @@ export function ScopePicker({
                   type="button"
                   aria-pressed={on}
                   onClick={() => toggle(option.value)}
-                  className={`px-3 py-1 text-xs font-semibold rounded-full border transition-colors cursor-pointer ${
+                  className={`px-3.5 py-2 min-h-10 sm:min-h-0 sm:px-3 sm:py-1 text-[13px] font-semibold rounded-full border transition-colors cursor-pointer ${
                     on
                       ? "bg-[#914A8C]/10 border-[#914A8C] text-[#914A8C]"
-                      : "bg-white border-neutral-300 text-neutral-600 hover:border-[#914A8C]/50"
+                      : "bg-white border-neutral-300 text-neutral-700 hover:border-[#914A8C]/50"
                   }`}
                 >
                   {on ? "✓ " : ""}
@@ -85,7 +96,7 @@ export function ScopePicker({
             })}
           </div>
           {selected.length === 0 && (
-            <p className="text-xs font-medium text-amber-700 mt-2">Pick at least one, or switch back to All.</p>
+            <p className="text-[13px] font-medium text-amber-700 mt-2">Pick at least one, or switch back to All.</p>
           )}
         </div>
       )}

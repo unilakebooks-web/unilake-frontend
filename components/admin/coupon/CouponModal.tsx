@@ -25,7 +25,20 @@ import { useComics } from "@/hooks/useComics";
 import { useCouponCustomerSearch } from "@/hooks/useCoupons";
 import { getErrorMessage } from "@/lib/utils";
 import { toIstDate, todayInIst } from "./couponFormat";
-import { FormSection, ScopePicker, labelClass, selectClass } from "./CouponFormParts";
+import { FieldError, FormSection, ScopePicker, hintClass, labelClass, selectClass } from "./CouponFormParts";
+import {
+  friendlyServerMessage,
+  sanitizeCode,
+  sanitizeDecimal,
+  sanitizeInteger,
+  validateCode,
+  validateDescription,
+  validateLimit,
+  validateMoney,
+  validateName,
+  validatePerCustomer,
+  validatePercent,
+} from "./couponFormRules";
 
 export type CouponModalMode = "create" | "edit";
 
@@ -94,6 +107,8 @@ function CouponForm({ mode, initialData, onSave, onClose }: CouponFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   // Set by the first press of the save button when something risky needs a second look.
   const [riskShown, setRiskShown] = useState(false);
+  // Set by the first press of the save button; empty required fields only show an error from then on.
+  const [submitted, setSubmitted] = useState(false);
 
   const { data: countries } = useCountries();
   const currencyOptions = [
@@ -127,26 +142,64 @@ function CouponForm({ mode, initialData, onSave, onClose }: CouponFormProps) {
   const isSingleUse = kind === "SINGLE_USE";
   const usedCount = (c?.usage.redeemed ?? 0) + (c?.usage.reserved ?? 0);
 
-  // Settings that could cost money if they are a slip of the finger.
+  // Settings that could cost money if they are a slip of the finger. On edit, only what is
+  // being changed counts, so saving a coupon untouched never raises a warning.
+  const percentChanged =
+    !isEdit ||
+    discountType !== c?.discountType ||
+    percentOff !== (c?.percentOff ? String(parseFloat(c.percentOff)) : "");
+  const openEndedChanged =
+    !isEdit ||
+    kind !== c?.kind ||
+    usageLimit !== (c?.usageLimit ? String(c.usageLimit) : "") ||
+    endsAt !== toIstDate(c?.endsAt ?? null) ||
+    (restrictedUser?.id ?? null) !== (c?.restrictedToUserId ?? null);
   const riskNotes: string[] = [];
-  if (discountType === "PERCENT" && Number(percentOff) >= 50) {
+  if (percentChanged && discountType === "PERCENT" && Number(percentOff) >= 50) {
     riskNotes.push(`This takes ${Number(percentOff)}% off the price.`);
   }
-  if (!isSingleUse && !usageLimit.trim() && !endsAt && !restrictedUser) {
+  if (openEndedChanged && !isSingleUse && !usageLimit.trim() && !endsAt && !restrictedUser) {
     riskNotes.push("Anyone with this code can use it any number of times, and it never expires.");
   }
+
+  // Plain-words checks on every field. An empty required field only shows after the first save press.
+  const isPercent = discountType === "PERCENT";
+  const fieldErrors = {
+    code: validateCode(code, isEdit ? (initialData?.code ?? null) : null),
+    name: validateName(name),
+    description: validateDescription(description),
+    percentOff: isPercent ? validatePercent(percentOff, true) : null,
+    maxDiscount: isPercent ? validateMoney(maxDiscount, "Max discount", false) : null,
+    amountOff: isPercent ? null : validateMoney(amountOff, "Amount off", true),
+    currency: needsCurrency && !currency ? "Choose a currency for this coupon." : null,
+    usageLimit: isSingleUse ? null : validateLimit(usageLimit, "Max uses"),
+    perCustomerLimit: validatePerCustomer(perCustomerLimit, usageLimit, isSingleUse),
+  };
+  const emptyRequired = { name: name.trim() === "", percentOff: percentOff.trim() === "", amountOff: amountOff.trim() === "", currency: true };
+  const shown = (field: keyof typeof fieldErrors): string | null => {
+    const message = fieldErrors[field];
+    if (!message) return null;
+    const isEmptyRequired = field in emptyRequired && emptyRequired[field as keyof typeof emptyRequired];
+    return submitted || !isEmptyRequired ? message : null;
+  };
+  const hasFieldErrors = Object.values(fieldErrors).some(Boolean);
+  const fieldProps = (field: keyof typeof fieldErrors, id: string) => ({
+    "aria-invalid": shown(field) ? true : undefined,
+    "aria-describedby": shown(field) ? `${id}-error` : undefined,
+  });
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (isSubmitting) return;
     setErrorMessage(null);
+    setSubmitted(true);
 
-    if (startError || endError) {
-      setErrorMessage("Please fix the dates marked in red.");
+    if (hasFieldErrors) {
+      setErrorMessage("Please fix the fields marked in red.");
       return;
     }
-    if (needsCurrency && !currency) {
-      setErrorMessage("Choose a currency for this coupon.");
+    if (startError || endError) {
+      setErrorMessage("Please fix the dates marked in red.");
       return;
     }
     if (!allComics && comicIds.length === 0) {
@@ -172,7 +225,6 @@ function CouponForm({ mode, initialData, onSave, onClose }: CouponFormProps) {
       isEdit ? value : value === null ? undefined : value;
     const clearable = (text: string) => orNull(text.trim() === "" ? null : text.trim());
 
-    const isPercent = discountType === "PERCENT";
     const shared = {
       name: name.trim(),
       description: clearable(description),
@@ -210,7 +262,7 @@ function CouponForm({ mode, initialData, onSave, onClose }: CouponFormProps) {
       } as CouponInput);
       onClose();
     } catch (err) {
-      setErrorMessage(getErrorMessage(err, "Failed to save coupon"));
+      setErrorMessage(friendlyServerMessage(getErrorMessage(err, "Failed to save coupon")));
     } finally {
       setIsSubmitting(false);
     }
@@ -219,7 +271,8 @@ function CouponForm({ mode, initialData, onSave, onClose }: CouponFormProps) {
   const amountUnit = currency ? ` (${currency})` : "";
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4" noValidate>
+    <form onSubmit={handleSubmit} className="flex min-h-0 flex-1 flex-col" noValidate>
+      <div className="flex-1 overflow-y-auto px-6 py-2 space-y-4">
       <FormSection title="Coupon">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
@@ -227,23 +280,28 @@ function CouponForm({ mode, initialData, onSave, onClose }: CouponFormProps) {
             <Input
               id="coupon-code"
               value={code}
-              onChange={(e) => setCode(e.target.value.toUpperCase())}
+              onChange={(e) => setCode(sanitizeCode(e.target.value))}
               placeholder={isEdit ? "" : "Leave empty to generate one"}
               maxLength={32}
               disabled={isEdit && usedCount > 0}
-              className="font-mono uppercase"
+              className="h-10 font-mono uppercase"
+              {...fieldProps("code", "coupon-code")}
             />
+            <FieldError id="coupon-code-error" message={shown("code")} />
+            {!shown("code") && !(isEdit && usedCount > 0) && (
+              <p className={hintClass}>4 to 32 letters, digits or hyphens.</p>
+            )}
             {isEdit && usedCount > 0 && (
-              <p className="text-xs text-neutral-500 mt-1">This code has been used, so it cannot be changed.</p>
+              <p className={hintClass}>This code has been used, so it cannot be changed.</p>
             )}
             {!isEdit && code.trim() === "" && (
               <div className="flex items-center gap-2 mt-2">
-                <label className="text-xs font-semibold text-neutral-600" htmlFor="coupon-code-length">
+                <label className="text-[13px] font-semibold text-neutral-700" htmlFor="coupon-code-length">
                   Generated code length
                 </label>
                 <select
                   id="coupon-code-length"
-                  className="h-8 rounded-lg border border-input bg-white px-2 text-sm font-medium"
+                  className="h-10 sm:h-8 rounded-lg border border-input bg-white px-2 text-sm font-medium"
                   value={codeLength}
                   onChange={(e) => setCodeLength(e.target.value)}
                 >
@@ -258,19 +316,22 @@ function CouponForm({ mode, initialData, onSave, onClose }: CouponFormProps) {
           </div>
           <div>
             <label className={labelClass} htmlFor="coupon-name">Name (internal label)</label>
-            <Input id="coupon-name" value={name} onChange={(e) => setName(e.target.value)} maxLength={100} />
+            <Input id="coupon-name" className="h-10" value={name} onChange={(e) => setName(e.target.value)} maxLength={100} {...fieldProps("name", "coupon-name")} />
+            <FieldError id="coupon-name-error" message={shown("name")} />
           </div>
         </div>
         <div>
           <label className={labelClass} htmlFor="coupon-description">Description (optional)</label>
-          <Input id="coupon-description" value={description} onChange={(e) => setDescription(e.target.value)} maxLength={500} />
+          <Input id="coupon-description" className="h-10" value={description} onChange={(e) => setDescription(e.target.value)} maxLength={500} {...fieldProps("description", "coupon-description")} />
+          <FieldError id="coupon-description-error" message={shown("description")} />
         </div>
         <div className="max-w-xs">
           <label className={labelClass} htmlFor="coupon-kind">Type of code</label>
           <select id="coupon-kind" className={selectClass} value={kind} onChange={(e) => setKind(e.target.value as CouponKind)}>
-            <option value="PUBLIC">Public code (shared with many)</option>
-            <option value="SINGLE_USE">Single-use code (works once)</option>
+            <option value="PUBLIC">Anyone with the code</option>
+            <option value="SINGLE_USE">Works once in total (single use)</option>
           </select>
+          {restrictedUser && <p className={hintClass}>Only this customer can use it.</p>}
         </div>
       </FormSection>
 
@@ -297,28 +358,33 @@ function CouponForm({ mode, initialData, onSave, onClose }: CouponFormProps) {
             <>
               <div>
                 <label className={labelClass} htmlFor="coupon-percent">Percent off</label>
-                <Input id="coupon-percent" inputMode="decimal" value={percentOff} onChange={(e) => setPercentOff(e.target.value)} placeholder="e.g. 20" />
+                <Input id="coupon-percent" className="h-10" inputMode="decimal" value={percentOff} onChange={(e) => setPercentOff(sanitizeDecimal(e.target.value))} placeholder="e.g. 20" {...fieldProps("percentOff", "coupon-percent")} />
+                <FieldError id="coupon-percent-error" message={shown("percentOff")} />
               </div>
               <div>
                 <label className={labelClass} htmlFor="coupon-max">Max discount{amountUnit} (optional)</label>
-                <Input id="coupon-max" inputMode="decimal" value={maxDiscount} onChange={(e) => {
-                    setMaxDiscount(e.target.value);
-                    if (e.target.value.trim() === "") setCurrency("");
-                  }} />
+                <Input id="coupon-max" className="h-10" inputMode="decimal" value={maxDiscount} onChange={(e) => {
+                    const next = sanitizeDecimal(e.target.value);
+                    setMaxDiscount(next);
+                    if (next.trim() === "") setCurrency("");
+                  }} {...fieldProps("maxDiscount", "coupon-max")} />
+                <FieldError id="coupon-max-error" message={shown("maxDiscount")} />
               </div>
             </>
           ) : (
             <div className="sm:col-span-2">
               <label className={labelClass} htmlFor="coupon-amount">Amount off{amountUnit}</label>
-              <Input id="coupon-amount" inputMode="decimal" value={amountOff} onChange={(e) => setAmountOff(e.target.value)} />
+              <Input id="coupon-amount" className="h-10" inputMode="decimal" value={amountOff} onChange={(e) => setAmountOff(sanitizeDecimal(e.target.value))} {...fieldProps("amountOff", "coupon-amount")} />
+              <FieldError id="coupon-amount-error" message={shown("amountOff")} />
             </div>
           )}
         </div>
+        <p className={hintClass}>Customers always pay at least 1.00, even with a 100% discount.</p>
         <div className="max-w-xs">
           <label className={labelClass} htmlFor="coupon-currency">
             Currency{needsCurrency ? "" : " (optional)"}
           </label>
-          <select id="coupon-currency" className={selectClass} value={currency} onChange={(e) => setCurrency(e.target.value)}>
+          <select id="coupon-currency" className={selectClass} value={currency} onChange={(e) => setCurrency(e.target.value)} {...fieldProps("currency", "coupon-currency")}>
             <option value="">{needsCurrency ? "Choose a currency" : "Any currency"}</option>
             {currencyOptions.map((option) => (
               <option key={option} value={option}>
@@ -326,7 +392,8 @@ function CouponForm({ mode, initialData, onSave, onClose }: CouponFormProps) {
               </option>
             ))}
           </select>
-          <p className="text-xs text-neutral-500 mt-1">
+          <FieldError id="coupon-currency-error" message={shown("currency")} />
+          <p className={hintClass}>
             {discountType === "FIXED"
               ? "The amount off is in this currency, and the coupon only works on orders in it."
               : maxDiscount.trim() !== ""
@@ -334,7 +401,7 @@ function CouponForm({ mode, initialData, onSave, onClose }: CouponFormProps) {
                 : "Leave on Any currency to work in every country, or choose one to limit the coupon to orders in it."}
           </p>
           {needsCurrency && (
-            <p className="text-xs text-neutral-500 mt-1">
+            <p className={hintClass}>
               A coupon has one currency. To offer the same deal in another currency, create a second coupon with its own code.
             </p>
           )}
@@ -347,6 +414,7 @@ function CouponForm({ mode, initialData, onSave, onClose }: CouponFormProps) {
             <label className={labelClass} htmlFor="coupon-starts">Starts (optional)</label>
             <Input
               id="coupon-starts"
+              className="h-10"
               type="date"
               value={startsAt}
               min={today}
@@ -354,12 +422,13 @@ function CouponForm({ mode, initialData, onSave, onClose }: CouponFormProps) {
               onChange={(e) => setStartsAt(e.target.value)}
               aria-invalid={startError ? true : undefined}
             />
-            {startError && <p role="alert" className="text-xs font-medium text-red-600 mt-1">{startError}</p>}
+            {startError && <p role="alert" className="text-[13px] font-medium text-red-700 mt-1">{startError}</p>}
           </div>
           <div>
             <label className={labelClass} htmlFor="coupon-ends">Ends (optional)</label>
             <Input
               id="coupon-ends"
+              className="h-10"
               type="date"
               value={endsAt}
               min={startsAt && startsAt > today ? startsAt : today}
@@ -369,9 +438,9 @@ function CouponForm({ mode, initialData, onSave, onClose }: CouponFormProps) {
               }}
               aria-invalid={endError ? true : undefined}
             />
-            {endError && <p role="alert" className="text-xs font-medium text-red-600 mt-1">{endError}</p>}
+            {endError && <p role="alert" className="text-[13px] font-medium text-red-700 mt-1">{endError}</p>}
             {expiredAndOff && !endError && (
-              <p className="text-xs text-neutral-500 mt-1">
+              <p className={hintClass}>
                 This coupon expired and was switched off. Choosing a new end date switches it back on.
               </p>
             )}
@@ -380,16 +449,20 @@ function CouponForm({ mode, initialData, onSave, onClose }: CouponFormProps) {
             <label className={labelClass} htmlFor="coupon-limit">Max uses, all customers (optional)</label>
             <Input
               id="coupon-limit"
+              className="h-10"
               inputMode="numeric"
               value={isSingleUse ? "1" : usageLimit}
-              onChange={(e) => setUsageLimit(e.target.value)}
+              onChange={(e) => setUsageLimit(sanitizeInteger(e.target.value))}
               disabled={isSingleUse}
+              {...fieldProps("usageLimit", "coupon-limit")}
             />
-            {isSingleUse && <p className="text-xs text-neutral-500 mt-1">A single-use code works once.</p>}
+            <FieldError id="coupon-limit-error" message={shown("usageLimit")} />
+            {isSingleUse && <p className={hintClass}>A single-use code works once.</p>}
           </div>
           <div>
             <label className={labelClass} htmlFor="coupon-per-customer">Max uses per customer (optional)</label>
-            <Input id="coupon-per-customer" inputMode="numeric" value={perCustomerLimit} onChange={(e) => setPerCustomerLimit(e.target.value)} />
+            <Input id="coupon-per-customer" className="h-10" inputMode="numeric" value={perCustomerLimit} onChange={(e) => setPerCustomerLimit(sanitizeInteger(e.target.value))} {...fieldProps("perCustomerLimit", "coupon-per-customer")} />
+            <FieldError id="coupon-per-customer-error" message={shown("perCustomerLimit")} />
           </div>
         </div>
       </FormSection>
@@ -400,7 +473,7 @@ function CouponForm({ mode, initialData, onSave, onClose }: CouponFormProps) {
           {restrictedUser ? (
             <div className="flex items-center justify-between gap-3 rounded-lg border border-[#914A8C]/30 bg-white px-3 py-2 text-sm font-medium">
               <span className="truncate">Only {restrictedUser.label}</span>
-              <button type="button" className="text-xs font-bold text-red-600 cursor-pointer" onClick={() => setRestrictedUser(null)}>
+              <button type="button" className="shrink-0 min-h-10 px-2 text-[13px] font-bold text-red-700 cursor-pointer" onClick={() => setRestrictedUser(null)}>
                 Allow everyone
               </button>
             </div>
@@ -412,6 +485,7 @@ function CouponForm({ mode, initialData, onSave, onClose }: CouponFormProps) {
                 placeholder="Search customers by name or email"
                 aria-label="Search customers"
                 autoFocus
+                className="h-10"
               />
               {customerSearch.trim().length >= 2 &&
                 (customerResults?.length ? (
@@ -420,7 +494,7 @@ function CouponForm({ mode, initialData, onSave, onClose }: CouponFormProps) {
                       <li key={customer.id}>
                         <button
                           type="button"
-                          className="w-full text-left px-3 py-2 text-sm hover:bg-[#914A8C]/5 cursor-pointer"
+                          className="w-full text-left px-3 py-2.5 min-h-10 text-sm hover:bg-[#914A8C]/5 cursor-pointer"
                           onClick={() => {
                             setRestrictedUser({ id: customer.id, label: `${customer.name} (${customer.email})` });
                             setPickingCustomer(false);
@@ -433,13 +507,13 @@ function CouponForm({ mode, initialData, onSave, onClose }: CouponFormProps) {
                     ))}
                   </ul>
                 ) : (
-                  <p className="text-xs text-neutral-500">No registered account matches. Ask the customer to sign up first.</p>
+                  <p className={hintClass}>No registered account matches. Ask the customer to sign up first.</p>
                 ))}
             </div>
           ) : (
             <div className="flex flex-wrap items-center gap-3">
-              <span className="text-sm font-medium text-neutral-700">Everyone can use it</span>
-              <Button type="button" variant="outline" className="h-8 rounded-lg text-xs cursor-pointer" onClick={() => setPickingCustomer(true)}>
+              <span className="text-sm font-medium text-neutral-700">Anyone with the code can use it</span>
+              <Button type="button" variant="outline" className="h-10 sm:h-8 rounded-lg text-[13px] cursor-pointer" onClick={() => setPickingCustomer(true)}>
                 Limit to one customer
               </Button>
             </div>
@@ -480,21 +554,24 @@ function CouponForm({ mode, initialData, onSave, onClose }: CouponFormProps) {
 
       <FormSection title="Options">
         <div className="flex flex-wrap items-center gap-6">
-          <label className="flex items-center gap-2 text-sm font-semibold cursor-pointer">
+          <label className="flex items-center gap-2 min-h-10 text-sm font-semibold cursor-pointer">
             <Switch checked={combinable} onCheckedChange={setCombinable} className="data-[state=checked]:bg-[#914A8C]" />
             Can be combined with other offers
           </label>
-          <label className="flex items-center gap-2 text-sm font-semibold cursor-pointer">
+          <label className="flex items-center gap-2 min-h-10 text-sm font-semibold cursor-pointer">
             <Switch checked={isActive} onCheckedChange={setIsActive} className="data-[state=checked]:bg-[#914A8C]" />
             Active
           </label>
         </div>
       </FormSection>
 
+      </div>
+
+      <DialogFooter className="mx-0 mb-0 shrink-0 flex-col gap-2 rounded-none border-t border-neutral-200 bg-white px-6 py-3 sm:flex-col">
       {riskShown && riskNotes.length > 0 && (
         <div role="alert" className="p-3.5 bg-amber-50 border border-amber-200 rounded-xl text-amber-900 flex items-start gap-2.5">
           <TriangleAlert className="w-4 h-4 mt-0.5 shrink-0 text-amber-600" />
-          <div className="text-xs font-semibold leading-relaxed">
+          <div className="text-[13px] font-semibold leading-relaxed">
             <p className="font-bold">Please check before saving:</p>
             <ul className="list-disc pl-4 mt-1 space-y-0.5">
               {riskNotes.map((note) => (
@@ -507,19 +584,19 @@ function CouponForm({ mode, initialData, onSave, onClose }: CouponFormProps) {
       )}
 
       {errorMessage && (
-        <div role="alert" className="p-3 bg-red-50 border border-red-200 rounded-xl text-red-800 text-xs font-semibold">
+        <div role="alert" className="p-3 bg-red-50 border border-red-200 rounded-xl text-red-800 text-[13px] font-semibold">
           {errorMessage}
         </div>
       )}
-
-      <DialogFooter className="gap-2 pt-3 border-t border-neutral-100">
-        <Button type="button" variant="outline" onClick={onClose} disabled={isSubmitting} className="rounded-xl h-10 px-5 font-semibold cursor-pointer">
+        <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+        <Button type="button" variant="outline" onClick={onClose} disabled={isSubmitting} className="rounded-xl h-11 sm:h-10 px-5 font-semibold cursor-pointer">
           Cancel
         </Button>
-        <Button type="submit" disabled={isSubmitting} className="rounded-xl bg-[#914A8C] hover:bg-[#914A8C]/90 text-white font-bold h-10 px-6 flex items-center gap-2 cursor-pointer">
+        <Button type="submit" disabled={isSubmitting} className="rounded-xl bg-[#914A8C] hover:bg-[#914A8C]/90 text-white font-bold h-11 sm:h-10 px-6 flex items-center justify-center gap-2 cursor-pointer">
           {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
           {riskShown && riskNotes.length > 0 ? "Save anyway" : isEdit ? "Save changes" : "Create coupon"}
         </Button>
+        </div>
       </DialogFooter>
     </form>
   );
@@ -530,15 +607,15 @@ export function CouponModal({ open, onOpenChange, mode, initialData, onSave }: C
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto bg-white rounded-2xl p-6">
-        <DialogHeader className="space-y-1">
+      <DialogContent className="sm:max-w-2xl max-h-[90vh] flex flex-col gap-0 overflow-hidden bg-white rounded-2xl p-0">
+        <DialogHeader className="space-y-1 px-6 pt-6 pb-3 shrink-0">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-[#914A8C] text-[#FFD54A] flex items-center justify-center shrink-0">
               <Ticket className="w-5 h-5" />
             </div>
             <div>
               <DialogTitle className="text-xl font-bold text-neutral-900">{title}</DialogTitle>
-              <DialogDescription className="text-xs text-neutral-500 font-medium">
+              <DialogDescription className="text-[13px] text-neutral-600 font-medium">
                 Dates are in Indian time. An end date lasts until the end of that day.
               </DialogDescription>
             </div>

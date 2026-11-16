@@ -156,8 +156,14 @@ export default function OrderSummary({ snapshot, coupon }: OrderSummaryProps) {
       
       {coupon && (
         <div className="mt-6 pt-4 border-t border-gray-100 space-y-2">
+          {coupon.listAmount && (
+            <div className="flex items-center justify-between gap-3 text-sm font-semibold text-gray-600">
+              <span>Price</span>
+              <span className="shrink-0">{formatMoney(coupon.listAmount, coupon.currency)}</span>
+            </div>
+          )}
           <div className="flex items-center justify-between gap-3 text-sm font-semibold text-gray-600">
-            <span className="min-w-0 truncate">Coupon {coupon.code}</span>
+            <span className="min-w-0 truncate" title={`Coupon ${coupon.code}`}>Coupon {coupon.code}</span>
             <span className="shrink-0 text-green-700">
               -{formatMoney(coupon.discountAmount, coupon.currency)}
             </span>
@@ -168,6 +174,11 @@ export default function OrderSummary({ snapshot, coupon }: OrderSummaryProps) {
               {formatMoney(coupon.finalAmount, coupon.currency)}
             </span>
           </div>
+          {parseFloat(coupon.finalAmount) === 1 && (
+            <p className="text-xs font-medium text-gray-500">
+              A minimum of {formatMoney("1", coupon.currency)} is charged.
+            </p>
+          )}
         </div>
       )}
 

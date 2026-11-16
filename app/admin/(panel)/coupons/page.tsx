@@ -61,7 +61,9 @@ export default function CouponsPage() {
 
   const handleToggle = async (coupon: Coupon) => {
     try {
-      await toggleMutation.mutateAsync(coupon.id);
+      const next = !coupon.isActive;
+      await toggleMutation.mutateAsync({ id: coupon.id, isActive: next });
+      toast.success(`${coupon.code} turned ${next ? "on" : "off"}`);
       // Turning the last coupon on this page out of the filter would leave an empty page.
       if (status && page > 1 && data?.coupons.length === 1) setPage(page - 1);
     } catch (err) {
@@ -94,7 +96,7 @@ export default function CouponsPage() {
           }}
           placeholder="Search by code or name"
           aria-label="Search coupons"
-          className="sm:max-w-xs"
+          className="h-10 sm:h-8 sm:max-w-xs"
         />
         <select
           value={status}
@@ -103,7 +105,7 @@ export default function CouponsPage() {
             setPage(1);
           }}
           aria-label="Filter by status"
-          className="h-9 rounded-lg border border-input bg-transparent px-3 text-sm font-medium"
+          className="h-10 sm:h-9 rounded-lg border border-input bg-transparent px-3 text-sm font-medium"
         >
           <option value="">All statuses</option>
           <option value="active">Active</option>
@@ -139,7 +141,7 @@ export default function CouponsPage() {
         <>
           <CouponTable
             coupons={data?.coupons ?? []}
-            togglingId={toggleMutation.isPending ? (toggleMutation.variables ?? null) : null}
+            togglingId={toggleMutation.isPending ? (toggleMutation.variables?.id ?? null) : null}
             onEdit={(target) => setModalState({ open: true, mode: "edit", target })}
             onDelete={(target) => setDeleteTarget(target)}
             onToggle={handleToggle}
@@ -152,10 +154,10 @@ export default function CouponsPage() {
                 Page {pagination.page} of {pagination.totalPages} ({pagination.total} coupons)
               </span>
               <div className="flex gap-2">
-                <Button variant="outline" disabled={page <= 1} onClick={() => setPage(page - 1)} className="cursor-pointer">
+                <Button variant="outline" disabled={page <= 1} onClick={() => setPage(page - 1)} className="h-10 sm:h-8 cursor-pointer">
                   Previous
                 </Button>
-                <Button variant="outline" disabled={page >= pagination.totalPages} onClick={() => setPage(page + 1)} className="cursor-pointer">
+                <Button variant="outline" disabled={page >= pagination.totalPages} onClick={() => setPage(page + 1)} className="h-10 sm:h-8 cursor-pointer">
                   Next
                 </Button>
               </div>
@@ -181,7 +183,7 @@ export default function CouponsPage() {
         coupon={deleteTarget}
         onConfirm={handleDelete}
         onDeactivate={async (coupon) => {
-          await toggleMutation.mutateAsync(coupon.id);
+          await toggleMutation.mutateAsync({ id: coupon.id, isActive: false });
           toast.success(`Coupon ${coupon.code} turned off`);
         }}
       />

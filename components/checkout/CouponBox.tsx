@@ -79,11 +79,11 @@ export default function CouponBox({
           <div className="min-w-0">
             <p className="flex items-center gap-2 text-sm font-bold text-green-800">
               <Tag size={16} className="shrink-0" />
-              <span className="truncate">{applied.code}</span>
+              <span className="min-w-0 break-all" title={applied.code}>{applied.code}</span>
               <span className="shrink-0 font-semibold">applied</span>
             </p>
             {applied.name && (
-              <p className="text-sm font-medium text-green-800 mt-0.5 truncate">{applied.name}</p>
+              <p className="text-sm font-medium text-green-800 mt-0.5 break-words" title={applied.name}>{applied.name}</p>
             )}
             <p className="text-sm text-green-700 mt-0.5">
               You save {formatMoney(applied.discountAmount, applied.currency)}
@@ -149,7 +149,7 @@ export default function CouponBox({
       )}
 
       {notice && !applied && (
-        <p role="status" className="mt-3 text-sm font-medium text-amber-700">
+        <p role="status" className="mt-3 rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm font-medium text-amber-800">
           {notice}
         </p>
       )}
