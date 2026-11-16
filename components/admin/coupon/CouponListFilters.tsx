@@ -71,7 +71,7 @@ export function CouponListFilters({ onFiltersChange }: CouponListFiltersProps) {
         >
           <SelectValue placeholder="Status">{STATUS_LABELS[status] ?? "All statuses"}</SelectValue>
         </SelectTrigger>
-        <SelectContent className="rounded-xl">
+        <SelectContent className="rounded-xl" alignItemWithTrigger={false}>
           <SelectItem value="ALL">All statuses</SelectItem>
           <SelectItem value="active">Active</SelectItem>
           <SelectItem value="inactive">Inactive</SelectItem>
