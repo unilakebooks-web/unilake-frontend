@@ -329,7 +329,7 @@ function CouponForm({ mode, initialData, onSave, onClose }: CouponFormProps) {
               )}
             </div>
             <div>
-              <label className={labelClass} htmlFor="coupon-name">Name (internal label)</label>
+              <label className={labelClass} htmlFor="coupon-name">Name (shown to customers)</label>
               <Input id="coupon-name" className="h-10" value={name} onChange={(e) => setName(e.target.value)} maxLength={NAME_MAX} {...fieldProps("name", "coupon-name")} />
               <FieldError id="coupon-name-error" message={shown("name")} />
             </div>
