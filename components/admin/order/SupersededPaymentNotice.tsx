@@ -7,9 +7,9 @@ import type { AdminOrderDetail } from "@/app/types/order";
  * then paid on the earlier one. The payment is real, so someone must follow it up.
  */
 export function SupersededPaymentNotice({ order }: { order: AdminOrderDetail }) {
-  const paidElsewhere =
-    order.status === "CREATED" &&
-    order.webhookEvents.some((event) => event.eventType === "payment.captured");
+  const captured = order.webhookEvents.filter((event) => event.eventType === "payment.captured").length;
+  // Unpaid here with a payment received, or paid here and a second payment received as well.
+  const paidElsewhere = (order.status === "CREATED" && captured >= 1) || captured >= 2;
   if (!paidElsewhere) return null;
 
   return (
@@ -19,7 +19,11 @@ export function SupersededPaymentNotice({ order }: { order: AdminOrderDetail }) 
     >
       <TriangleAlert className="w-5 h-5 mt-0.5 shrink-0 text-red-600" />
       <div className="text-sm leading-relaxed">
-        <p className="font-bold">A payment was received for this order, but it is still unpaid here.</p>
+        <p className="font-bold">
+          {order.status === "CREATED"
+            ? "A payment was received for this order, but it is still unpaid here."
+            : "More than one payment was received for this order."}
+        </p>
         <p className="mt-1">
           The customer changed their coupon, so the order moved to a new payment of a different
           amount, and they paid on the earlier one. Check the payment in Razorpay, then refund it
