@@ -29,6 +29,9 @@ export default function CouponBox({
   const [code, setCode] = useState("");
   const [isChecking, setIsChecking] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // Collapsed behind a link until wanted: a visible box sends shoppers off to hunt for codes.
+  const [expanded, setExpanded] = useState(false);
+  const open = expanded || applied !== null || Boolean(notice);
 
   const handleApply = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -51,6 +54,22 @@ export default function CouponBox({
     }
   };
 
+  if (!open) {
+    return (
+      <div className="bg-white rounded-2xl px-6 py-4 border-2 border-gray-100 shadow-sm">
+        <button
+          type="button"
+          aria-expanded={false}
+          onClick={() => setExpanded(true)}
+          className="flex w-full items-center gap-2 text-left text-base font-bold text-[#3F3C95] underline-offset-2 hover:underline cursor-pointer"
+        >
+          <Tag size={18} className="shrink-0" />
+          Have a coupon code?
+        </button>
+      </div>
+    );
+  }
+
   return (
     <div className="bg-white rounded-2xl p-6 border-2 border-gray-100 shadow-sm">
       <h2 className="text-xl font-bold text-[#3F3C95] mb-4">Have a coupon code?</h2>
@@ -72,7 +91,10 @@ export default function CouponBox({
           </div>
           <button
             type="button"
-            onClick={onRemoved}
+            onClick={() => {
+              setExpanded(true); // stay open so another code can be tried
+              onRemoved();
+            }}
             className="shrink-0 text-sm font-bold text-[#3F3C95] underline underline-offset-2 hover:text-[#3F3C95]/80 cursor-pointer"
           >
             Remove
@@ -97,6 +119,7 @@ export default function CouponBox({
               autoComplete="off"
               autoCapitalize="characters"
               spellCheck={false}
+              autoFocus={expanded}
               disabled={!canApply || isChecking}
               aria-invalid={error ? true : undefined}
               aria-describedby={error ? "coupon-error" : undefined}
