@@ -1,11 +1,14 @@
 import Image from "next/image";
 import { SessionSnapshot } from "@/app/types/session";
+import { AppliedCoupon } from "@/app/types/coupon";
 import { usePublicComic } from "@/hooks/usePublicComics";
 import { useCountryStore } from "@/stores/useCountryStore";
-import { resolveMrp } from "@/lib/utils";
+import { formatMoney, resolveMrp } from "@/lib/utils";
 
 interface OrderSummaryProps {
   snapshot: SessionSnapshot;
+  /** The coupon applied to this order, if any; adds the discount and total rows. */
+  coupon?: AppliedCoupon | null;
 }
 
 /** Long edge of the image box, in px. The short edge follows the page's ratio. */
@@ -64,7 +67,7 @@ function resolveSummaryImage(
   return thumbnailUrl ? { url: thumbnailUrl, ...FALLBACK_BOX, isGenerated: false } : null;
 }
 
-export default function OrderSummary({ snapshot }: OrderSummaryProps) {
+export default function OrderSummary({ snapshot, coupon }: OrderSummaryProps) {
   const { data: comicDetail } = usePublicComic(snapshot.comicId);
   const { selectedCountry, getCurrencySymbol } = useCountryStore();
 
@@ -151,6 +154,23 @@ export default function OrderSummary({ snapshot }: OrderSummaryProps) {
         </div>
       </div>
       
+      {coupon && (
+        <div className="mt-6 pt-4 border-t border-gray-100 space-y-2">
+          <div className="flex items-center justify-between gap-3 text-sm font-semibold text-gray-600">
+            <span className="min-w-0 truncate">Coupon {coupon.code}</span>
+            <span className="shrink-0 text-green-700">
+              -{formatMoney(coupon.discountAmount, coupon.currency)}
+            </span>
+          </div>
+          <div className="flex items-center justify-between gap-3 text-[#3F3C95]">
+            <span className="text-base font-bold">You pay</span>
+            <span className="text-xl sm:text-2xl font-black whitespace-nowrap">
+              {formatMoney(coupon.finalAmount, coupon.currency)}
+            </span>
+          </div>
+        </div>
+      )}
+
       <div className="mt-6 pt-4 border-t border-gray-100">
         <p className="text-xs text-center text-gray-500 font-medium">
           Your order details cannot be changed after payment.

@@ -1,3 +1,5 @@
+import type { AppliedCoupon } from "./coupon";
+
 export type SessionStatus =
   | "CREATED"
   | "PHOTO_UPLOADED"
@@ -92,6 +94,8 @@ export interface SessionSnapshot {
     coverThumbnailUrls: string[];
   };
   pages: SessionPage[];
+  /** The coupon applied to this session's unpaid order, if any. */
+  coupon: AppliedCoupon | null;
 }
 
 export interface CreateSessionResponse {
@@ -111,6 +115,10 @@ export interface CheckoutResponse {
   currency: string;
   displayAmount: string;
   notificationEmail: string | null;
+  /** Price before the coupon, the discount, and the code; null / "0" with no coupon. */
+  listAmount: string | null;
+  discountAmount: string;
+  couponCode: string | null;
 }
 
 export interface GenerateResponse {

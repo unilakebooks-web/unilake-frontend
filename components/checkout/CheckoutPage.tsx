@@ -5,11 +5,13 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { LogIn } from "lucide-react";
 import { SessionSnapshot } from "@/app/types/session";
+import { AppliedCoupon } from "@/app/types/coupon";
 import { attachUser, getSession } from "@/app/actions/session";
 import { useAuth } from "@/app/hooks/useAuth";
 import OrderSummary from "./OrderSummary";
 import AddressPicker from "./AddressPicker";
 import PaymentButton from "./PaymentButton";
+import CouponBox from "./CouponBox";
 import VerifyingPaymentOverlay from "./VerifyingPaymentOverlay";
 import LoginModal from "./LoginModal";
 
@@ -29,6 +31,23 @@ export default function CheckoutPage({ sessionId, initialSnapshot }: CheckoutPag
   const [paymentStatus, setPaymentStatus] = useState<string | null>(null);
   const [loginDismissed, setLoginDismissed] = useState(false);
 
+  // The coupon the customer applied on this page, with the delivery country it
+  // was priced for (the price depends on it). A returning customer starts with
+  // the coupon already on their unpaid order.
+  const [applied, setApplied] = useState<{
+    coupon: AppliedCoupon;
+    country: string | null;
+  } | null>(
+    initialSnapshot.coupon
+      ? { coupon: initialSnapshot.coupon, country: initialSnapshot.shippingCountry }
+      : null
+  );
+  // The coupon code the unpaid order currently carries, as the server last told us.
+  // Needed to know whether "no coupon applied" means "nothing to do" or "remove it".
+  const [orderCouponCode, setOrderCouponCode] = useState<string | null>(
+    initialSnapshot.coupon?.code ?? null
+  );
+
   const router = useRouter();
   const { user, isAuthenticated, loading: authLoading } = useAuth();
   // AuthContext builds a new `user` object every render; the id is stable.
@@ -40,6 +59,20 @@ export default function CheckoutPage({ sessionId, initialSnapshot }: CheckoutPag
   // state is whether they closed it.
   const needsLogin = !authLoading && !isAuthenticated;
   const showLoginModal = needsLogin && !loginDismissed;
+
+  // Derived, not set from an effect: an applied coupon only counts while the
+  // delivery country is the one it was priced for.
+  const couponIsStale = applied !== null && applied.country !== snapshot.shippingCountry;
+  const activeCoupon = applied && !couponIsStale ? applied.coupon : null;
+  // undefined = no coupon involved (checkout sends no body, exactly as before),
+  // a code = apply it, null = remove the one already on the order.
+  const couponToSend = activeCoupon ? activeCoupon.code : orderCouponCode ? null : undefined;
+  const canApplyCoupon = Boolean(
+    snapshot.userId &&
+      snapshot.coverType &&
+      snapshot.shippingCountry &&
+      (snapshot.status === "PREVIEW_READY" || snapshot.status === "AWAITING_PAYMENT")
+  );
 
   // One link attempt per page visit — StrictMode runs effects twice in dev,
   // and a second PATCH while the first is in flight is pointless.
@@ -112,6 +145,10 @@ export default function CheckoutPage({ sessionId, initialSnapshot }: CheckoutPag
     setIsVerifying(true);
   };
 
+  const handleCouponApplied = (coupon: AppliedCoupon) => {
+    setApplied({ coupon, country: snapshot.shippingCountry });
+  };
+
   const handlePaymentDismissed = (status: string) => {
     setPaymentStatus(status);
     if (status !== "AWAITING_PAYMENT" && status !== "PREVIEW_READY") {
@@ -155,12 +192,27 @@ export default function CheckoutPage({ sessionId, initialSnapshot }: CheckoutPag
 
           {/* Right Column: Summary & Payment */}
           <div className="space-y-8">
-            <OrderSummary snapshot={snapshot} />
+            <OrderSummary snapshot={snapshot} coupon={activeCoupon} />
+            <CouponBox
+              sessionId={sessionId}
+              applied={activeCoupon}
+              canApply={canApplyCoupon}
+              notice={
+                couponIsStale
+                  ? "Your delivery country changed, so the code was removed. Apply it again if it still applies."
+                  : null
+              }
+              onApplied={handleCouponApplied}
+              onRemoved={() => setApplied(null)}
+            />
             <PaymentButton 
               sessionId={sessionId} 
               snapshot={snapshot} 
               onPaymentComplete={handlePaymentComplete}
               onPaymentDismissed={handlePaymentDismissed}
+              couponCode={couponToSend}
+              onCheckoutStarted={setOrderCouponCode}
+              onCouponRejected={() => setApplied(null)}
             />
             
             {paymentStatus === "AWAITING_PAYMENT" && (

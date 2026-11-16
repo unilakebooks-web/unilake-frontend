@@ -14,6 +14,15 @@ interface PaymentButtonProps {
   snapshot: SessionSnapshot;
   onPaymentComplete: () => void;
   onPaymentDismissed: (status: string) => void;
+  /**
+   * Coupon to send with checkout: undefined = none involved (no body, as before),
+   * a code = apply it, null = remove the coupon already on the order.
+   */
+  couponCode?: string | null;
+  /** The order's coupon code once checkout has created or changed the order. */
+  onCheckoutStarted?: (couponCode: string | null) => void;
+  /** The server refused the coupon at checkout (used up, expired...). */
+  onCouponRejected?: () => void;
 }
 
 export default function PaymentButton({
@@ -21,6 +30,9 @@ export default function PaymentButton({
   snapshot,
   onPaymentComplete,
   onPaymentDismissed,
+  couponCode,
+  onCheckoutStarted,
+  onCouponRejected,
 }: PaymentButtonProps) {
   const [isProcessing, setIsProcessing] = useState(false);
   const { data: comicDetail } = usePublicComic(snapshot.comicId);
@@ -46,7 +58,8 @@ export default function PaymentButton({
       await loadRazorpayScript();
 
       // 2. Initiate checkout on backend
-      const checkoutData = await initiateCheckout(sessionId);
+      const checkoutData = await initiateCheckout(sessionId, couponCode);
+      onCheckoutStarted?.(checkoutData.couponCode);
 
       // 3. Open Razorpay modal
       const options = {
@@ -95,6 +108,11 @@ export default function PaymentButton({
       razorpay.open();
     } catch (error: any) {
       console.error("Checkout initiation failed:", error);
+      // A coupon the server no longer accepts: drop it from the page so the
+      // customer sees the real price, and the toast below says why.
+      if (typeof error?.code === "string" && error.code.startsWith("COUPON_")) {
+        onCouponRejected?.();
+      }
       toast.error(error.message || "Failed to start payment. Please try again.");
       setIsProcessing(false);
     }

@@ -1,4 +1,5 @@
 import api from "@/app/lib/axios";
+import { AppliedCoupon } from "@/app/types/coupon";
 import {
   CreateSessionResponse,
   GenerateResponse,
@@ -69,8 +70,25 @@ export async function attachUser(sessionId: string): Promise<void> {
   await api.patch(`/api/public/sessions/${sessionId}/attach-user`);
 }
 
-export async function initiateCheckout(sessionId: string): Promise<CheckoutResponse> {
-  const { data } = await api.post<CheckoutResponse>(`/api/public/sessions/${sessionId}/checkout`);
+// couponCode: undefined keeps the order as it is (no body, exactly as before),
+// a code applies or replaces its coupon, null removes it.
+export async function initiateCheckout(
+  sessionId: string,
+  couponCode?: string | null
+): Promise<CheckoutResponse> {
+  const { data } = await api.post<CheckoutResponse>(
+    `/api/public/sessions/${sessionId}/checkout`,
+    couponCode === undefined ? undefined : { couponCode }
+  );
+  return data;
+}
+
+// What would I pay with this code? Read-only; needs the logged-in owner of the session.
+export async function previewCoupon(sessionId: string, code: string): Promise<AppliedCoupon> {
+  const { data } = await api.post<AppliedCoupon>(
+    `/api/public/sessions/${sessionId}/coupon-preview`,
+    { code }
+  );
   return data;
 }
 
