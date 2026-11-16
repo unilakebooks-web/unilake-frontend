@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import {
   useCoupons,
   useCreateCoupon,
@@ -14,10 +14,10 @@ import { CouponPageHeader } from "@/components/admin/coupon/CouponPageHeader";
 import { CouponTable } from "@/components/admin/coupon/CouponTable";
 import { CouponModal, type CouponModalMode } from "@/components/admin/coupon/CouponModal";
 import { CouponDeleteDialog } from "@/components/admin/coupon/CouponDeleteDialog";
+import { CouponListFilters } from "@/components/admin/coupon/CouponListFilters";
+import { OrderPagination } from "@/components/admin/order/OrderPagination";
 
 import { Skeleton } from "@/components/ui/skeleton";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { AlertCircle } from "lucide-react";
 import { toast } from "sonner";
 import { getErrorMessage } from "@/lib/utils";
@@ -78,6 +78,16 @@ export default function CouponsPage() {
     if (page > 1 && data?.coupons.length === 1) setPage(page - 1);
   };
 
+  // Stable: CouponListFilters lists it in a debounce effect's dependencies.
+  const handleFiltersChange = useCallback(
+    (next: { search?: string; status?: "active" | "inactive" }) => {
+      setSearch(next.search ?? "");
+      setStatus(next.status ?? "");
+      setPage(1); // A narrower result set makes the old page number meaningless.
+    },
+    []
+  );
+
   const openCreate = () => setModalState({ open: true, mode: "create", target: null });
   const pagination = data?.pagination;
 
@@ -87,31 +97,7 @@ export default function CouponsPage() {
         onAddClick={openCreate}
       />
 
-      <div className="flex flex-col sm:flex-row gap-3">
-        <Input
-          value={search}
-          onChange={(e) => {
-            setSearch(e.target.value);
-            setPage(1);
-          }}
-          placeholder="Search by code or name"
-          aria-label="Search coupons"
-          className="h-10 sm:h-8 sm:max-w-xs"
-        />
-        <select
-          value={status}
-          onChange={(e) => {
-            setStatus(e.target.value as "" | "active" | "inactive");
-            setPage(1);
-          }}
-          aria-label="Filter by status"
-          className="h-10 sm:h-9 rounded-lg border border-input bg-transparent px-3 text-sm font-medium"
-        >
-          <option value="">All statuses</option>
-          <option value="active">Active</option>
-          <option value="inactive">Inactive</option>
-        </select>
-      </div>
+      <CouponListFilters onFiltersChange={handleFiltersChange} />
 
       {isLoading ? (
         <div className="space-y-4">
@@ -148,20 +134,8 @@ export default function CouponsPage() {
             onAddFirst={openCreate}
             filtered={Boolean(search.trim() || status)}
           />
-          {pagination && pagination.totalPages > 1 && (
-            <div className="flex items-center justify-between text-sm font-medium text-neutral-600">
-              <span>
-                Page {pagination.page} of {pagination.totalPages} ({pagination.total} coupons)
-              </span>
-              <div className="flex gap-2">
-                <Button variant="outline" disabled={page <= 1} onClick={() => setPage(page - 1)} className="h-10 sm:h-8 cursor-pointer">
-                  Previous
-                </Button>
-                <Button variant="outline" disabled={page >= pagination.totalPages} onClick={() => setPage(page + 1)} className="h-10 sm:h-8 cursor-pointer">
-                  Next
-                </Button>
-              </div>
-            </div>
+          {pagination && (
+            <OrderPagination pagination={pagination} onPageChange={setPage} itemLabel="coupons" />
           )}
         </>
       )}
