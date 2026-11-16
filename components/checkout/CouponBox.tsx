@@ -90,7 +90,7 @@ export default function CouponBox({
                 if (error) setError(null);
               }}
               placeholder="Enter your code"
-              maxLength={64}
+              maxLength={64} // the API accepts up to 64 characters (COUPON_CODE_INPUT_MAX)
               autoComplete="off"
               autoCapitalize="characters"
               spellCheck={false}

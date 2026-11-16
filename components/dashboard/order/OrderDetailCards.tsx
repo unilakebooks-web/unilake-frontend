@@ -99,9 +99,9 @@ export function OrderDetailCards({ order }: { order: UserOrderDetail }) {
                   {order.currency} {order.amount}
                 </dd>
                 {order.couponCode && (
-                  <p className="text-xs text-gray-500 mt-0.5">
+                  <dd className="text-xs text-gray-500 mt-0.5">
                     Coupon {order.couponCode}: -{order.currency} {order.discountAmount}
-                  </p>
+                  </dd>
                 )}
               </div>
               <div>

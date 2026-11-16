@@ -102,6 +102,11 @@ export function OrderListTable({ orders }: { orders: AdminOrderRow[] }) {
                 </td>
                 <td className="px-6 py-3 text-right whitespace-nowrap font-semibold text-neutral-900">
                   {order.currency} {order.amount}
+                  {order.couponCode && (
+                    <span className="block text-xs font-normal text-neutral-500">
+                      {order.couponCode}
+                    </span>
+                  )}
                 </td>
                 <td className="px-6 py-3 hidden sm:table-cell whitespace-nowrap text-xs text-neutral-500">
                   {format(new Date(order.createdAt), "MMM d, yyyy")}
