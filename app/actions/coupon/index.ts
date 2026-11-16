@@ -1,10 +1,10 @@
 import api from "@/app/lib/axios";
 import type {
   Coupon,
+  CouponCustomer,
   CouponInput,
   CouponListFilters,
   CouponListResponse,
-  GenerateCouponsInput,
 } from "@/app/types/coupon";
 
 export async function fetchCoupons(filters?: CouponListFilters): Promise<CouponListResponse> {
@@ -41,7 +41,10 @@ export async function deleteCoupon(id: string): Promise<void> {
   await api.delete(`/api/admin/coupons/${id}`);
 }
 
-export async function generateCoupons(payload: GenerateCouponsInput): Promise<Coupon[]> {
-  const { data } = await api.post<Coupon[]>("/api/admin/coupons/generate", payload);
+/** Registered accounts matching a name or email, for a customer-only coupon. */
+export async function searchCouponCustomers(search: string): Promise<CouponCustomer[]> {
+  const { data } = await api.get<CouponCustomer[]>(
+    `/api/admin/coupons/customers?search=${encodeURIComponent(search)}`
+  );
   return data;
 }

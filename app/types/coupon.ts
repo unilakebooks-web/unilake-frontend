@@ -68,6 +68,8 @@ export interface CouponListFilters {
  */
 export interface CouponInput {
   code?: string;
+  /** Length of the code to generate when `code` is left out (4 to 32). */
+  codeLength?: number;
   name: string;
   description?: string | null;
   kind: CouponKind;
@@ -89,7 +91,9 @@ export interface CouponInput {
   isActive: boolean;
 }
 
-/** Bulk creation of single-use codes: a count instead of a code, kind and limit. */
-export type GenerateCouponsInput = Omit<CouponInput, "code" | "kind" | "usageLimit"> & {
-  count: number;
-};
+/** A registered account, as offered when a coupon is reserved for one customer. */
+export interface CouponCustomer {
+  id: string;
+  name: string;
+  email: string;
+}

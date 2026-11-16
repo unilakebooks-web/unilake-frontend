@@ -7,9 +7,8 @@ import {
   useUpdateCoupon,
   useToggleCouponStatus,
   useDeleteCoupon,
-  useGenerateCoupons,
 } from "@/hooks/useCoupons";
-import type { Coupon, CouponInput, GenerateCouponsInput } from "@/app/types/coupon";
+import type { Coupon, CouponInput } from "@/app/types/coupon";
 
 import { CouponPageHeader } from "@/components/admin/coupon/CouponPageHeader";
 import { CouponTable } from "@/components/admin/coupon/CouponTable";
@@ -41,7 +40,6 @@ export default function CouponsPage() {
   const updateMutation = useUpdateCoupon();
   const toggleMutation = useToggleCouponStatus();
   const deleteMutation = useDeleteCoupon();
-  const generateMutation = useGenerateCoupons();
 
   const [modalState, setModalState] = useState<{
     open: boolean;
@@ -51,15 +49,12 @@ export default function CouponsPage() {
 
   const [deleteTarget, setDeleteTarget] = useState<Coupon | null>(null);
 
-  const handleSave = async (payload: CouponInput | GenerateCouponsInput) => {
-    if (modalState.mode === "generate") {
-      const created = await generateMutation.mutateAsync(payload as GenerateCouponsInput);
-      toast.success(`${created.length} codes generated`);
-    } else if (modalState.mode === "create") {
-      await createMutation.mutateAsync(payload as CouponInput);
-      toast.success("Coupon created successfully");
+  const handleSave = async (payload: CouponInput) => {
+    if (modalState.mode === "create") {
+      const created = await createMutation.mutateAsync(payload);
+      toast.success(`Coupon ${created.code} created`);
     } else if (modalState.target) {
-      await updateMutation.mutateAsync({ id: modalState.target.id, data: payload as CouponInput });
+      await updateMutation.mutateAsync({ id: modalState.target.id, data: payload });
       toast.success("Coupon updated successfully");
     }
   };
@@ -67,6 +62,8 @@ export default function CouponsPage() {
   const handleToggle = async (coupon: Coupon) => {
     try {
       await toggleMutation.mutateAsync(coupon.id);
+      // Turning the last coupon on this page out of the filter would leave an empty page.
+      if (status && page > 1 && data?.coupons.length === 1) setPage(page - 1);
     } catch (err) {
       toast.error(getErrorMessage(err, "Failed to change the coupon status"));
     }
@@ -75,6 +72,8 @@ export default function CouponsPage() {
   const handleDelete = async (id: string) => {
     await deleteMutation.mutateAsync(id);
     toast.success("Coupon deleted successfully");
+    // Deleting the only coupon on the last page would leave an empty page.
+    if (page > 1 && data?.coupons.length === 1) setPage(page - 1);
   };
 
   const openCreate = () => setModalState({ open: true, mode: "create", target: null });
@@ -84,7 +83,6 @@ export default function CouponsPage() {
     <div className="space-y-6 max-w-6xl mx-auto py-2">
       <CouponPageHeader
         onAddClick={openCreate}
-        onGenerateClick={() => setModalState({ open: true, mode: "generate", target: null })}
       />
 
       <div className="flex flex-col sm:flex-row gap-3">
@@ -174,6 +172,7 @@ export default function CouponsPage() {
       />
 
       <CouponDeleteDialog
+        key={deleteTarget?.id ?? "none"}
         open={!!deleteTarget}
         onOpenChange={(open) => {
           if (!open) setDeleteTarget(null);

@@ -1,14 +1,13 @@
 "use client";
 
-import { Plus, Sparkles, Ticket } from "lucide-react";
+import { Plus, Ticket } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface CouponPageHeaderProps {
   onAddClick: () => void;
-  onGenerateClick: () => void;
 }
 
-export function CouponPageHeader({ onAddClick, onGenerateClick }: CouponPageHeaderProps) {
+export function CouponPageHeader({ onAddClick }: CouponPageHeaderProps) {
   return (
     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-6 border-b border-[#914A8C]/15 mb-6">
       <div className="flex items-center gap-3.5">
@@ -26,14 +25,6 @@ export function CouponPageHeader({ onAddClick, onGenerateClick }: CouponPageHead
       </div>
 
       <div className="flex items-center gap-3 shrink-0">
-        <Button
-          variant="outline"
-          onClick={onGenerateClick}
-          className="h-10 px-4 rounded-xl border-[#914A8C]/40 text-[#914A8C] font-bold text-sm flex items-center gap-2 cursor-pointer"
-        >
-          <Sparkles className="w-4 h-4" />
-          <span>Generate codes</span>
-        </Button>
         <Button
           onClick={onAddClick}
           className="h-10 px-5 rounded-xl bg-[#914A8C] hover:bg-[#914A8C]/90 text-white font-bold text-sm shadow-md shadow-[#914A8C]/20 flex items-center gap-2 transition-transform duration-200 hover:scale-[1.02] cursor-pointer"

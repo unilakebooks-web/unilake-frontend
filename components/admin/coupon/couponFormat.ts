@@ -9,6 +9,11 @@ export function toIstDate(iso: string | null): string {
   return new Date(new Date(iso).getTime() + IST_OFFSET_MS).toISOString().slice(0, 10);
 }
 
+/** Today's date in IST as "YYYY-MM-DD". */
+export function todayInIst(): string {
+  return toIstDate(new Date().toISOString());
+}
+
 /** "12 Dec 2026" for a date string from toIstDate. */
 export function formatIstDate(iso: string | null): string {
   if (!iso) return "";

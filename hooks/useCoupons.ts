@@ -1,11 +1,11 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient, keepPreviousData } from "@tanstack/react-query";
 import {
   fetchCoupons,
   createCoupon,
   updateCoupon,
   toggleCouponStatus,
   deleteCoupon,
-  generateCoupons,
+  searchCouponCustomers,
 } from "@/app/actions/coupon";
 import type { CouponInput, CouponListFilters } from "@/app/types/coupon";
 
@@ -13,6 +13,8 @@ export function useCoupons(filters?: CouponListFilters) {
   return useQuery({
     queryKey: ["coupons", filters],
     queryFn: () => fetchCoupons(filters),
+    // Keep showing the last list while a search or page change loads, instead of flashing skeletons.
+    placeholderData: keepPreviousData,
   });
 }
 
@@ -57,12 +59,11 @@ export function useDeleteCoupon() {
   });
 }
 
-export function useGenerateCoupons() {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: generateCoupons,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["coupons"] });
-    },
+export function useCouponCustomerSearch(search: string) {
+  const text = search.trim();
+  return useQuery({
+    queryKey: ["coupon-customers", text],
+    queryFn: () => searchCouponCustomers(text),
+    enabled: text.length >= 2,
   });
 }
