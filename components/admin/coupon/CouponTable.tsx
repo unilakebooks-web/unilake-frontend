@@ -1,10 +1,28 @@
 "use client";
 
 import type { Coupon } from "@/app/types/coupon";
-import { Pencil, Ticket, Trash2 } from "lucide-react";
+import { Copy, Pencil, Ticket, Trash2 } from "lucide-react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
-import { describeDiscount, describeValidity } from "./couponFormat";
+import { couponStatus, describeDiscount, describeValidity, type CouponStatus } from "./couponFormat";
+
+const STATUS_STYLES: Record<CouponStatus, string> = {
+  active: "bg-green-100 text-green-700 border-green-200",
+  off: "bg-neutral-100 text-neutral-600 border-neutral-200",
+  expired: "bg-red-100 text-red-700 border-red-200",
+  scheduled: "bg-blue-100 text-blue-700 border-blue-200",
+  "used up": "bg-amber-100 text-amber-800 border-amber-200",
+};
+
+async function copyCode(code: string) {
+  try {
+    await navigator.clipboard.writeText(code);
+    toast.success(`Code ${code} copied`);
+  } catch {
+    toast.error("Could not copy the code");
+  }
+}
 
 interface CouponTableProps {
   coupons: Coupon[];
@@ -13,6 +31,8 @@ interface CouponTableProps {
   onDelete: (coupon: Coupon) => void;
   onToggle: (coupon: Coupon) => void;
   onAddFirst: () => void;
+  /** True when a search or filter is active, so an empty list means no match. */
+  filtered: boolean;
 }
 
 export function CouponTable({
@@ -22,7 +42,19 @@ export function CouponTable({
   onDelete,
   onToggle,
   onAddFirst,
+  filtered,
 }: CouponTableProps) {
+  if (coupons.length === 0 && filtered) {
+    return (
+      <div className="bg-white/80 backdrop-blur-md rounded-3xl border-2 border-dashed border-[#914A8C]/25 p-10 text-center shadow-sm">
+        <h3 className="text-lg font-bold text-neutral-800 mb-1">No coupons match</h3>
+        <p className="text-sm text-neutral-500 font-medium">
+          Try a different search, or choose All statuses.
+        </p>
+      </div>
+    );
+  }
+
   if (coupons.length === 0) {
     return (
       <div className="bg-white/80 backdrop-blur-md rounded-3xl border-2 border-dashed border-[#914A8C]/25 p-12 text-center shadow-sm flex flex-col items-center justify-center min-h-[360px]">
@@ -65,7 +97,18 @@ export function CouponTable({
               className="border-b border-[#914A8C]/10 hover:bg-[#F8E7D2]/10 transition-colors"
             >
               <td className="p-4">
-                <p className="font-mono font-bold text-neutral-800">{coupon.code}</p>
+                <p className="flex items-center gap-1.5 font-mono font-bold text-neutral-800">
+                  {coupon.code}
+                  <button
+                    type="button"
+                    onClick={() => copyCode(coupon.code)}
+                    aria-label={`Copy code ${coupon.code}`}
+                    title="Copy code"
+                    className="p-1 rounded text-neutral-400 hover:text-[#914A8C] hover:bg-[#914A8C]/10 transition-colors cursor-pointer"
+                  >
+                    <Copy className="w-3.5 h-3.5" />
+                  </button>
+                </p>
                 <p className="text-xs text-neutral-500 font-medium">
                   {coupon.name}
                   {coupon.kind === "SINGLE_USE" ? " · single use" : ""}
@@ -92,6 +135,11 @@ export function CouponTable({
                   className="data-[state=checked]:bg-[#914A8C]"
                   aria-label={`${coupon.isActive ? "Deactivate" : "Activate"} ${coupon.code}`}
                 />
+                <span
+                  className={`mt-1.5 inline-block px-2 py-0.5 rounded-full border text-[11px] font-bold uppercase tracking-wide ${STATUS_STYLES[couponStatus(coupon)]}`}
+                >
+                  {couponStatus(coupon)}
+                </span>
               </td>
               <td className="p-4 text-right">
                 <div className="flex items-center justify-end gap-2">
@@ -101,6 +149,7 @@ export function CouponTable({
                     onClick={() => onEdit(coupon)}
                     className="h-8 w-8 rounded-lg text-neutral-600 hover:text-[#914A8C] hover:border-[#914A8C] transition-colors"
                     title="Edit Coupon"
+                    aria-label={`Edit coupon ${coupon.code}`}
                   >
                     <Pencil className="w-4 h-4" />
                   </Button>
@@ -110,6 +159,7 @@ export function CouponTable({
                     onClick={() => onDelete(coupon)}
                     className="h-8 w-8 rounded-lg text-neutral-600 hover:text-red-600 hover:bg-red-50 hover:border-red-200 transition-colors"
                     title="Delete Coupon"
+                    aria-label={`Delete coupon ${coupon.code}`}
                   >
                     <Trash2 className="w-4 h-4" />
                   </Button>

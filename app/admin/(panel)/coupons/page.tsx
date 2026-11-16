@@ -144,6 +144,7 @@ export default function CouponsPage() {
             onDelete={(target) => setDeleteTarget(target)}
             onToggle={handleToggle}
             onAddFirst={openCreate}
+            filtered={Boolean(search.trim() || status)}
           />
           {pagination && pagination.totalPages > 1 && (
             <div className="flex items-center justify-between text-sm font-medium text-neutral-600">
@@ -179,6 +180,10 @@ export default function CouponsPage() {
         }}
         coupon={deleteTarget}
         onConfirm={handleDelete}
+        onDeactivate={async (coupon) => {
+          await toggleMutation.mutateAsync(coupon.id);
+          toast.success(`Coupon ${coupon.code} turned off`);
+        }}
       />
     </div>
   );

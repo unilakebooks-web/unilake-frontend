@@ -19,6 +19,8 @@ interface CouponDeleteDialogProps {
   onOpenChange: (open: boolean) => void;
   coupon: Coupon | null;
   onConfirm: (id: string) => Promise<void>;
+  /** Turns the coupon off, offered instead of deleting a coupon that has been used. */
+  onDeactivate: (coupon: Coupon) => Promise<void>;
 }
 
 export function CouponDeleteDialog({
@@ -26,11 +28,28 @@ export function CouponDeleteDialog({
   onOpenChange,
   coupon,
   onConfirm,
+  onDeactivate,
 }: CouponDeleteDialogProps) {
   const [isDeleting, setIsDeleting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   if (!coupon) return null;
+
+  // A coupon that was used or is held by a customer in checkout cannot be deleted.
+  const timesUsed = coupon.usage.redeemed + coupon.usage.reserved;
+
+  const handleDeactivate = async () => {
+    setIsDeleting(true);
+    setErrorMessage(null);
+    try {
+      await onDeactivate(coupon);
+      onOpenChange(false);
+    } catch (err) {
+      setErrorMessage(getErrorMessage(err, "Failed to turn the coupon off"));
+    } finally {
+      setIsDeleting(false);
+    }
+  };
 
   const handleConfirm = async () => {
     setIsDeleting(true);
@@ -71,8 +90,15 @@ export function CouponDeleteDialog({
           <p className="text-xs text-neutral-500">{coupon.name}</p>
         </div>
 
+        {timesUsed > 0 && (
+          <div className="p-3.5 bg-amber-50 border border-amber-200 rounded-xl text-amber-900 text-xs font-semibold leading-relaxed">
+            This coupon has been used or is held in a checkout ({timesUsed} time{timesUsed === 1 ? "" : "s"}), so it cannot be
+            deleted. Turn it off instead: customers can no longer use it, and the history stays.
+          </div>
+        )}
+
         {errorMessage && (
-          <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-red-800 text-xs font-semibold">
+          <div role="alert" className="p-3 bg-red-50 border border-red-200 rounded-xl text-red-800 text-xs font-semibold">
             {errorMessage}
           </div>
         )}
@@ -87,11 +113,21 @@ export function CouponDeleteDialog({
           >
             Cancel
           </Button>
+          {timesUsed > 0 && coupon.isActive && (
+            <Button
+              type="button"
+              onClick={handleDeactivate}
+              disabled={isDeleting}
+              className="rounded-xl bg-[#914A8C] hover:bg-[#914A8C]/90 text-white font-semibold h-10 px-5 cursor-pointer"
+            >
+              Turn off instead
+            </Button>
+          )}
           <Button
             type="button"
             variant="destructive"
             onClick={handleConfirm}
-            disabled={isDeleting}
+            disabled={isDeleting || timesUsed > 0}
             className="rounded-xl bg-red-600 hover:bg-red-700 text-white font-semibold h-10 px-5 shadow-sm flex items-center gap-2 cursor-pointer"
           >
             {isDeleting ? (

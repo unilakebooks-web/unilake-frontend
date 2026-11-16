@@ -43,3 +43,14 @@ export function describeValidity(coupon: Coupon): string {
   if (to) return `Until ${to}`;
   return "No dates";
 }
+
+export type CouponStatus = "active" | "off" | "expired" | "scheduled" | "used up";
+
+/** What an admin wants to know at a glance: can customers use this coupon right now? */
+export function couponStatus(coupon: Coupon, now: Date = new Date()): CouponStatus {
+  if (!coupon.isActive) return "off";
+  if (coupon.endsAt && new Date(coupon.endsAt) < now) return "expired";
+  if (coupon.startsAt && new Date(coupon.startsAt) > now) return "scheduled";
+  if (coupon.usageLimit !== null && coupon.usage.redeemed >= coupon.usageLimit) return "used up";
+  return "active";
+}
