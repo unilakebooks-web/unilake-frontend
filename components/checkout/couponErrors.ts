@@ -1,4 +1,4 @@
-// Pure rule for coupon errors at payment time: no React, so it can be tested on its own.
+// Pure rule for coupon errors at payment time: no React.
 
 // ⚠️ These mirror the coupon error codes in the backend; the other COUPON_ codes
 // (COUPON_TOO_MANY_ATTEMPTS, COUPON_CHANGED_RETRY) mean "try again", not "this code was refused".

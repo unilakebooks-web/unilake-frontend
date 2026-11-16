@@ -1,6 +1,6 @@
-// Pure rules for the offers list on the checkout page: no React, so they can be tested on their own.
+// Pure rules for the offers list on the checkout page: no React.
 import type { CouponOffer } from "@/app/types/coupon";
-import { IST_OFFSET_MS } from "@/components/admin/coupon/couponFormat";
+import { IST_OFFSET_MS } from "@/lib/istTime";
 
 /** How many offers show before "Show N more". */
 const OFFERS_VISIBLE = 3;

@@ -1,7 +1,6 @@
 import type { Coupon } from "@/app/types/coupon";
 import { formatMoney } from "@/lib/utils";
-
-export const IST_OFFSET_MS = 5.5 * 60 * 60 * 1000;
+import { IST_OFFSET_MS } from "@/lib/istTime";
 
 /** "YYYY-MM-DD" of an instant as read in IST (the admin enters dates in IST). */
 export function toIstDate(iso: string | null): string {

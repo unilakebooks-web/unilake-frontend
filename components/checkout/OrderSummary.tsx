@@ -175,6 +175,7 @@ export default function OrderSummary({ snapshot, coupon }: OrderSummaryProps) {
               {formatMoney(coupon.finalAmount, coupon.currency)}
             </span>
           </div>
+          {/* Display only: both amounts have at most two decimals, so the float comparison is exact. */}
           {parseFloat(coupon.finalAmount) === PAYMENT_MINIMUM && parseFloat(coupon.discountAmount) > 0 && (
             <p className="text-xs font-medium text-gray-500">
               A minimum of {formatMoney(String(PAYMENT_MINIMUM), coupon.currency)} is charged.
