@@ -67,7 +67,7 @@ export function CouponListFilters({ onFiltersChange }: CouponListFiltersProps) {
       <Select value={status} onValueChange={(value) => setStatus(value || "ALL")}>
         <SelectTrigger
           aria-label="Filter by status"
-          className="w-full sm:w-[190px] h-10 rounded-xl bg-white border-neutral-200"
+          className="w-full sm:w-[190px] h-10 data-[size=default]:h-10 rounded-xl bg-white border-neutral-200 px-3"
         >
           <SelectValue placeholder="Status">{STATUS_LABELS[status] ?? "All statuses"}</SelectValue>
         </SelectTrigger>
