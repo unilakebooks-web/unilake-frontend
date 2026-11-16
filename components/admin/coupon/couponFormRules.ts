@@ -95,12 +95,15 @@ export function validateLimit(text: string, noun: string): string | null {
   return null;
 }
 
-export function validatePerCustomer(text: string, totalText: string, singleUse: boolean): string | null {
+export function validatePerCustomer(text: string, totalText: string, singleUse: boolean, firstOrderOnly = false): string | null {
   const own = validateLimit(text, "Uses per customer");
   if (own || text.trim() === "") return own;
   const value = Number(text.trim());
   if (singleUse) {
     return value > 1 ? "A single-use code works once, so this must be 1 or empty." : null;
+  }
+  if (firstOrderOnly) {
+    return value > 1 ? "A first-order coupon can only be used once per customer." : null;
   }
   if (validateLimit(totalText, "Max uses") === null && totalText.trim() !== "" && value > Number(totalText.trim())) {
     return "Uses per customer cannot be more than the total uses.";

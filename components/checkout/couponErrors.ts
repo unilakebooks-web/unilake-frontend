@@ -10,6 +10,7 @@ const COUPON_REJECTION_CODES = [
   "COUPON_ALREADY_USED",
   "COUPON_WRONG_CURRENCY",
   "COUPON_NOT_APPLICABLE",
+  "COUPON_FIRST_ORDER_ONLY",
 ];
 
 /** True when the server refused the coupon code itself, so the page should drop it. */

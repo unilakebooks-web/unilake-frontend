@@ -106,6 +106,7 @@ function CouponForm({ mode, initialData, onSave, onClose }: CouponFormProps) {
   const [coverTypes, setCoverTypes] = useState<CoverType[]>(c?.coverTypes ?? []);
   const [combinable, setCombinable] = useState(c?.combinable ?? false);
   const [showAtCheckout, setShowAtCheckout] = useState(c?.showAtCheckout ?? false);
+  const [firstOrderOnly, setFirstOrderOnly] = useState(c?.firstOrderOnly ?? false);
   const [isActive, setIsActive] = useState(c?.isActive ?? true);
   const [codeLength, setCodeLength] = useState("8");
 
@@ -180,7 +181,7 @@ function CouponForm({ mode, initialData, onSave, onClose }: CouponFormProps) {
     amountOff: isPercent ? null : validateMoney(amountOff, "Amount off", true),
     currency: needsCurrency && !currency ? "Choose a currency for this coupon." : null,
     usageLimit: isSingleUse ? null : validateLimit(usageLimit, "Max uses"),
-    perCustomerLimit: validatePerCustomer(perCustomerLimit, usageLimit, isSingleUse),
+    perCustomerLimit: validatePerCustomer(perCustomerLimit, usageLimit, isSingleUse, firstOrderOnly),
   };
   const emptyRequired = { name: name.trim() === "", percentOff: percentOff.trim() === "", amountOff: amountOff.trim() === "", currency: true };
   const shown = (field: keyof typeof fieldErrors): string | null => {
@@ -242,7 +243,10 @@ function CouponForm({ mode, initialData, onSave, onClose }: CouponFormProps) {
       currency: clearable(currency),
       startsAt: orNull(startsAt || null),
       endsAt: orNull(endsAt || null),
-      perCustomerLimit: orNull(numberOrNull(perCustomerLimit)),
+      // A first-order coupon is once per customer: an empty field on create means 1.
+      perCustomerLimit: orNull(
+        firstOrderOnly && !isEdit && perCustomerLimit.trim() === "" ? 1 : numberOrNull(perCustomerLimit)
+      ),
       restrictedToUserId: orNull(restrictedUser?.id ?? null),
       allComics,
       comicIds: allComics ? [] : comicIds,
@@ -251,6 +255,7 @@ function CouponForm({ mode, initialData, onSave, onClose }: CouponFormProps) {
       combinable,
       // Never sent as true for a single-use code or a one-customer coupon (the server refuses it).
       showAtCheckout: showAtCheckout && !isSingleUse && !restrictedUser,
+      firstOrderOnly,
       isActive,
     };
 
@@ -475,7 +480,7 @@ function CouponForm({ mode, initialData, onSave, onClose }: CouponFormProps) {
             </div>
             <div>
               <label className={labelClass} htmlFor="coupon-per-customer">Max uses per customer</label>
-              <Input id="coupon-per-customer" className="h-10" placeholder="No limit" inputMode="numeric" value={perCustomerLimit} onChange={(e) => setPerCustomerLimit(sanitizeInteger(e.target.value))} {...fieldProps("perCustomerLimit", "coupon-per-customer")} />
+              <Input id="coupon-per-customer" className="h-10" placeholder={firstOrderOnly ? "1" : "No limit"} inputMode="numeric" value={perCustomerLimit} onChange={(e) => setPerCustomerLimit(sanitizeInteger(e.target.value))} {...fieldProps("perCustomerLimit", "coupon-per-customer")} />
               <FieldError id="coupon-per-customer-error" message={shown("perCustomerLimit")} />
             </div>
           </div>
@@ -597,6 +602,15 @@ function CouponForm({ mode, initialData, onSave, onClose }: CouponFormProps) {
                 : restrictedUser
                   ? "A coupon for one customer is shown to that customer automatically."
                   : "Customers see this offer on their checkout page. Leave off for private codes."}
+            </p>
+          </div>
+          <div className="mt-1">
+            <label className="flex items-center gap-2 min-h-10 text-sm font-semibold cursor-pointer">
+              <Switch checked={firstOrderOnly} onCheckedChange={setFirstOrderOnly} aria-describedby="coupon-first-order-hint" className="data-[state=checked]:bg-[#914A8C]" />
+              Only for a customer&apos;s first order
+            </label>
+            <p id="coupon-first-order-hint" className={hintClass}>
+              Customers who already have a paid order cannot use it. It can be used once per customer.
             </p>
           </div>
         </FormSection>

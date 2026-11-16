@@ -23,6 +23,8 @@ export interface CouponOffer {
   description: string | null;
   /** True when the coupon is reserved for this customer. */
   forYou: boolean;
+  /** True when the coupon only works on a customer's first order. */
+  firstOrderOnly: boolean;
   /** ISO instant, for "Ends 31 Dec". */
   endsAt: string | null;
   listAmount: string;
@@ -59,6 +61,8 @@ export interface Coupon {
   combinable: boolean;
   /** Listed on the checkout page of customers it fits (public coupons only). */
   showAtCheckout: boolean;
+  /** Only a customer with no paid order can use it. */
+  firstOrderOnly: boolean;
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
@@ -107,6 +111,7 @@ export interface CouponInput {
   coverTypes: CoverType[];
   combinable: boolean;
   showAtCheckout: boolean;
+  firstOrderOnly: boolean;
   isActive: boolean;
 }
 

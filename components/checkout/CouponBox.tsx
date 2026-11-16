@@ -114,6 +114,11 @@ export default function CouponBox({
                           For you
                         </span>
                       )}
+                      {offer.firstOrderOnly && (
+                        <span className="shrink-0 rounded-full bg-[#3F3C95]/10 px-2 py-0.5 text-xs font-bold text-[#3F3C95]">
+                          First order
+                        </span>
+                      )}
                     </p>
                     <p className="mt-0.5 text-sm font-medium text-gray-700 break-words" title={offer.name}>{offer.name}</p>
                     <p className="mt-0.5 text-sm font-semibold text-green-700">
