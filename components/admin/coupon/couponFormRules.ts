@@ -1,8 +1,8 @@
 // Pure rules for the coupon form: no React, so they can be tested on their own.
 // ⚠️ The limits mirror the backend schema (coupon.schema.ts); change both together.
 
-export const MAX_MONEY = 99999999.99;
-export const MAX_LIMIT = 2147483647;
+const MAX_MONEY = 99999999.99;
+const MAX_LIMIT = 2147483647;
 export const CODE_MIN = 4;
 export const CODE_MAX = 32;
 export const NAME_MAX = 100;

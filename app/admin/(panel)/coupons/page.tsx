@@ -63,7 +63,7 @@ export default function CouponsPage() {
     try {
       const next = !coupon.isActive;
       await toggleMutation.mutateAsync({ id: coupon.id, isActive: next });
-      toast.success(`${coupon.code} turned ${next ? "on" : "off"}`);
+      toast.success(`Coupon ${coupon.code} turned ${next ? "on" : "off"}`);
       // Turning the last coupon on this page out of the filter would leave an empty page.
       if (status && page > 1 && data?.coupons.length === 1) setPage(page - 1);
     } catch (err) {

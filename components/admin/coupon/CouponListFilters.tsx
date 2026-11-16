@@ -17,8 +17,8 @@ type StatusFilter = NonNullable<CouponFilters["status"]>;
 // The dropdown would otherwise show the raw value ("ALL") until it is opened.
 const STATUS_LABELS: Record<string, string> = {
   ALL: "All statuses",
-  active: "Active",
-  inactive: "Inactive",
+  active: "Switched on",
+  inactive: "Switched off",
 };
 
 interface CouponListFiltersProps {
@@ -73,8 +73,8 @@ export function CouponListFilters({ onFiltersChange }: CouponListFiltersProps) {
         </SelectTrigger>
         <SelectContent className="rounded-xl" alignItemWithTrigger={false}>
           <SelectItem value="ALL">All statuses</SelectItem>
-          <SelectItem value="active">Active</SelectItem>
-          <SelectItem value="inactive">Inactive</SelectItem>
+          <SelectItem value="active">Switched on</SelectItem>
+          <SelectItem value="inactive">Switched off</SelectItem>
         </SelectContent>
       </Select>
     </div>

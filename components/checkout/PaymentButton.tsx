@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { Loader2, CreditCard } from "lucide-react";
 import { usePublicComic } from "@/hooks/usePublicComics";
 import api from "@/app/lib/axios";
+import { isCouponRejection } from "./couponErrors";
 
 interface PaymentButtonProps {
   sessionId: string;
@@ -110,7 +111,7 @@ export default function PaymentButton({
       console.error("Checkout initiation failed:", error);
       // A coupon the server no longer accepts: drop it from the page so the
       // customer sees the real price, and the toast below says why.
-      if (typeof error?.code === "string" && error.code.startsWith("COUPON_")) {
+      if (isCouponRejection(error?.code)) {
         onCouponRejected?.();
       }
       toast.error(error.message || "Failed to start payment. Please try again.");

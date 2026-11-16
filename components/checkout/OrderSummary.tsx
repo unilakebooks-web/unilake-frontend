@@ -4,6 +4,7 @@ import { AppliedCoupon } from "@/app/types/coupon";
 import { usePublicComic } from "@/hooks/usePublicComics";
 import { useCountryStore } from "@/stores/useCountryStore";
 import { formatMoney, resolveMrp } from "@/lib/utils";
+import { PAYMENT_MINIMUM } from "./couponOffers";
 
 interface OrderSummaryProps {
   snapshot: SessionSnapshot;
@@ -174,9 +175,9 @@ export default function OrderSummary({ snapshot, coupon }: OrderSummaryProps) {
               {formatMoney(coupon.finalAmount, coupon.currency)}
             </span>
           </div>
-          {parseFloat(coupon.finalAmount) === 1 && (
+          {parseFloat(coupon.finalAmount) === PAYMENT_MINIMUM && parseFloat(coupon.discountAmount) > 0 && (
             <p className="text-xs font-medium text-gray-500">
-              A minimum of {formatMoney("1", coupon.currency)} is charged.
+              A minimum of {formatMoney(String(PAYMENT_MINIMUM), coupon.currency)} is charged.
             </p>
           )}
         </div>

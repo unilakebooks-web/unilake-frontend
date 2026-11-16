@@ -1,6 +1,8 @@
 // Coupon types, shared by the customer checkout and the admin panel.
 // Money values are decimal STRINGS, exactly as the API sends them.
 
+import type { CoverType } from "@/app/types/comic";
+
 /** A coupon applied to an order, as the customer sees it. */
 export interface AppliedCoupon {
   code: string;
@@ -31,7 +33,6 @@ export interface CouponOffer {
 
 export type CouponDiscountType = "PERCENT" | "FIXED";
 export type CouponKind = "PUBLIC" | "SINGLE_USE";
-export type CoverType = "HARDCOVER" | "SOFTCOVER";
 
 /** A coupon as the admin API returns it. */
 export interface Coupon {

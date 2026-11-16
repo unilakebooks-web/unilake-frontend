@@ -7,6 +7,9 @@ import { AppliedCoupon, CouponOffer } from "@/app/types/coupon";
 import { formatMoney, getErrorMessage } from "@/lib/utils";
 import { endsText, offersHeading, splitOffers } from "./couponOffers";
 
+// ⚠️ mirrors the backend COUPON_CODE_INPUT_MAX
+const COUPON_CODE_INPUT_MAX = 64;
+
 interface CouponBoxProps {
   sessionId: string;
   /** The coupon currently applied, if any. */
@@ -95,8 +98,8 @@ export default function CouponBox({
             {offerError.code} could not be applied. {offerError.message}
           </p>
         )}
-        {offers.length > 0 && <h3 className="text-sm font-bold text-[#3F3C95] mb-2">{offersHeading(offers)}</h3>}
-        <ul className="space-y-2">
+        {offers.length > 0 && <p className="text-sm font-bold text-[#3F3C95] mb-2">{offersHeading(offers)}</p>}
+        <ul className="space-y-2" aria-label={offers.length > 0 ? offersHeading(offers) : undefined}>
           {shownOffers.map((offer) => {
             const ends = endsText(offer.endsAt);
             return (
@@ -206,7 +209,7 @@ export default function CouponBox({
                 if (error) setError(null);
               }}
               placeholder="Enter your code"
-              maxLength={64} // the API accepts up to 64 characters (COUPON_CODE_INPUT_MAX)
+              maxLength={COUPON_CODE_INPUT_MAX}
               autoComplete="off"
               autoCapitalize="characters"
               spellCheck={false}

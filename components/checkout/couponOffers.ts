@@ -1,10 +1,12 @@
 // Pure rules for the offers list on the checkout page: no React, so they can be tested on their own.
 import type { CouponOffer } from "@/app/types/coupon";
+import { IST_OFFSET_MS } from "@/components/admin/coupon/couponFormat";
 
 /** How many offers show before "Show N more". */
-export const OFFERS_VISIBLE = 3;
+const OFFERS_VISIBLE = 3;
 
-const IST_OFFSET_MS = 5.5 * 60 * 60 * 1000;
+/** The least a customer is ever charged, whatever the discount. ⚠️ mirrors MIN_PAYABLE_MAJOR_UNITS in the backend src/config/coupon.ts */
+export const PAYMENT_MINIMUM = 1;
 
 /** "Offers for you" when any offer is reserved for this customer, otherwise "Available offers". */
 export function offersHeading(offers: CouponOffer[]): string {

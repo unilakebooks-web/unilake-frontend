@@ -1,7 +1,7 @@
 import type { Coupon } from "@/app/types/coupon";
 import { formatMoney } from "@/lib/utils";
 
-const IST_OFFSET_MS = 5.5 * 60 * 60 * 1000;
+export const IST_OFFSET_MS = 5.5 * 60 * 60 * 1000;
 
 /** "YYYY-MM-DD" of an instant as read in IST (the admin enters dates in IST). */
 export function toIstDate(iso: string | null): string {
@@ -15,7 +15,7 @@ export function todayInIst(): string {
 }
 
 /** "12 Dec 2026" for a date string from toIstDate. */
-export function formatIstDate(iso: string | null): string {
+function formatIstDate(iso: string | null): string {
   if (!iso) return "";
   return new Date(`${toIstDate(iso)}T00:00:00Z`).toLocaleDateString("en-IN", {
     day: "numeric",
