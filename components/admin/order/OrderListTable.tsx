@@ -85,6 +85,11 @@ export function OrderListTable({ orders }: { orders: AdminOrderRow[] }) {
                 </td>
                 <td className="px-6 py-3">
                   <OrderStatusBadge status={order.status} />
+                  {order.needsPaymentCheck && (
+                    <span className="mt-1 block text-xs font-semibold text-red-700">
+                      Check payment in Razorpay
+                    </span>
+                  )}
                 </td>
                 <td className="px-6 py-3 hidden lg:table-cell">
                   {order.awbNumber ? (

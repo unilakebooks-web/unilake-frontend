@@ -61,6 +61,8 @@ export interface AdminOrderRow {
   currency: string;
   /** The coupon used, if any. `amount` is what was actually paid. */
   couponCode: string | null;
+  /** A payment arrived that the order has not accounted for: check it in Razorpay. */
+  needsPaymentCheck: boolean;
   status: OrderStatus;
   trackingStatus: string | null;
   awbNumber: string | null;
