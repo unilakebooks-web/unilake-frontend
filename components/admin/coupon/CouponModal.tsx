@@ -120,6 +120,9 @@ function CouponForm({ mode, initialData, onSave, onClose }: CouponFormProps) {
         ? "The end date cannot be before the start date."
         : null;
 
+  // An expired coupon is switched off automatically; giving it a new end date should bring it back.
+  const expiredAndOff = isEdit && c !== null && !c.isActive && c.endsAt !== null && new Date(c.endsAt) < new Date();
+
   const needsCurrency = discountType === "FIXED" || (discountType === "PERCENT" && maxDiscount.trim() !== "");
   const isSingleUse = kind === "SINGLE_USE";
   const usedCount = (c?.usage.redeemed ?? 0) + (c?.usage.reserved ?? 0);
@@ -360,10 +363,18 @@ function CouponForm({ mode, initialData, onSave, onClose }: CouponFormProps) {
               type="date"
               value={endsAt}
               min={startsAt && startsAt > today ? startsAt : today}
-              onChange={(e) => setEndsAt(e.target.value)}
+              onChange={(e) => {
+                setEndsAt(e.target.value);
+                if (expiredAndOff && e.target.value >= today) setIsActive(true);
+              }}
               aria-invalid={endError ? true : undefined}
             />
             {endError && <p role="alert" className="text-xs font-medium text-red-600 mt-1">{endError}</p>}
+            {expiredAndOff && !endError && (
+              <p className="text-xs text-neutral-500 mt-1">
+                This coupon expired and was switched off. Choosing a new end date switches it back on.
+              </p>
+            )}
           </div>
           <div>
             <label className={labelClass} htmlFor="coupon-limit">Max uses, all customers (optional)</label>

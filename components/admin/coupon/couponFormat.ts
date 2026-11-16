@@ -48,8 +48,9 @@ export type CouponStatus = "active" | "off" | "expired" | "scheduled" | "used up
 
 /** What an admin wants to know at a glance: can customers use this coupon right now? */
 export function couponStatus(coupon: Coupon, now: Date = new Date()): CouponStatus {
-  if (!coupon.isActive) return "off";
+  // Expired comes first: an expired coupon is switched off automatically, and "expired" says why.
   if (coupon.endsAt && new Date(coupon.endsAt) < now) return "expired";
+  if (!coupon.isActive) return "off";
   if (coupon.startsAt && new Date(coupon.startsAt) > now) return "scheduled";
   if (coupon.usageLimit !== null && coupon.usage.redeemed >= coupon.usageLimit) return "used up";
   return "active";
