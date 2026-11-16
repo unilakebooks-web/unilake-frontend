@@ -362,8 +362,8 @@ function CouponForm({ mode, initialData, onSave, onClose }: CouponFormProps) {
                 <FieldError id="coupon-percent-error" message={shown("percentOff")} />
               </div>
               <div>
-                <label className={labelClass} htmlFor="coupon-max">Max discount{amountUnit} (optional)</label>
-                <Input id="coupon-max" className="h-10" inputMode="decimal" value={maxDiscount} onChange={(e) => {
+                <label className={labelClass} htmlFor="coupon-max">Max discount{amountUnit}</label>
+                <Input id="coupon-max" className="h-10" placeholder="Optional" inputMode="decimal" value={maxDiscount} onChange={(e) => {
                     const next = sanitizeDecimal(e.target.value);
                     setMaxDiscount(next);
                     if (next.trim() === "") setCurrency("");
@@ -380,18 +380,20 @@ function CouponForm({ mode, initialData, onSave, onClose }: CouponFormProps) {
           )}
         </div>
         <p className={hintClass}>Customers always pay at least 1.00, even with a 100% discount.</p>
-        <div className="max-w-xs">
+        <div>
           <label className={labelClass} htmlFor="coupon-currency">
             Currency{needsCurrency ? "" : " (optional)"}
           </label>
-          <select id="coupon-currency" className={selectClass} value={currency} onChange={(e) => setCurrency(e.target.value)} {...fieldProps("currency", "coupon-currency")}>
-            <option value="">{needsCurrency ? "Choose a currency" : "Any currency"}</option>
-            {currencyOptions.map((option) => (
-              <option key={option} value={option}>
-                {option}
-              </option>
-            ))}
-          </select>
+          <div className="max-w-xs">
+            <select id="coupon-currency" className={selectClass} value={currency} onChange={(e) => setCurrency(e.target.value)} {...fieldProps("currency", "coupon-currency")}>
+              <option value="">{needsCurrency ? "Choose a currency" : "Any currency"}</option>
+              {currencyOptions.map((option) => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              ))}
+            </select>
+          </div>
           <FieldError id="coupon-currency-error" message={shown("currency")} />
           <p className={hintClass}>
             {discountType === "FIXED"
@@ -446,10 +448,11 @@ function CouponForm({ mode, initialData, onSave, onClose }: CouponFormProps) {
             )}
           </div>
           <div>
-            <label className={labelClass} htmlFor="coupon-limit">Max uses, all customers (optional)</label>
+            <label className={labelClass} htmlFor="coupon-limit">Max uses, everyone</label>
             <Input
               id="coupon-limit"
               className="h-10"
+              placeholder="No limit"
               inputMode="numeric"
               value={isSingleUse ? "1" : usageLimit}
               onChange={(e) => setUsageLimit(sanitizeInteger(e.target.value))}
@@ -460,8 +463,8 @@ function CouponForm({ mode, initialData, onSave, onClose }: CouponFormProps) {
             {isSingleUse && <p className={hintClass}>A single-use code works once.</p>}
           </div>
           <div>
-            <label className={labelClass} htmlFor="coupon-per-customer">Max uses per customer (optional)</label>
-            <Input id="coupon-per-customer" className="h-10" inputMode="numeric" value={perCustomerLimit} onChange={(e) => setPerCustomerLimit(sanitizeInteger(e.target.value))} {...fieldProps("perCustomerLimit", "coupon-per-customer")} />
+            <label className={labelClass} htmlFor="coupon-per-customer">Max uses per customer</label>
+            <Input id="coupon-per-customer" className="h-10" placeholder="No limit" inputMode="numeric" value={perCustomerLimit} onChange={(e) => setPerCustomerLimit(sanitizeInteger(e.target.value))} {...fieldProps("perCustomerLimit", "coupon-per-customer")} />
             <FieldError id="coupon-per-customer-error" message={shown("perCustomerLimit")} />
           </div>
         </div>
