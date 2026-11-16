@@ -2,9 +2,10 @@ import { TriangleAlert } from "lucide-react";
 import type { AdminOrderDetail } from "@/app/types/order";
 
 /**
- * Shown when a payment arrived for an order that is still unpaid here. That happens when
- * the customer changed their coupon (a new Razorpay order was made for the new amount) and
- * then paid on the earlier one. The payment is real, so someone must follow it up.
+ * Shown when a payment arrived for an order that is still unpaid here, or when a paid order
+ * received a second payment. Both can happen when the customer changed their coupon (a new
+ * Razorpay order was made for the new amount) and paid on the earlier one as well. The
+ * payment is real, so someone must follow it up.
  */
 export function SupersededPaymentNotice({ order }: { order: AdminOrderDetail }) {
   const captured = order.webhookEvents.filter((event) => event.eventType === "payment.captured").length;
@@ -25,9 +26,11 @@ export function SupersededPaymentNotice({ order }: { order: AdminOrderDetail }) 
             : "More than one payment was received for this order."}
         </p>
         <p className="mt-1">
-          The customer changed their coupon, so the order moved to a new payment of a different
-          amount, and they paid on the earlier one. Check the payment in Razorpay, then refund it
-          or contact the customer. The payment details are in the event log below.
+          {order.status === "CREATED"
+            ? "The customer changed their coupon, so the order moved to a new payment of a different amount, and they paid on the earlier one. "
+            : "This can happen when the customer changed their coupon and then paid on both the earlier and the new payment. "}
+          Check the payments in Razorpay, then refund the extra one or contact the customer. The
+          payment details are in the event log below.
         </p>
       </div>
     </div>

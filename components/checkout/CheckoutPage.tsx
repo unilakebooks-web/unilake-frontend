@@ -164,6 +164,7 @@ export default function CheckoutPage({ sessionId, initialSnapshot }: CheckoutPag
   const handleCouponRejected = () => {
     setRejectedCode(couponToSend ?? null);
     setApplied(null);
+    refreshOffers();
   };
 
   const handlePaymentDismissed = (status: string) => {
