@@ -120,6 +120,7 @@ export function CouponTable({
                   {coupon.name}
                   {coupon.kind === "SINGLE_USE" ? " · single use" : ""}
                 </p>
+                {coupon.showAtCheckout && <p className="text-xs font-semibold text-[#914A8C]">Shown at checkout</p>}
               </div>
               <StatusBadge coupon={coupon} />
             </div>
@@ -218,6 +219,7 @@ export function CouponTable({
                     {coupon.name}
                     {coupon.kind === "SINGLE_USE" ? " · single use" : ""}
                   </p>
+                  {coupon.showAtCheckout && <p className="text-xs font-semibold text-[#914A8C]">Shown at checkout</p>}
                 </td>
                 <td className="p-4 text-sm font-semibold text-neutral-700">
                   {describeDiscount(coupon)}

@@ -8,6 +8,7 @@ import { SessionSnapshot } from "@/app/types/session";
 import { AppliedCoupon } from "@/app/types/coupon";
 import { attachUser, getSession } from "@/app/actions/session";
 import { useAuth } from "@/app/hooks/useAuth";
+import { useCouponOffers } from "@/hooks/useCoupons";
 import OrderSummary from "./OrderSummary";
 import AddressPicker from "./AddressPicker";
 import PaymentButton from "./PaymentButton";
@@ -76,6 +77,11 @@ export default function CheckoutPage({ sessionId, initialSnapshot }: CheckoutPag
       snapshot.shippingCountry &&
       (snapshot.status === "PREVIEW_READY" || snapshot.status === "AWAITING_PAYMENT")
   );
+  // Offers fit the cover and country, so they load only once the page can price, and again when those change.
+  const { offers, refresh: refreshOffers } = useCouponOffers(sessionId, canApplyCoupon, [
+    snapshot.shippingCountry,
+    snapshot.coverType,
+  ]);
 
   // One link attempt per page visit — StrictMode runs effects twice in dev,
   // and a second PATCH while the first is in flight is pointless.
@@ -151,6 +157,7 @@ export default function CheckoutPage({ sessionId, initialSnapshot }: CheckoutPag
   const handleCouponApplied = (coupon: AppliedCoupon) => {
     setRejectedCode(null);
     setApplied({ coupon, country: snapshot.shippingCountry });
+    refreshOffers();
   };
 
   // Kept on screen (not just a toast) so the customer knows why the price went back up.
@@ -218,7 +225,10 @@ export default function CheckoutPage({ sessionId, initialSnapshot }: CheckoutPag
               onRemoved={() => {
                 setRejectedCode(null);
                 setApplied(null);
+                refreshOffers();
               }}
+              offers={offers}
+              onRefreshOffers={refreshOffers}
             />
             <PaymentButton 
               sessionId={sessionId} 

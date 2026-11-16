@@ -14,6 +14,21 @@ export interface AppliedCoupon {
   currency: string;
 }
 
+/** A coupon offered on the checkout page; it works for this order right now. */
+export interface CouponOffer {
+  code: string;
+  name: string;
+  description: string | null;
+  /** True when the coupon is reserved for this customer. */
+  forYou: boolean;
+  /** ISO instant, for "Ends 31 Dec". */
+  endsAt: string | null;
+  listAmount: string;
+  discountAmount: string;
+  finalAmount: string;
+  currency: string;
+}
+
 export type CouponDiscountType = "PERCENT" | "FIXED";
 export type CouponKind = "PUBLIC" | "SINGLE_USE";
 export type CoverType = "HARDCOVER" | "SOFTCOVER";
@@ -41,6 +56,8 @@ export interface Coupon {
   countryCodes: string[];
   coverTypes: CoverType[];
   combinable: boolean;
+  /** Listed on the checkout page of customers it fits (public coupons only). */
+  showAtCheckout: boolean;
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
@@ -88,6 +105,7 @@ export interface CouponInput {
   countryCodes: string[];
   coverTypes: CoverType[];
   combinable: boolean;
+  showAtCheckout: boolean;
   isActive: boolean;
 }
 

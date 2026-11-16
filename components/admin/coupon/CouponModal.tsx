@@ -100,6 +100,7 @@ function CouponForm({ mode, initialData, onSave, onClose }: CouponFormProps) {
   const [allCovers, setAllCovers] = useState((c?.coverTypes.length ?? 0) === 0);
   const [coverTypes, setCoverTypes] = useState<CoverType[]>(c?.coverTypes ?? []);
   const [combinable, setCombinable] = useState(c?.combinable ?? false);
+  const [showAtCheckout, setShowAtCheckout] = useState(c?.showAtCheckout ?? false);
   const [isActive, setIsActive] = useState(c?.isActive ?? true);
   const [codeLength, setCodeLength] = useState("8");
 
@@ -140,6 +141,7 @@ function CouponForm({ mode, initialData, onSave, onClose }: CouponFormProps) {
 
   const needsCurrency = discountType === "FIXED" || (discountType === "PERCENT" && maxDiscount.trim() !== "");
   const isSingleUse = kind === "SINGLE_USE";
+  const showAtCheckoutLocked = isSingleUse || restrictedUser !== null;
   const usedCount = (c?.usage.redeemed ?? 0) + (c?.usage.reserved ?? 0);
 
   // Settings that could cost money if they are a slip of the finger. On edit, only what is
@@ -242,6 +244,8 @@ function CouponForm({ mode, initialData, onSave, onClose }: CouponFormProps) {
       countryCodes: allCountries ? [] : countryCodes,
       coverTypes: allCovers ? [] : coverTypes,
       combinable,
+      // Never sent as true for a single-use code or a one-customer coupon (the server refuses it).
+      showAtCheckout: showAtCheckout && !isSingleUse && !restrictedUser,
       isActive,
     };
 
@@ -565,6 +569,25 @@ function CouponForm({ mode, initialData, onSave, onClose }: CouponFormProps) {
             <Switch checked={isActive} onCheckedChange={setIsActive} className="data-[state=checked]:bg-[#914A8C]" />
             Active
           </label>
+        </div>
+        <div className="mt-1">
+          <label className={`flex items-center gap-2 min-h-10 text-sm font-semibold ${showAtCheckoutLocked ? "cursor-not-allowed opacity-60" : "cursor-pointer"}`}>
+            <Switch
+              checked={showAtCheckout && !showAtCheckoutLocked}
+              onCheckedChange={setShowAtCheckout}
+              disabled={showAtCheckoutLocked}
+              aria-describedby="coupon-show-hint"
+              className="data-[state=checked]:bg-[#914A8C]"
+            />
+            Show to customers at checkout
+          </label>
+          <p id="coupon-show-hint" className={hintClass}>
+            {isSingleUse
+              ? "A single-use code cannot be shown to everyone."
+              : restrictedUser
+                ? "A coupon for one customer is shown to that customer automatically."
+                : "Customers see this offer on their checkout page. Leave off for private codes."}
+          </p>
         </div>
       </FormSection>
 

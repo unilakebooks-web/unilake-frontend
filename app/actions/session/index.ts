@@ -1,5 +1,5 @@
 import api from "@/app/lib/axios";
-import { AppliedCoupon } from "@/app/types/coupon";
+import { AppliedCoupon, CouponOffer } from "@/app/types/coupon";
 import {
   CreateSessionResponse,
   GenerateResponse,
@@ -90,6 +90,14 @@ export async function previewCoupon(sessionId: string, code: string): Promise<Ap
     { code }
   );
   return data;
+}
+
+// Coupons that fit this order right now. Read-only; needs the logged-in owner of the session.
+export async function fetchCouponOffers(sessionId: string): Promise<CouponOffer[]> {
+  const { data } = await api.get<{ offers: CouponOffer[] }>(
+    `/api/public/sessions/${sessionId}/coupon-offers`
+  );
+  return data.offers;
 }
 
 // Unlike everything else in this file, this one lives under /api/user — it needs

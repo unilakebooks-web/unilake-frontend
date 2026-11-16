@@ -1,4 +1,5 @@
 import { useQuery, useMutation, useQueryClient, keepPreviousData } from "@tanstack/react-query";
+import { fetchCouponOffers } from "@/app/actions/session";
 import {
   fetchCoupons,
   createCoupon,
@@ -7,7 +8,7 @@ import {
   deleteCoupon,
   searchCouponCustomers,
 } from "@/app/actions/coupon";
-import type { CouponInput, CouponListFilters } from "@/app/types/coupon";
+import type { CouponInput, CouponListFilters, CouponOffer } from "@/app/types/coupon";
 
 export function useCoupons(filters?: CouponListFilters) {
   return useQuery({
@@ -67,4 +68,29 @@ export function useCouponCustomerSearch(search: string) {
     queryFn: () => searchCouponCustomers(text),
     enabled: text.length >= 2,
   });
+}
+
+const NO_OFFERS: CouponOffer[] = [];
+
+/**
+ * Coupons that fit this checkout. `keyParts` (country, cover) are in the query key so the
+ * list is fetched again when they change. Errors are silent: the typed-code box always works.
+ */
+export function useCouponOffers(
+  sessionId: string,
+  enabled: boolean,
+  keyParts: (string | null)[]
+) {
+  const query = useQuery({
+    queryKey: ["coupon-offers", sessionId, ...keyParts],
+    queryFn: async () => {
+      try {
+        return await fetchCouponOffers(sessionId);
+      } catch {
+        return NO_OFFERS;
+      }
+    },
+    enabled,
+  });
+  return { offers: enabled ? (query.data ?? NO_OFFERS) : NO_OFFERS, refresh: query.refetch };
 }
