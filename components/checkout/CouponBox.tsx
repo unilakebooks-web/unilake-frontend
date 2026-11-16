@@ -63,6 +63,9 @@ export default function CouponBox({
               <span className="truncate">{applied.code}</span>
               <span className="shrink-0 font-semibold">applied</span>
             </p>
+            {applied.name && (
+              <p className="text-sm font-medium text-green-800 mt-0.5 truncate">{applied.name}</p>
+            )}
             <p className="text-sm text-green-700 mt-0.5">
               You save {formatMoney(applied.discountAmount, applied.currency)}
             </p>
