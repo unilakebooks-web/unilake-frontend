@@ -88,6 +88,15 @@ export function OrderInfoCards({ order }: { order: AdminOrderDetail }) {
             </span>
           }
         />
+        {order.couponCode && (
+          <>
+            <Field label="List price" value={`${order.currency} ${order.listAmount}`} />
+            <Field
+              label={`Coupon ${order.couponCode}`}
+              value={`-${order.currency} ${order.discountAmount}`}
+            />
+          </>
+        )}
         <Field label="Cover type" value={order.coverType} />
         <Field label="Pricing country" value={order.countryCode} />
         <Field

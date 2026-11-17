@@ -59,6 +59,10 @@ export interface AdminOrderRow {
   /** Prisma Decimal serialised — a string, never a number. */
   amount: string;
   currency: string;
+  /** The coupon used, if any. `amount` is what was actually paid. */
+  couponCode: string | null;
+  /** A payment arrived that the order has not accounted for: check it in Razorpay. */
+  needsPaymentCheck: boolean;
   status: OrderStatus;
   trackingStatus: string | null;
   awbNumber: string | null;
@@ -108,6 +112,10 @@ export interface AdminOrderDetail {
 
   amount: string;
   currency: string;
+  /** Price before the coupon; null when no coupon was used. */
+  listAmount: string | null;
+  discountAmount: string;
+  couponCode: string | null;
   countryCode: string;
   coverType: "HARDCOVER" | "SOFTCOVER";
 
@@ -259,6 +267,10 @@ export interface UserOrderDetail {
   coverType: "HARDCOVER" | "SOFTCOVER";
   amount: string;
   currency: string;
+  /** Price before the coupon; null when no coupon was used. */
+  listAmount: string | null;
+  discountAmount: string;
+  couponCode: string | null;
   publicStatus: PublicOrderStatus;
   shipping: {
     name: string | null;
