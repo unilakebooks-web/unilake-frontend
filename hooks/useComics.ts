@@ -10,7 +10,7 @@ import {
   setComicVideo,
   reorderComics,
 } from "@/app/actions/comic";
-import type { ComicStatus, CreateComicPayload } from "@/app/types/comic";
+import type { ComicListItem, ComicStatus, CreateComicPayload } from "@/app/types/comic";
 import { normalizeComicFilters, type ComicTagFilters } from "@/lib/comicTags";
 
 export function useComics(filters?: ComicTagFilters) {
@@ -118,8 +118,17 @@ export function useReorderComics() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: reorderComics,
-    // Returned, so the save only finishes once the list has the new numbers
-    // (otherwise the screen briefly shows the old order again).
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["comics"] }),
+    // The answer holds the saved numbers: put them in every cached list straight
+    // away, so the screen shows the new order at once and a failed refresh cannot
+    // bring the old order back. The refetch below then only confirms.
+    onSuccess: (saved) => {
+      const numbers = new Map(saved.map((s) => [s.id, s.sortOrder]));
+      queryClient.setQueriesData<ComicListItem[]>({ queryKey: ["comics"] }, (old) =>
+        Array.isArray(old)
+          ? old.map((c) => (numbers.has(c.id) ? { ...c, sortOrder: numbers.get(c.id)! } : c))
+          : old
+      );
+      queryClient.invalidateQueries({ queryKey: ["comics"] });
+    },
   });
 }

@@ -62,9 +62,11 @@ export default function ArrangeComicsPage() {
     setLocalOrder(ids.join(",") === savedKey ? null : ids);
   };
 
-  const handleReload = () => {
-    setLocalOrder(null);
-    refetch();
+  // The unsaved order is dropped only once the fresh list has arrived; if the
+  // refetch fails the admin keeps what they dragged.
+  const handleReload = async () => {
+    const result = await refetch();
+    if (!result.isError) setLocalOrder(null);
   };
 
   const handleSaveOrder = async () => {
@@ -110,7 +112,7 @@ export default function ArrangeComicsPage() {
             <Skeleton key={i} className="h-[72px] w-full rounded-2xl bg-[#F8E7D2]/80" />
           ))}
         </div>
-      ) : isError ? (
+      ) : isError && !data ? (
         <div className="bg-red-50 border border-red-200 rounded-3xl p-8 text-center text-red-800 flex flex-col items-center">
           <AlertCircle className="w-10 h-10 text-red-500 mb-3" />
           <h3 className="font-bold text-lg mb-1">Failed to load books</h3>
