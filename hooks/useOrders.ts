@@ -1,7 +1,10 @@
+import { useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   fetchAdminOrders,
   fetchAdminOrder,
+  fetchAdminOrderPages,
+  regenerateOrderPages,
   confirmDimensions,
   retryShiprocket,
   fetchOrderLabel,
@@ -11,7 +14,12 @@ import {
   fetchUserOrder,
   fetchOrderTracking,
 } from "@/app/actions/order";
-import type { AdminOrdersFilters, ConfirmDimensionsInput } from "@/app/types/order";
+import type {
+  AdminOrderPages,
+  AdminOrdersFilters,
+  ConfirmDimensionsInput,
+  RegenerateOrderPagesInput,
+} from "@/app/types/order";
 
 // Customer-facing. Query keys are namespaced away from the admin ones below so
 // the two caches can never collide on the same order id.
@@ -109,3 +117,71 @@ export function useOrderLabel(orderId: string) {
     mutationFn: () => fetchOrderLabel(orderId),
   });
 }
+
+// ----- Pages of a paid order (restart stuck or failed pages) -----
+
+/** The long poll stops after this long on one visit, so a forgotten tab does not hold the server awake for ever. */
+const PAGES_WATCH_MS = 30 * 60 * 1000;
+const PAGES_WAIT_SECONDS = 25;
+
+const hasPagesInProgress = (data: AdminOrderPages | undefined) =>
+  !!data?.pages.some(
+    (p) => p.state === "IN_PROGRESS" || p.state === "WAITING" || p.retryRunning
+  );
+
+/**
+ * The pages of an order. While anything is in progress each answer is requested again at
+ * once as a long poll (the server holds it up to 25 s and answers early when something
+ * changes), so the screen follows progress and the request-billed server stays awake.
+ * `retry: false`: a 404 (older backend) or an outage must just hide the section.
+ */
+export function useAdminOrderPages(orderId: string) {
+  const signature = useRef<string | undefined>(undefined);
+  // When this visit started watching; set on first use (not during render) and again by watchAgain.
+  const watchStarted = useRef(0);
+  const watching = () => {
+    if (watchStarted.current === 0) watchStarted.current = Date.now();
+    return Date.now() - watchStarted.current < PAGES_WATCH_MS;
+  };
+  const queryClient = useQueryClient();
+
+  const query = useQuery({
+    queryKey: ["admin-order-pages", orderId],
+    queryFn: async () => {
+      const previous = queryClient.getQueryData<AdminOrderPages>(["admin-order-pages", orderId]);
+      const data = await fetchAdminOrderPages(orderId, {
+        wait: watching() && hasPagesInProgress(previous) ? PAGES_WAIT_SECONDS : 0,
+        sig: signature.current,
+      });
+      signature.current = data.signature;
+      return data;
+    },
+    enabled: !!orderId,
+    retry: false,
+    staleTime: 0,
+    refetchInterval: (q) =>
+      hasPagesInProgress(q.state.data) && watching() ? 300 : false,
+  });
+
+  /** Start watching again (after a restart, or when the admin comes back to the tab). */
+  const watchAgain = () => {
+    watchStarted.current = Date.now();
+    signature.current = undefined;
+  };
+
+  return { ...query, watchAgain };
+}
+
+export function useRegenerateOrderPages(orderId: string, watchAgain: () => void) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (input: RegenerateOrderPagesInput) => regenerateOrderPages(orderId, input),
+    onSuccess: () => {
+      watchAgain();
+      queryClient.invalidateQueries({ queryKey: ["admin-order-pages", orderId] });
+      queryClient.invalidateQueries({ queryKey: ["admin-order", orderId] });
+      queryClient.invalidateQueries({ queryKey: ["admin-orders"] });
+    },
+  });
+}
+

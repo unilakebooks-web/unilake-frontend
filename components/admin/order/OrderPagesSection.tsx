@@ -1,0 +1,461 @@
+"use client";
+
+import { useEffect, useMemo, useState } from "react";
+import { format } from "date-fns";
+import { toast } from "sonner";
+import {
+  BookOpen,
+  CheckCircle2,
+  ChevronDown,
+  ChevronUp,
+  Loader2,
+  RotateCcw,
+  TriangleAlert,
+  X,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { useAdminOrderPages, useRegenerateOrderPages } from "@/hooks/useOrders";
+import type {
+  AdminOrderDetail,
+  AdminOrderPage,
+  AdminOrderPages,
+  AdminPageStateName,
+  RegenerateOrderPagesResult,
+} from "@/app/types/order";
+import { RegeneratePagesDialog } from "./RegeneratePagesDialog";
+
+// The section shows what the server sends and holds no thresholds of its own: whether a
+// page can be restarted, whether it needs "Restart anyway" and until when are all decided
+// by the backend (utils/pageRecovery.ts).
+
+const STATE_STYLE: Record<
+  AdminPageStateName,
+  { label: string; className: string }
+> = {
+  READY: {
+    label: "Ready",
+    className: "bg-emerald-50 text-emerald-700 border-emerald-200",
+  },
+  BLOCKED: {
+    label: "Blocked: a retry of this page is stuck",
+    className: "bg-amber-50 text-amber-800 border-amber-200",
+  },
+  WAITING: {
+    label: "Waiting in the queue",
+    className: "bg-sky-50 text-sky-700 border-sky-200",
+  },
+  IN_PROGRESS: {
+    label: "Being made",
+    className: "bg-sky-50 text-sky-700 border-sky-200",
+  },
+  STUCK: {
+    label: "Stuck",
+    className: "bg-amber-50 text-amber-800 border-amber-200",
+  },
+  FAILED: {
+    label: "Failed",
+    className: "bg-red-50 text-red-700 border-red-200",
+  },
+  NOT_STARTED: {
+    label: "Not started",
+    className: "bg-neutral-100 text-neutral-600 border-neutral-200",
+  },
+};
+
+const PROBLEM_STATES: AdminPageStateName[] = [
+  "FAILED",
+  "STUCK",
+  "BLOCKED",
+  "NOT_STARTED",
+];
+
+const SKIP_TEXT: Record<string, string> = {
+  FINISHED: "already finished",
+  ALREADY_RUNNING: "already running",
+  CHANGED: "changed while restarting",
+  COOLING_DOWN: "restarted or failed a few minutes ago",
+  NOT_IN_BOOK: "not part of the book",
+};
+
+const clock = (iso: string) => format(new Date(iso), "h:mm a");
+
+function summaryLine(s: AdminOrderPages["summary"]) {
+  const parts: [number, string][] = [
+    [s.ready, "ready"],
+    [s.inProgress, "being made"],
+    [s.waiting, "waiting"],
+    [s.stuck, "stuck"],
+    [s.blocked, "blocked"],
+    [s.failed, "failed"],
+    [s.notStarted, "not started"],
+  ];
+  return parts
+    .filter(([n]) => n > 0)
+    .map(([n, label]) => `${n} ${label}`)
+    .join(", ");
+}
+
+function PageRow({
+  page,
+  busy,
+  onRestart,
+}: {
+  page: AdminOrderPage;
+  busy: boolean;
+  onRestart: (page: AdminOrderPage) => void;
+}) {
+  const style = STATE_STYLE[page.state];
+  const label =
+    page.state === "READY" && page.retryRunning
+      ? "Ready (a retry is running)"
+      : style.label;
+
+  return (
+    <li className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-xl border border-neutral-100 bg-white px-4 py-3">
+      <div className="min-w-0 space-y-1">
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="font-bold text-neutral-900 text-sm">
+            Page {page.pageNumber}
+          </span>
+          {page.isPreviewPage && (
+            <span className="text-[10px] font-semibold text-neutral-500 uppercase tracking-wide">
+              free preview
+            </span>
+          )}
+          <span
+            className={cn(
+              "inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold border",
+              style.className,
+            )}
+          >
+            {label}
+          </span>
+        </div>
+        {page.cooldownEndsAt && (
+          <p className="text-xs text-amber-800">
+            Restarted or failed a few minutes ago. Can be restarted at{" "}
+            {clock(page.cooldownEndsAt)}.
+          </p>
+        )}
+        {page.lastError && (
+          <p
+            className="text-xs text-neutral-500 break-words"
+            title={page.lastError}
+          >
+            Last error: {page.lastError}
+          </p>
+        )}
+      </div>
+
+      {page.restartable && (
+        <Button
+          type="button"
+          variant="outline"
+          disabled={busy}
+          onClick={() => onRestart(page)}
+          aria-label={`${page.requiresForce ? "Restart anyway" : "Restart"} page ${page.pageNumber}`}
+          className="rounded-xl border-[#914A8C]/40 text-[#914A8C] hover:bg-[#914A8C]/10 font-semibold h-9 px-4 shrink-0 self-start sm:self-center"
+        >
+          <RotateCcw className="w-4 h-4 mr-2" />
+          {page.requiresForce ? "Restart anyway" : "Restart"}
+        </Button>
+      )}
+    </li>
+  );
+}
+
+function PagesBody({ order }: { order: AdminOrderDetail }) {
+  const { data, error, isLoading, watchAgain } = useAdminOrderPages(order.id);
+  const regenerate = useRegenerateOrderPages(order.id, watchAgain);
+
+  const [dialog, setDialog] = useState<{
+    mode: "restart" | "finish";
+    pages: AdminOrderPage[];
+    wholeBook: boolean;
+  } | null>(null);
+  const [dialogError, setDialogError] = useState<string | null>(null);
+  const [result, setResult] = useState<RegenerateOrderPagesResult | null>(null);
+  const [showReady, setShowReady] = useState(false);
+
+  // An older backend (404) or an outage must never break the order page: say it once in
+  // the console and show nothing.
+  useEffect(() => {
+    if (error)
+      console.warn(
+        "[Order pages] Could not load the pages of this order:",
+        error,
+      );
+  }, [error]);
+
+  const groups = useMemo(() => {
+    const pages = data?.pages ?? [];
+    return {
+      problems: pages.filter((p) => PROBLEM_STATES.includes(p.state)),
+      running: pages.filter(
+        (p) => p.state === "IN_PROGRESS" || p.state === "WAITING",
+      ),
+      ready: pages.filter((p) => p.state === "READY"),
+    };
+  }, [data]);
+
+  if (error) return null;
+
+  if (isLoading || !data) {
+    return (
+      <div className="bg-white/70 backdrop-blur-sm rounded-3xl border border-[#914A8C]/15 p-6 shadow-sm">
+        <div className="flex items-center gap-2 text-[#914A8C]">
+          <BookOpen className="w-4 h-4" />
+          <h2 className="font-bold uppercase text-xs tracking-wider">
+            Book pages
+          </h2>
+          <Loader2 className="w-4 h-4 animate-spin ml-1" />
+        </div>
+      </div>
+    );
+  }
+
+  const restartable = data.pages.filter((p) => p.restartable);
+  const restoresSession = [
+    "FAILED",
+    "PREVIEW_READY",
+    "GENERATING_PREVIEW",
+  ].includes(data.sessionStatus);
+  const inProgress =
+    groups.running.length > 0 || data.pages.some((p) => p.retryRunning);
+
+  const openRestart = (pages: AdminOrderPage[], wholeBook: boolean) => {
+    setDialogError(null);
+    setDialog({ mode: "restart", pages, wholeBook });
+  };
+
+  const confirm = async () => {
+    if (!dialog) return;
+    setDialogError(null);
+    try {
+      const input =
+        dialog.mode === "finish"
+          ? {}
+          : {
+              ...(dialog.wholeBook
+                ? {}
+                : { pageNumbers: dialog.pages.map((p) => p.pageNumber) }),
+              ...(dialog.pages.some((p) => p.requiresForce) && { force: true }),
+            };
+      const outcome = await regenerate.mutateAsync(input);
+      setDialog(null);
+      setResult(outcome);
+      toast.success(outcome.message ?? "Done.");
+    } catch (err) {
+      const { message } = (err ?? {}) as { message?: string };
+      setDialogError(message ?? "Could not restart the pages.");
+    }
+  };
+
+  return (
+    <div className="bg-white/70 backdrop-blur-sm rounded-3xl border border-[#914A8C]/15 p-6 shadow-sm space-y-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="min-w-0">
+          <div className="flex items-center gap-2 text-[#914A8C]">
+            <BookOpen className="w-4 h-4" />
+            <h2 className="font-bold uppercase text-xs tracking-wider">
+              Book pages
+            </h2>
+          </div>
+          <p className="mt-1 text-sm font-semibold text-neutral-800">
+            {summaryLine(data.summary)}
+          </p>
+        </div>
+
+        {restartable.length > 0 && (
+          <Button
+            type="button"
+            disabled={regenerate.isPending}
+            onClick={() => openRestart(restartable, true)}
+            className="rounded-xl bg-[#914A8C] hover:bg-[#7a3e75] text-white font-semibold h-auto min-h-10 py-2 px-5 shadow-sm whitespace-normal text-left w-full sm:w-auto"
+          >
+            <RotateCcw className="w-4 h-4 mr-2 shrink-0" />
+            Restart all failed and stuck pages ({restartable.length})
+          </Button>
+        )}
+      </div>
+
+      {!data.canRegenerate && data.blockedReason && (
+        <div
+          role="status"
+          className="flex items-start gap-3 rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900"
+        >
+          <TriangleAlert className="w-4 h-4 mt-0.5 shrink-0 text-amber-600" />
+          <p>{data.blockedReason}</p>
+        </div>
+      )}
+
+      {data.canRegenerate && !data.queueAvailable && (
+        <div
+          role="status"
+          className="flex items-start gap-3 rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900"
+        >
+          <TriangleAlert className="w-4 h-4 mt-0.5 shrink-0 text-amber-600" />
+          <p>
+            The queue cannot be reached right now, so pages cannot be restarted.
+            Try again in a few minutes.
+          </p>
+        </div>
+      )}
+
+      {data.needsRepair && (
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-xl border border-[#914A8C]/20 bg-[#914A8C]/5 p-4">
+          <p className="text-sm text-neutral-800">
+            <span className="font-bold">
+              All pages are ready, but the order has not moved on.
+            </span>{" "}
+            The customer cannot choose their pages and print yet.
+          </p>
+          <Button
+            type="button"
+            disabled={regenerate.isPending}
+            onClick={() => {
+              setDialogError(null);
+              setDialog({ mode: "finish", pages: [], wholeBook: true });
+            }}
+            className="rounded-xl bg-[#914A8C] hover:bg-[#7a3e75] text-white font-semibold h-10 px-5 shadow-sm self-start sm:self-auto"
+          >
+            <CheckCircle2 className="w-4 h-4 mr-2" />
+            Finish this order
+          </Button>
+        </div>
+      )}
+
+      {result && (
+        <div
+          role="status"
+          className="rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-900 space-y-2"
+        >
+          <div className="flex items-start justify-between gap-3">
+            <p className="font-bold">{result.message ?? "Done."}</p>
+            <button
+              type="button"
+              onClick={() => setResult(null)}
+              aria-label="Dismiss"
+              className="text-emerald-700 hover:text-emerald-900 shrink-0"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+          {result.expanded && (
+            <p>
+              The whole failed book was restarted, so the customer hears
+              &ldquo;ready&rdquo; only when it is.
+            </p>
+          )}
+          {result.skipped.length > 0 && (
+            <ul className="list-disc pl-5">
+              {result.skipped.map((s) => (
+                <li key={`${s.pageNumber}-${s.reason}`}>
+                  Page {s.pageNumber}: {SKIP_TEXT[s.reason] ?? s.reason}
+                  {s.cooldownEndsAt
+                    ? ` (can be restarted at ${clock(s.cooldownEndsAt)})`
+                    : ""}
+                </li>
+              ))}
+            </ul>
+          )}
+          {result.queued.length > 0 && (
+            <p className="text-xs text-emerald-800">
+              The customer&rsquo;s book updates by itself when the pages are
+              ready.
+            </p>
+          )}
+        </div>
+      )}
+
+      {inProgress && (
+        <p className="text-xs text-neutral-500">
+          Pages are being made. Keep this page open: it keeps the server working
+          on them, and it updates by itself.
+        </p>
+      )}
+
+      {groups.problems.length > 0 && (
+        <ul className="space-y-2">
+          {groups.problems.map((p) => (
+            <PageRow
+              key={p.pageNumber}
+              page={p}
+              busy={regenerate.isPending}
+              onRestart={(page) => openRestart([page], false)}
+            />
+          ))}
+        </ul>
+      )}
+
+      {groups.running.length > 0 && (
+        <ul className="space-y-2">
+          {groups.running.map((p) => (
+            <PageRow
+              key={p.pageNumber}
+              page={p}
+              busy={regenerate.isPending}
+              onRestart={(page) => openRestart([page], false)}
+            />
+          ))}
+        </ul>
+      )}
+
+      {groups.ready.length > 0 && (
+        <div>
+          <button
+            type="button"
+            onClick={() => setShowReady((v) => !v)}
+            aria-expanded={showReady}
+            className="inline-flex items-center gap-1 text-sm font-semibold text-[#914A8C] hover:underline"
+          >
+            {showReady ? (
+              <ChevronUp className="w-4 h-4" />
+            ) : (
+              <ChevronDown className="w-4 h-4" />
+            )}
+            {showReady ? "Hide" : "Show"} {groups.ready.length} ready page
+            {groups.ready.length === 1 ? "" : "s"}
+          </button>
+          {showReady && (
+            <ul className="mt-2 space-y-2">
+              {groups.ready.map((p) => (
+                <PageRow
+                  key={p.pageNumber}
+                  page={p}
+                  busy={regenerate.isPending}
+                  onRestart={(page) => openRestart([page], false)}
+                />
+              ))}
+            </ul>
+          )}
+        </div>
+      )}
+
+      <RegeneratePagesDialog
+        open={dialog !== null}
+        onOpenChange={(open) => {
+          if (!open) setDialog(null);
+        }}
+        mode={dialog?.mode ?? "restart"}
+        pages={dialog?.pages ?? []}
+        restoresSession={restoresSession}
+        onConfirm={confirm}
+        isPending={regenerate.isPending}
+        errorMessage={dialogError}
+      />
+    </div>
+  );
+}
+
+/**
+ * Pages of a PAID order: which are ready, being made, stuck or failed, and a button to
+ * restart them. Shown while the order is PAID or GENERATED (after the customer has sent
+ * the book to print its pages are frozen). Renders nothing, and says so in the console, if
+ * the backend does not answer.
+ */
+export function OrderPagesSection({ order }: { order: AdminOrderDetail }) {
+  if (order.status !== "PAID" && order.status !== "GENERATED") return null;
+  return <PagesBody order={order} />;
+}

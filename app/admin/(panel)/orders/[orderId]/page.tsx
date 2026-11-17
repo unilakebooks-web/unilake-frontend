@@ -9,6 +9,7 @@ import { OrderDetailHeader } from "@/components/admin/order/OrderDetailHeader";
 import { SupersededPaymentNotice } from "@/components/admin/order/SupersededPaymentNotice";
 import { OrderInfoCards } from "@/components/admin/order/OrderInfoCards";
 import { ShipmentSection } from "@/components/admin/order/ShipmentSection";
+import { OrderPagesSection } from "@/components/admin/order/OrderPagesSection";
 import { WebhookEventsLog } from "@/components/admin/order/WebhookEventsLog";
 
 export default function OrderDetailPage({
@@ -74,6 +75,7 @@ export default function OrderDetailPage({
       <OrderDetailHeader order={order} />
       <SupersededPaymentNotice order={order} />
       <ShipmentSection order={order} />
+      <OrderPagesSection order={order} />
       <OrderInfoCards order={order} />
       <WebhookEventsLog events={order.webhookEvents} />
     </div>
