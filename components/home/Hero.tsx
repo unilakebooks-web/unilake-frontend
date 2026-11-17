@@ -3,9 +3,12 @@ import Link from "next/link";
 import { chauPhilomeneOne, hankenGrotesk } from "@/app/fonts";
 import { getPublicHeroImages } from "@/app/actions/heroimage";
 import { HeroImageSlideshow } from "./HeroImageSlideshow";
+import type { HeroImage } from "@/app/types/heroimage";
 
-export default async function Hero() {
-  const heroImages = await getPublicHeroImages();
+// The home page passes the images in so they are fetched together with its other
+// data instead of after it; without the prop Hero fetches them itself.
+export default async function Hero({ heroImages: preloaded }: { heroImages?: HeroImage[] } = {}) {
+  const heroImages = preloaded ?? await getPublicHeroImages();
 
   return (
     <section className="relative pt-36 sm:pt-40 lg:pt-40">
