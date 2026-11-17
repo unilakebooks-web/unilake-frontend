@@ -55,7 +55,9 @@ export default function ArrangeComicsPage() {
     (localOrder.length !== published.length || localOrder.some((id) => !publishedIds.has(id)));
 
   const handleReorder = (next: ComicListItem[]) => {
-    if (reorder.isPending) return; // a drag during a save would be wiped by the answer
+    // A drag during a save would be wiped by the answer; a drag while the list is
+    // stale would fold the new book into the dragged order and hide the banner.
+    if (reorder.isPending || isStale) return;
     const ids = next.map((c) => c.id);
     setLocalOrder(ids.join(",") === savedKey ? null : ids);
   };
