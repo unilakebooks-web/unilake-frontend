@@ -83,7 +83,7 @@ export function SentToPrinterControl({ order }: { order: AdminOrderDetail }) {
         )}
       </Button>
       {!order.canMarkSentToPrinter && (
-        <p className="text-xs text-neutral-400">Available once the print-ready PDF is compiled</p>
+        <p className="text-xs text-neutral-400">Cannot be marked yet: the print-ready PDF is not compiled, or the order is cancelled</p>
       )}
     </div>
   );

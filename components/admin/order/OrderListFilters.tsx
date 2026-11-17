@@ -34,7 +34,7 @@ interface OrderListFiltersProps {
 }
 
 // The closed dropdown shows these (not the raw values "ALL" / "not_sent").
-const SENT_TO_PRINTER_LABELS: Record<string, string> = {
+const SENT_TO_PRINTER_LABELS: Record<"ALL" | "sent" | "not_sent", string> = {
   ALL: "Any printer status",
   sent: "Sent to printer",
   not_sent: "Not sent",
@@ -116,12 +116,12 @@ export function OrderListFilters({
 
       <Select value={sentToPrinter} onValueChange={(val) => setSentToPrinter(val || "ALL")}>
         <SelectTrigger className="w-full sm:w-[190px] h-10 rounded-xl bg-white border-neutral-200">
-          <SelectValue placeholder="Sent to printer">{SENT_TO_PRINTER_LABELS[sentToPrinter]}</SelectValue>
+          <SelectValue placeholder="Sent to printer">{SENT_TO_PRINTER_LABELS[sentToPrinter as keyof typeof SENT_TO_PRINTER_LABELS]}</SelectValue>
         </SelectTrigger>
         <SelectContent className="rounded-xl">
           <SelectItem value="ALL">{SENT_TO_PRINTER_LABELS.ALL}</SelectItem>
-          <SelectItem value="sent">Sent to printer</SelectItem>
-          <SelectItem value="not_sent">Not sent</SelectItem>
+          <SelectItem value="sent">{SENT_TO_PRINTER_LABELS.sent}</SelectItem>
+          <SelectItem value="not_sent">{SENT_TO_PRINTER_LABELS.not_sent}</SelectItem>
         </SelectContent>
       </Select>
 
