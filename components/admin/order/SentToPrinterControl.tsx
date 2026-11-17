@@ -19,7 +19,10 @@ export function SentToPrinterControl({ order }: { order: AdminOrderDetail }) {
 
   const handleMark = () => {
     mutation.mutate(true, {
-      onSuccess: () => toast.success("Marked as sent to printer."),
+      onSuccess: (data) =>
+        data.sentToPrinterAt
+          ? toast.success("Marked as sent to printer.")
+          : toast.info("The order was changed at the same moment and is not marked. Try again."),
       onError: (err) => toast.error(getErrorMessage(err, "Couldn't mark as sent to printer.")),
     });
   };

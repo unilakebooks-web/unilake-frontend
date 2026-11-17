@@ -92,7 +92,7 @@ export function OrderListTable({ orders }: { orders: AdminOrderRow[] }) {
                   )}
                   {order.sentToPrinterAt && (
                     <span className="mt-1 block text-xs text-neutral-500">
-                      Sent to printer, {format(new Date(order.sentToPrinterAt), "MMM d")}
+                      Sent to printer, {format(new Date(order.sentToPrinterAt), "MMM d, yyyy")}
                     </span>
                   )}
                 </td>
