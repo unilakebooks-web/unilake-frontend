@@ -7,6 +7,8 @@ export const CODE_MIN = 4;
 export const CODE_MAX = 32;
 export const NAME_MAX = 100;
 export const DESCRIPTION_MAX = 500;
+// ⚠️ Most single-use codes created in one go; also MAX_BULK_COUPONS in the backend (config/coupon.ts).
+export const MAX_BULK_COUPONS = 100;
 
 /** Letters, digits and hyphens only, upper-cased; anything else is dropped as it is typed. */
 export function sanitizeCode(raw: string): string {
@@ -92,6 +94,17 @@ export function validateLimit(text: string, noun: string): string | null {
   const value = Number(t);
   if (value < 1) return `${noun} must be at least 1.`;
   if (value > MAX_LIMIT) return `${noun} cannot be more than 2,147,483,647.`;
+  return null;
+}
+
+/** How many single-use codes to create at once: a whole number from 1 to MAX_BULK_COUPONS. */
+export function validateQuantity(text: string): string | null {
+  const t = text.trim();
+  if (t === "") return "Enter how many codes to create.";
+  if (!/^\d+$/.test(t)) return "Use a whole number, like 10.";
+  const value = Number(t);
+  if (value < 1) return "Create at least 1 code.";
+  if (value > MAX_BULK_COUPONS) return `You can create at most ${MAX_BULK_COUPONS} codes at once.`;
   return null;
 }
 
