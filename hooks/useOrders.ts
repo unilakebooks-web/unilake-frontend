@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   fetchAdminOrders,
@@ -126,6 +126,8 @@ const PAGES_WATCH_MS = 30 * 60 * 1000;
 const PAGES_WAIT_SECONDS = 25;
 /** Pause before the next long poll starts, so a fast answer cannot loop the request. */
 const PAGES_REPOLL_MS = 300;
+/** After a failed refresh the list stays on screen and is tried again this slowly (never in a tight loop). */
+const PAGES_ERROR_RETRY_MS = 10_000;
 
 const hasPagesInProgress = (data: AdminOrderPages | undefined) =>
   !!data?.pages.some(
@@ -147,6 +149,15 @@ export function useAdminOrderPages(orderId: string) {
     return Date.now() - watchStarted.current < PAGES_WATCH_MS;
   };
   const queryClient = useQueryClient();
+  // Each start of watching is an epoch; the 30 minutes run per epoch, and the screen is told
+  // when they are up (watchStopped) so it never claims to update by itself after that.
+  const [epoch, setEpoch] = useState(0);
+  const [stoppedEpoch, setStoppedEpoch] = useState(-1);
+  useEffect(() => {
+    const timer = setTimeout(() => setStoppedEpoch(epoch), PAGES_WATCH_MS);
+    return () => clearTimeout(timer);
+  }, [epoch]);
+  const watchStopped = stoppedEpoch === epoch;
 
   const query = useQuery({
     queryKey: ["admin-order-pages", orderId],
@@ -162,12 +173,16 @@ export function useAdminOrderPages(orderId: string) {
     enabled: !!orderId,
     retry: false,
     staleTime: 0,
-    // Not after an error: the last good data is kept, and would otherwise be re-requested
-    // three times a second for as long as the backend keeps failing.
+    // After an error the last good data is kept; it is tried again slowly, and only if there
+    // is something to show (a first load that fails, such as an older backend, is not retried).
     refetchInterval: (q) =>
-      q.state.status !== "error" && hasPagesInProgress(q.state.data) && watching()
-        ? PAGES_REPOLL_MS
-        : false,
+      q.state.status === "error"
+        ? q.state.data && watching()
+          ? PAGES_ERROR_RETRY_MS
+          : false
+        : hasPagesInProgress(q.state.data) && watching()
+          ? PAGES_REPOLL_MS
+          : false,
     // The long poll is what keeps the request-billed server working on the pages, so it
     // carries on in a background tab (until the 30 minutes are up).
     refetchIntervalInBackground: true,
@@ -178,6 +193,7 @@ export function useAdminOrderPages(orderId: string) {
     const resume = () => {
       watchStarted.current = Date.now();
       signature.current = undefined;
+      setEpoch((e) => e + 1);
     };
     window.addEventListener("focus", resume);
     return () => window.removeEventListener("focus", resume);
@@ -187,9 +203,10 @@ export function useAdminOrderPages(orderId: string) {
   const watchAgain = () => {
     watchStarted.current = Date.now();
     signature.current = undefined;
+    setEpoch((e) => e + 1);
   };
 
-  return { ...query, watchAgain };
+  return { ...query, watchAgain, watchStopped };
 }
 
 export function useRegenerateOrderPages(orderId: string, watchAgain: () => void) {

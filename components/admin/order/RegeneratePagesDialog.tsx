@@ -20,7 +20,8 @@ interface RegeneratePagesDialogProps {
   mode: "restart" | "finish";
   pages: AdminOrderPage[];
   /** The session failed after payment, so every failed page is restarted, not only these. */
-  restoresSession: boolean;
+  /** Why every restartable page is restarted together: the book failed, or its payment's pages were never started. */
+  groupReason: "failed" | "stalled" | null;
   /** Some page that will be restarted needs "Restart anyway" (a restore restarts every failed page). */
   needsForce: boolean;
   onConfirm: () => void;
@@ -28,8 +29,17 @@ interface RegeneratePagesDialogProps {
   errorMessage: string | null;
 }
 
+// "1–5, 8, 10–12": consecutive page numbers collapsed, so a long list stays readable.
 function pageList(pages: AdminOrderPage[]) {
-  return pages.map((p) => p.pageNumber).join(", ");
+  const numbers = pages.map((p) => p.pageNumber).sort((a, b) => a - b);
+  const parts: string[] = [];
+  for (let i = 0; i < numbers.length;) {
+    let j = i;
+    while (j + 1 < numbers.length && numbers[j + 1] === numbers[j] + 1) j++;
+    parts.push(j > i ? `${numbers[i]}–${numbers[j]}` : `${numbers[i]}`);
+    i = j + 1;
+  }
+  return parts.join(", ");
 }
 
 export function RegeneratePagesDialog({
@@ -37,22 +47,23 @@ export function RegeneratePagesDialog({
   onOpenChange,
   mode,
   pages,
-  restoresSession,
+  groupReason,
   needsForce,
   onConfirm,
   isPending,
   errorMessage,
 }: RegeneratePagesDialogProps) {
-  const usesImageService = pages.some((p) => p.usesImageService);
+  const imagePages = pages.filter((p) => p.usesImageService).length;
+  const usesImageService = imagePages > 0;
   const anyForced = needsForce;
   const count = pages.length;
 
   const title =
     mode === "finish"
-      ? "Finish this order?"
-      : count > 5
-        ? `Restart ${count} pages?`
-        : `Restart ${count} page${count === 1 ? "" : "s"} (${pageList(pages)})?`;
+      ? "Tell the customer their book is ready?"
+      : count === 1
+        ? `Restart page ${pages[0]?.pageNumber}?`
+        : `Restart ${count} pages?`;
 
   return (
     <Dialog open={open} onOpenChange={isPending ? undefined : onOpenChange}>
@@ -70,7 +81,7 @@ export function RegeneratePagesDialog({
               )}
             </div>
             <div className="min-w-0">
-              <DialogTitle className="text-xl font-bold text-neutral-900 break-words">
+              <DialogTitle className="text-xl font-bold text-neutral-900 break-words pr-8">
                 {title}
               </DialogTitle>
               <DialogDescription className="text-xs text-neutral-500 font-medium">
@@ -85,27 +96,43 @@ export function RegeneratePagesDialog({
         <div className="mt-3 space-y-3 text-sm text-neutral-700 leading-relaxed">
           {mode === "finish" ? (
             <p>
-              All pages are ready, but the order never moved on. This marks the
-              book as ready and sends the customer the &ldquo;your book is
-              ready&rdquo; email, so they can choose their pages and print.
+              All pages are ready, but the order never moved on, so the customer
+              cannot choose their pages or print yet. This marks the book as
+              ready and emails them. It cannot be undone.
             </p>
           ) : (
             <>
-              {usesImageService && (
-                <p>
-                  These pages are made by the image service (RunPod). If the
-                  first attempt is still running there, restarting can use
-                  credit twice for that page (about 1.4 US cents per page), and
-                  the first result is thrown away. If the account has no credit
-                  left, the restart will fail again; the balance is not shown
-                  here.
+              {count > 1 && (
+                <p className="text-sm font-semibold text-neutral-800">
+                  Pages: {pageList(pages)}
                 </p>
               )}
-              {restoresSession && (
+              {usesImageService && (
+                <p>
+                  {imagePages === 1
+                    ? "This page is made by the image service (RunPod)."
+                    : "These pages are made by the image service (RunPod)."}{" "}
+                  If the first attempt is still running there, restarting can
+                  use credit twice, and the first result is thrown away. That is
+                  about 1.4 US cents per page
+                  {imagePages > 1
+                    ? `, up to about ${(imagePages * 1.4).toFixed(0)} US cents for these ${imagePages} pages`
+                    : ""}
+                  . If the account has no credit left, the restart will fail
+                  again; the balance is not shown here.
+                </p>
+              )}
+              {groupReason === "failed" && (
                 <p>
                   Because the book failed, every failed page is restarted
                   together, so that the customer is only told the book is ready
                   when it is.
+                </p>
+              )}
+              {groupReason === "stalled" && (
+                <p>
+                  This payment&rsquo;s pages were never started, so all of them
+                  are started together.
                 </p>
               )}
               {anyForced && (
@@ -149,17 +176,17 @@ export function RegeneratePagesDialog({
             className={cn(
               "rounded-xl text-white font-semibold h-10 px-5 shadow-sm",
               mode === "restart" && anyForced
-                ? "bg-amber-600 hover:bg-amber-700"
+                ? "bg-amber-700 hover:bg-amber-800"
                 : "bg-[#914A8C] hover:bg-[#7a3e75]",
             )}
           >
             {isPending ? (
               <>
                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />{" "}
-                {mode === "finish" ? "Finishing…" : "Restarting…"}
+                {mode === "finish" ? "Sending…" : "Restarting…"}
               </>
             ) : mode === "finish" ? (
-              "Finish order"
+              "Mark ready and email"
             ) : anyForced ? (
               "Restart anyway"
             ) : (

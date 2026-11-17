@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { format } from "date-fns";
 import { toast } from "sonner";
 import {
@@ -147,7 +147,7 @@ function PageRow({
         )}
         {page.lastError && (
           <p
-            className="text-xs text-neutral-500 break-words"
+            className="text-xs text-neutral-500 break-words line-clamp-2"
             title={page.lastError}
           >
             {page.state === "IN_PROGRESS" || page.state === "WAITING"
@@ -168,7 +168,7 @@ function PageRow({
           className={cn(
             "rounded-xl font-semibold h-9 px-4 shrink-0 self-start sm:self-center",
             page.requiresForce
-              ? "border-amber-400 text-amber-800 hover:bg-amber-50"
+              ? "border-amber-600 text-amber-900 hover:bg-amber-50"
               : "border-[#914A8C]/40 text-[#914A8C] hover:bg-[#914A8C]/10",
           )}
         >
@@ -181,9 +181,8 @@ function PageRow({
 }
 
 function PagesBody({ order }: { order: AdminOrderDetail }) {
-  const { data, error, isLoading, watchAgain, refetch } = useAdminOrderPages(
-    order.id,
-  );
+  const { data, error, isLoading, watchAgain, watchStopped, refetch } =
+    useAdminOrderPages(order.id);
   const regenerate = useRegenerateOrderPages(order.id, watchAgain);
 
   const [dialog, setDialog] = useState<{
@@ -207,6 +206,22 @@ function PagesBody({ order }: { order: AdminOrderDetail }) {
       );
   }, [error]);
 
+  // The green "restarted" banner is true only while the restart is running: once the pages
+  // have been seen running and are not any more (finished, or failed again), it goes.
+  const sawRunning = useRef(false);
+  useEffect(() => {
+    if (!result) {
+      sawRunning.current = false;
+      return;
+    }
+    const running = data?.pages.some(
+      (p) =>
+        p.state === "IN_PROGRESS" || p.state === "WAITING" || p.retryRunning,
+    );
+    if (running) sawRunning.current = true;
+    else if (sawRunning.current) setResult(null);
+  }, [result, data]);
+
   const groups = useMemo(() => {
     const pages = data?.pages ?? [];
     return {
@@ -224,24 +239,36 @@ function PagesBody({ order }: { order: AdminOrderDetail }) {
 
   if (isLoading || !data) {
     return (
-      <div className="bg-white/70 backdrop-blur-sm rounded-3xl border border-[#914A8C]/15 p-6 shadow-sm">
+      <div
+        role="status"
+        aria-busy="true"
+        className="bg-white/70 backdrop-blur-sm rounded-3xl border border-[#914A8C]/15 p-6 shadow-sm"
+      >
         <div className="flex items-center gap-2 text-[#914A8C]">
           <BookOpen className="w-4 h-4" />
           <h2 className="font-bold uppercase text-xs tracking-wider">
             Book pages
           </h2>
-          <Loader2 className="w-4 h-4 animate-spin ml-1" />
+          <Loader2 className="w-4 h-4 animate-spin ml-1" aria-hidden />
+          <span className="sr-only">Loading pages</span>
         </div>
       </div>
     );
   }
 
   const restartable = data.pages.filter((p) => p.restartable);
-  const restoresSession = [
+  // The server restarts every restartable paid page together when the session failed after
+  // payment (or went back to the preview stage), or when a payment's pages were never started.
+  const groupReason: "failed" | "stalled" | null = [
     "FAILED",
     "PREVIEW_READY",
     "GENERATING_PREVIEW",
-  ].includes(data.sessionStatus);
+  ].includes(data.sessionStatus)
+    ? "failed"
+    : data.sessionStatus === "PAID"
+      ? "stalled"
+      : null;
+  const restoresSession = groupReason !== null;
   const inProgress =
     groups.running.length > 0 || data.pages.some((p) => p.retryRunning);
 
@@ -292,6 +319,11 @@ function PagesBody({ order }: { order: AdminOrderDetail }) {
     } catch (err) {
       const { message } = (err ?? {}) as { message?: string };
       setDialogError(message ?? "Could not restart the pages.");
+      // The server found a page cooling down that the dialog did not know about (it changed
+      // while the dialog was open): offer the override now instead of repeating the refusal.
+      if (message?.includes("Restart anyway")) {
+        setDialog((d) => (d ? { ...d, needsForce: true } : d));
+      }
     }
   };
 
@@ -305,6 +337,13 @@ function PagesBody({ order }: { order: AdminOrderDetail }) {
               Book pages
             </h2>
           </div>
+          {restoresSession && restartable.length > 1 && (
+            <p className="mt-1 text-xs text-neutral-600">
+              {groupReason === "failed"
+                ? "This book failed, so its failed pages are restarted together."
+                : "This payment's pages were never started, so they are started together."}
+            </p>
+          )}
           <p className="mt-1 text-sm font-semibold text-neutral-800">
             {summaryLine(data.summary) || "No pages found for this book."}
           </p>
@@ -330,6 +369,48 @@ function PagesBody({ order }: { order: AdminOrderDetail }) {
         >
           <TriangleAlert className="w-4 h-4 mt-0.5 shrink-0 text-amber-600" />
           <p>{data.blockedReason}</p>
+        </div>
+      )}
+
+      {error && data && (
+        <div
+          role="status"
+          className="flex flex-wrap items-center gap-3 rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900"
+        >
+          <TriangleAlert className="w-4 h-4 shrink-0 text-amber-600" />
+          <p>Could not refresh the pages, so this list may be out of date.</p>
+          <button
+            type="button"
+            onClick={() => {
+              watchAgain();
+              refetch();
+            }}
+            className="font-semibold underline"
+          >
+            Try again
+          </button>
+        </div>
+      )}
+
+      {watchStopped && inProgress && !error && (
+        <div
+          role="status"
+          className="flex flex-wrap items-center gap-3 rounded-xl border border-neutral-200 bg-neutral-50 p-3 text-sm text-neutral-700"
+        >
+          <p>
+            This page stopped checking by itself after 30 minutes, so the list
+            may be out of date.
+          </p>
+          <button
+            type="button"
+            onClick={() => {
+              watchAgain();
+              refetch();
+            }}
+            className="font-semibold text-[#914A8C] underline"
+          >
+            Check again
+          </button>
         </div>
       )}
 
@@ -366,10 +447,10 @@ function PagesBody({ order }: { order: AdminOrderDetail }) {
                 needsForce: false,
               });
             }}
-            className="rounded-xl bg-[#914A8C] hover:bg-[#7a3e75] text-white font-semibold h-10 px-5 shadow-sm self-start sm:self-auto"
+            className="rounded-xl bg-[#914A8C] hover:bg-[#7a3e75] text-white font-semibold h-auto min-h-10 py-2 px-5 shadow-sm whitespace-normal text-left w-full sm:w-auto"
           >
-            <CheckCircle2 className="w-4 h-4 mr-2" />
-            Finish this order
+            <CheckCircle2 className="w-4 h-4 mr-2 shrink-0" />
+            Mark ready and email customer
           </Button>
         </div>
       )}
@@ -402,8 +483,8 @@ function PagesBody({ order }: { order: AdminOrderDetail }) {
           </div>
           {result.expanded && (
             <p>
-              The whole failed book was restarted, so the customer hears
-              &ldquo;ready&rdquo; only when it is.
+              More pages than the one you chose were restarted together, so the
+              customer hears &ldquo;ready&rdquo; only when the book is.
             </p>
           )}
           {result.skipped.length > 0 && (
@@ -435,6 +516,11 @@ function PagesBody({ order }: { order: AdminOrderDetail }) {
       )}
 
       {groups.problems.length > 0 && (
+        <h3 className="text-xs font-semibold uppercase tracking-wide text-neutral-600">
+          Needs attention
+        </h3>
+      )}
+      {groups.problems.length > 0 && (
         <ul className="space-y-2">
           {groups.problems.map((p) => (
             <PageRow
@@ -447,6 +533,11 @@ function PagesBody({ order }: { order: AdminOrderDetail }) {
         </ul>
       )}
 
+      {groups.running.length > 0 && (
+        <h3 className="text-xs font-semibold uppercase tracking-wide text-neutral-600">
+          Being made
+        </h3>
+      )}
       {groups.running.length > 0 && (
         <ul className="space-y-2">
           {groups.running.map((p) => (
@@ -498,7 +589,7 @@ function PagesBody({ order }: { order: AdminOrderDetail }) {
         }}
         mode={dialog?.mode ?? "restart"}
         pages={dialog?.pages ?? []}
-        restoresSession={restoresSession}
+        groupReason={groupReason}
         needsForce={dialog?.needsForce ?? false}
         onConfirm={confirm}
         isPending={regenerate.isPending}
