@@ -307,7 +307,7 @@ export default function ComicQuickViewModal({
                 disabled={!pricing}
                 className={`hidden md:block mt-6 min-w-[220px] self-start ${PERSONALISE_BUTTON} ${buttonState}`}
               >
-                Personalise
+                Free Preview
               </button>
             </div>
           </div>
@@ -323,7 +323,7 @@ export default function ComicQuickViewModal({
             disabled={!pricing}
             className={`w-full ${PERSONALISE_BUTTON} ${buttonState}`}
           >
-            Personalise
+            Free Preview
           </button>
         </div>
       </DialogContent>

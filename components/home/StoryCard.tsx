@@ -157,7 +157,6 @@ export default function StoryCard({ comic }: StoryCardProps) {
         alt="Story Card Background"
         fill
         className="pointer-events-none select-none z-0"
-        priority
       />
 
       {/* Book Cover — fills the blackboard, leaving an equal 10px strip of
@@ -231,7 +230,6 @@ export default function StoryCard({ comic }: StoryCardProps) {
         fill
         sizes="(max-width: 640px) 100vw, 380px"
         className="pointer-events-none select-none z-20"
-        priority
       />
 
       {/* White Body Container */}
@@ -383,7 +381,7 @@ export default function StoryCard({ comic }: StoryCardProps) {
               onClick={(e) => e.stopPropagation()}
               className={`${PERSONALISE_CLASSES} hover:brightness-110 active:translate-y-[2px] active:border-b-[2px] cursor-pointer`}
             >
-              Personalise
+              Free Preview
             </Link>
           ) : (
             <button
@@ -391,7 +389,7 @@ export default function StoryCard({ comic }: StoryCardProps) {
               disabled
               className={`${PERSONALISE_CLASSES} opacity-50 cursor-not-allowed pointer-events-none`}
             >
-              Personalise
+              Free Preview
             </button>
           )}
         </div>
