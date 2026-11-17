@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import type { HeroImage } from "@/app/types/heroimage";
+import { toImageUrl } from "@/lib/imageUrl";
 
 interface HeroImageSlideshowProps {
   images: HeroImage[];
@@ -63,7 +64,7 @@ export function HeroImageSlideshow({
           }`}
         >
           <Image
-            src={img.imageUrl}
+            src={toImageUrl(img.imageUrl)}
             alt="Hero Slideshow Image"
             fill
             sizes="(max-width: 1024px) 100vw, 540px"

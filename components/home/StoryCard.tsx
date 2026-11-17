@@ -10,6 +10,7 @@ import { hankenGrotesk, poppins, protestStrike } from "@/app/fonts";
 import { resolveMrp } from "@/lib/utils";
 import { formatAgeRange } from "@/lib/comicTags";
 import ComicQuickViewModal from "@/components/home/ComicQuickViewModal";
+import { toImageUrl } from "@/lib/imageUrl";
 
 /** Shared by the Personalise link and its disabled stand-in. */
 const PERSONALISE_CLASSES = `
@@ -188,7 +189,7 @@ export default function StoryCard({ comic }: StoryCardProps) {
         {/* Image, clipped to softly rounded corners. */}
         <div className="absolute inset-0 overflow-hidden rounded-[1.6cqw]">
           <Image
-            src={images[currentImageIndex]}
+            src={toImageUrl(images[currentImageIndex])}
             alt={comic.title}
             fill
             // The box is ~76% of a card that is at most 380px wide.

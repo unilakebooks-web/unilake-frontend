@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { Lock } from "lucide-react";
+import { toImageUrl } from "@/lib/imageUrl";
 
 interface LockedPageOverlayProps {
   /** The page's raw artwork. Null when the admin has not uploaded it yet. */
@@ -38,7 +39,7 @@ export default function LockedPageOverlay({
         // Decorative, so alt="" and aria-hidden — the heading below already
         // carries the meaning.
         <Image
-          src={artworkUrl}
+          src={toImageUrl(artworkUrl)}
           alt=""
           aria-hidden="true"
           fill

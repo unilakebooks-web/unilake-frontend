@@ -10,6 +10,7 @@ import PageErrorPlaceholder from "./PageErrorPlaceholder";
 import LockedPageOverlay from "./LockedPageOverlay";
 import RegenerateSlide from "./RegenerateSlide";
 import { PublicComicDetailPage } from "@/app/types/comic";
+import { toImageUrl } from "@/lib/imageUrl";
 
 /**
  * Widest a page card is ever drawn, in px. The cap that applies to landscape
@@ -254,7 +255,7 @@ export default function PreviewPageCard({
 
             {!isLocked && !showRegenerateSlide && !isGenerating && imageUrl && (
               <img
-                src={imageUrl}
+                src={toImageUrl(imageUrl)}
                 alt={`Page ${page.pageNumber}`}
                 className="w-full h-auto block"
               />
@@ -326,7 +327,7 @@ export default function PreviewPageCard({
                 {isReady && thumbUrl ? (
                   <>
                     <Image
-                      src={thumbUrl}
+                      src={toImageUrl(thumbUrl)}
                       alt={`Version ${variant.variantIndex + 1}`}
                       fill
                       className="object-cover"

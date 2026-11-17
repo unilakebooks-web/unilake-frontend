@@ -5,6 +5,7 @@ import { usePublicComic } from "@/hooks/usePublicComics";
 import { useCountryStore } from "@/stores/useCountryStore";
 import { formatMoney, resolveMrp } from "@/lib/utils";
 import { PAYMENT_MINIMUM } from "./couponOffers";
+import { toImageUrl } from "@/lib/imageUrl";
 
 interface OrderSummaryProps {
   snapshot: SessionSnapshot;
@@ -105,7 +106,7 @@ export default function OrderSummary({ snapshot, coupon }: OrderSummaryProps) {
             style={{ width: summaryImage.width, height: summaryImage.height }}
           >
             <Image
-              src={summaryImage.url}
+              src={toImageUrl(summaryImage.url)}
               alt={
                 summaryImage.isGenerated
                   ? `${comicDetail.title} — personalized for ${snapshot.childName || "your child"}`

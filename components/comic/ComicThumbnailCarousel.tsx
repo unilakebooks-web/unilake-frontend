@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import { ChevronLeft, ChevronRight, Volume2, VolumeX } from "lucide-react";
+import { toImageUrl } from "@/lib/imageUrl";
 
 interface ComicThumbnailCarouselProps {
   images: string[];
@@ -203,7 +204,7 @@ export default function ComicThumbnailCarousel({
                 image gets light bands from the box background. */}
             {activeSlide?.kind === "image" && (
               <Image
-                src={activeSlide.url}
+                src={toImageUrl(activeSlide.url)}
                 alt={`Cover ${safeIndex + 1}`}
                 fill
                 className="object-contain"

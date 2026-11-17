@@ -1,5 +1,6 @@
 import { BookOpen } from "lucide-react";
 import type { OrderComicSummary, UserGeneratedCover } from "@/app/types/order";
+import { toImageUrl } from "@/lib/imageUrl";
 
 /**
  * The picture on a customer's order: the child's generated page 1, drawn at the
@@ -40,7 +41,7 @@ export function OrderCoverImage({
     >
       {url ? (
         <img
-          src={url}
+          src={toImageUrl(url)}
           alt={generatedCover ? `${comic.title} — your personalized cover` : ""}
           // The generated box already matches the page's ratio, so contain
           // shows the whole page. The fallback thumbnail keeps its old crop.
