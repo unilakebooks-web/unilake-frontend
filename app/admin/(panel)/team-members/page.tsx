@@ -49,6 +49,15 @@ export default function TeamMembersPage() {
     localOrder !== null &&
     orderedMembers.map((m) => m.id).join(",") !== members.map((m) => m.id).join(",");
 
+  const handleReorder = (next: TeamMember[]) => {
+    // A drag made while the save is in flight would be wiped by the saved answer
+    // without a word, so it is ignored (the card snaps back).
+    if (reorderMembers.isPending) return;
+    const ids = next.map((m) => m.id);
+    // Dragged back to the saved order: nothing is unsaved any more.
+    setLocalOrder(ids.join(",") === members.map((m) => m.id).join(",") ? null : ids);
+  };
+
   const handleSaveOrder = async () => {
     if (!isOrderDirty || reorderMembers.isPending) return;
     try {
@@ -151,7 +160,7 @@ export default function TeamMembersPage() {
       ) : (
         <TeamMemberTable
           members={orderedMembers}
-          onReorder={(next) => setLocalOrder(next.map((m) => m.id))}
+          onReorder={handleReorder}
           togglingId={togglingId}
           onToggleStatus={handleToggleStatus}
           onEdit={handleEditClick}
