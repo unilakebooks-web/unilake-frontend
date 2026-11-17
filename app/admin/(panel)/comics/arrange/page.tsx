@@ -8,6 +8,7 @@ import { useArrangeComics, useReorderComics } from "@/hooks/useComics";
 import { ComicArrangeHeader } from "@/components/admin/comic/arrange/ComicArrangeHeader";
 import { ComicArrangeList } from "@/components/admin/comic/arrange/ComicArrangeList";
 import { Skeleton } from "@/components/ui/skeleton";
+import { getErrorCode, getErrorMessage } from "@/lib/utils";
 
 // Keep in step with COMIC_ORDER_BY in the backend's comic.service.ts: the website
 // order is sortOrder, then newest first, then id.
@@ -36,20 +37,22 @@ export default function ArrangeComicsPage() {
   const orderedComics = useMemo(() => {
     if (!localOrder) return published;
     const byId = new Map(published.map((c) => [c.id, c]));
+    const inLocal = new Set(localOrder);
     const dragged = localOrder
       .map((id) => byId.get(id))
       .filter((c): c is ComicListItem => c !== undefined);
-    const added = published.filter((c) => !localOrder.includes(c.id));
+    const added = published.filter((c) => !inLocal.has(c.id));
     return [...dragged, ...added];
   }, [published, localOrder]);
 
+  const publishedIds = useMemo(() => new Set(published.map((c) => c.id)), [published]);
   const savedKey = published.map((c) => c.id).join(",");
   const isOrderDirty = localOrder !== null && orderedComics.map((c) => c.id).join(",") !== savedKey;
 
   // A book was published, unpublished or deleted while the admin was arranging.
   const isStale =
     localOrder !== null &&
-    (localOrder.length !== published.length || localOrder.some((id) => !published.some((c) => c.id === id)));
+    (localOrder.length !== published.length || localOrder.some((id) => !publishedIds.has(id)));
 
   const handleReorder = (next: ComicListItem[]) => {
     if (reorder.isPending) return; // a drag during a save would be wiped by the answer
@@ -63,18 +66,17 @@ export default function ArrangeComicsPage() {
   };
 
   const handleSaveOrder = async () => {
-    if (!isOrderDirty || reorder.isPending) return;
+    if (!isOrderDirty || isStale || reorder.isPending) return;
     try {
       await reorder.mutateAsync(orderedComics.map((c) => c.id));
       setLocalOrder(null);
       toast.success("Order has been saved");
     } catch (err) {
-      const failure = err as { code?: string; message?: string };
-      if (failure.code === "CONFLICT") {
+      if (getErrorCode(err) === "CONFLICT") {
         toast.error("The list of books changed while you were arranging it, so it was reloaded. Please arrange it again.");
         handleReload();
       } else {
-        toast.error("Could not save the new order: " + (failure.message || "Network error"));
+        toast.error("Could not save the new order: " + getErrorMessage(err, "Network error"));
       }
     }
   };
@@ -82,7 +84,7 @@ export default function ArrangeComicsPage() {
   return (
     <div className="space-y-4 max-w-3xl mx-auto py-2">
       <ComicArrangeHeader
-        isOrderDirty={isOrderDirty}
+        isOrderDirty={isOrderDirty && !isStale}
         isSavingOrder={reorder.isPending}
         onSaveOrder={handleSaveOrder}
       />
@@ -91,6 +93,7 @@ export default function ArrangeComicsPage() {
         <div className="flex items-center justify-between gap-3 bg-amber-50 border border-amber-200 rounded-2xl p-4 text-sm text-amber-900">
           <span>The list of books has changed since you started arranging. Reload to see it; your unsaved order will be lost.</span>
           <button
+            type="button"
             onClick={handleReload}
             className="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white font-semibold rounded-xl shrink-0 cursor-pointer"
           >
@@ -111,6 +114,7 @@ export default function ArrangeComicsPage() {
           <h3 className="font-bold text-lg mb-1">Failed to load books</h3>
           <p className="text-sm text-red-600 mb-5">{error?.message || "Unknown error"}</p>
           <button
+            type="button"
             onClick={() => refetch()}
             className="px-5 py-2.5 bg-red-600 hover:bg-red-700 text-white text-sm font-semibold rounded-xl flex items-center gap-2 cursor-pointer"
           >

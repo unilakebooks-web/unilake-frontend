@@ -118,8 +118,8 @@ export function useReorderComics() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: reorderComics,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["comics"] });
-    },
+    // Returned, so the save only finishes once the list has the new numbers
+    // (otherwise the screen briefly shows the old order again).
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["comics"] }),
   });
 }
