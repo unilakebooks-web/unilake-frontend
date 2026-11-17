@@ -51,7 +51,9 @@ export function PageFileInfo({
           />
         ) : (
           <>
-            {!loaded && <Skeleton className="absolute inset-0 rounded-lg" />}
+            {!loaded && (
+              <Skeleton className="absolute inset-0 rounded-lg pointer-events-none" />
+            )}
             <a
               href={url}
               target="_blank"
@@ -87,7 +89,7 @@ export function PageFileInfo({
           </p>
         ) : (
           <p className="text-xs font-medium text-neutral-500">
-            File name not saved (uploaded before this update)
+            File name not saved
           </p>
         )}
         <p className="text-[10px] text-neutral-500">
