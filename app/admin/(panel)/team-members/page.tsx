@@ -66,12 +66,14 @@ export default function TeamMembersPage() {
       toast.success("Order has been saved");
     } catch (err) {
       const failure = err as { code?: string; message?: string };
-      toast.error("Could not save the new order: " + (failure.message || "Network error"));
       // A 409 means the list changed since it was loaded (another admin added or
       // removed someone): reload it and start again from the saved order.
       if (failure.code === "CONFLICT") {
+        toast.error("The team list changed while you were arranging it, so it was reloaded. Please arrange it again.");
         setLocalOrder(null);
         refetch();
+      } else {
+        toast.error("Could not save the new order: " + (failure.message || "Network error"));
       }
     }
   };
