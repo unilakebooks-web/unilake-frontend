@@ -75,7 +75,7 @@ export function CouponDeleteDialog({
 
   return (
     <Dialog open={open} onOpenChange={isBusy ? undefined : onOpenChange}>
-      <DialogContent className="sm:max-w-md bg-white border border-red-200 shadow-xl rounded-2xl p-6">
+      <DialogContent className="sm:max-w-md bg-white border border-red-200 shadow-xl rounded-2xl p-6 grid-cols-[minmax(0,1fr)]">
         <DialogHeader className="space-y-3">
           <div className="flex items-center gap-3">
             <div className="w-11 h-11 rounded-full bg-red-100 text-red-600 flex items-center justify-center shrink-0">
@@ -110,7 +110,7 @@ export function CouponDeleteDialog({
           </div>
         )}
 
-        <DialogFooter className="gap-2 pt-3 border-t border-neutral-100">
+        <DialogFooter className="gap-2 pt-3 border-t border-neutral-100 flex-wrap -mx-6 -mb-6 px-6 rounded-b-2xl">
           <Button
             type="button"
             variant="outline"
