@@ -3,6 +3,7 @@
 import { format } from "date-fns";
 import { CreditCard, FileText, MapPin, Sparkles, User } from "lucide-react";
 import type { AdminOrderDetail } from "@/app/types/order";
+import { SentToPrinterControl } from "./SentToPrinterControl";
 
 function Card({
   title,
@@ -209,6 +210,8 @@ export function OrderInfoCards({ order }: { order: AdminOrderDetail }) {
             Not compiled yet — the PDF is built after the customer sends the book to print.
           </p>
         )}
+        {/* Shown in every state of this card; the control decides what to offer. */}
+        <SentToPrinterControl order={order} />
       </Card>
     </div>
   );

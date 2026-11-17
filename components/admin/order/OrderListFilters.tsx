@@ -19,6 +19,7 @@ interface OrderListFiltersProps {
     status?: OrderStatus;
     sortBy: OrderSortBy;
     sortOrder: SortOrder;
+    sentToPrinter?: "sent" | "not_sent";
   }) => void;
   /**
    * Seeds the status dropdown on first render, so a link like
@@ -31,6 +32,13 @@ interface OrderListFiltersProps {
    */
   initialStatus?: OrderStatus;
 }
+
+// The closed dropdown shows these (not the raw values "ALL" / "not_sent").
+const SENT_TO_PRINTER_LABELS: Record<string, string> = {
+  ALL: "Any printer status",
+  sent: "Sent to printer",
+  not_sent: "Not sent",
+};
 
 const STATUS_LABELS: Record<OrderStatus, string> = {
   CREATED: "Awaiting payment",
@@ -50,6 +58,7 @@ export function OrderListFilters({
 }: OrderListFiltersProps) {
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState<string>(initialStatus ?? "ALL");
+  const [sentToPrinter, setSentToPrinter] = useState<string>("ALL");
   const [sortBy, setSortBy] = useState<OrderSortBy>("createdAt");
   const [sortOrder, setSortOrder] = useState<SortOrder>("desc");
 
@@ -60,14 +69,15 @@ export function OrderListFilters({
       onFiltersChange({
         search: search.trim() || undefined,
         status: status === "ALL" ? undefined : (status as OrderStatus),
+        sentToPrinter: sentToPrinter === "ALL" ? undefined : (sentToPrinter as "sent" | "not_sent"),
         sortBy,
         sortOrder,
       });
     }, 400);
     return () => clearTimeout(handler);
-  }, [search, status, sortBy, sortOrder, onFiltersChange]);
+  }, [search, status, sentToPrinter, sortBy, sortOrder, onFiltersChange]);
 
-  const hasActiveFilters = search !== "" || status !== "ALL";
+  const hasActiveFilters = search !== "" || status !== "ALL" || sentToPrinter !== "ALL";
 
   return (
     <div className="flex flex-col sm:flex-row gap-3 items-center bg-white/60 backdrop-blur-sm p-3 rounded-2xl border border-[#914A8C]/15 shadow-sm">
@@ -104,6 +114,17 @@ export function OrderListFilters({
         </SelectContent>
       </Select>
 
+      <Select value={sentToPrinter} onValueChange={(val) => setSentToPrinter(val || "ALL")}>
+        <SelectTrigger className="w-full sm:w-[190px] h-10 rounded-xl bg-white border-neutral-200">
+          <SelectValue placeholder="Sent to printer">{SENT_TO_PRINTER_LABELS[sentToPrinter]}</SelectValue>
+        </SelectTrigger>
+        <SelectContent className="rounded-xl">
+          <SelectItem value="ALL">{SENT_TO_PRINTER_LABELS.ALL}</SelectItem>
+          <SelectItem value="sent">Sent to printer</SelectItem>
+          <SelectItem value="not_sent">Not sent</SelectItem>
+        </SelectContent>
+      </Select>
+
       <Select value={sortBy} onValueChange={(val) => setSortBy((val as OrderSortBy) || "createdAt")}>
         <SelectTrigger className="w-full sm:w-[150px] h-10 rounded-xl bg-white border-neutral-200">
           <SelectValue placeholder="Sort by" />
@@ -133,6 +154,7 @@ export function OrderListFilters({
           onClick={() => {
             setSearch("");
             setStatus("ALL");
+            setSentToPrinter("ALL");
           }}
           className="h-10 px-3 text-neutral-500 hover:text-neutral-900 rounded-xl shrink-0"
         >
