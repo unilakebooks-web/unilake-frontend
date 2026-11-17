@@ -17,6 +17,8 @@ const TABS = [
   { value: "review", label: "Publish Review", icon: CheckCircle },
 ] as const;
 
+export const TAB_VALUES: readonly string[] = TABS.map((tab) => tab.value);
+
 export function ComicTabBar({ activeTab, onTabChange }: ComicTabBarProps) {
   return (
     <div className="flex space-x-1 p-1 bg-white/60 backdrop-blur-sm rounded-2xl border border-[#914A8C]/15 shadow-sm overflow-x-auto no-scrollbar">

@@ -398,7 +398,7 @@ export default function BubbleMapperPage({
     return (
       <div className="h-screen flex flex-col items-center justify-center bg-neutral-50 text-neutral-800 p-8">
         <h2 className="text-2xl font-bold mb-4">Page not found</h2>
-        <Button onClick={() => router.push(`/admin/comics/${comicId}`)}>
+        <Button onClick={() => router.push(`/admin/comics/${comicId}?tab=pages`)}>
           Return to Comic
         </Button>
       </div>

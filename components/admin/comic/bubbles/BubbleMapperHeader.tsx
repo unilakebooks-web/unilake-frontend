@@ -38,7 +38,7 @@ export function BubbleMapperHeader({
           variant="ghost" 
           onClick={() => {
             if (hasUnsavedChanges && !confirm("You have unsaved changes. Leave anyway?")) return;
-            router.push(`/admin/comics/${comicId}`);
+            router.push(`/admin/comics/${comicId}?tab=pages`);
           }}
           className="text-neutral-500 hover:text-neutral-900 bg-neutral-100/50 rounded-xl"
         >
