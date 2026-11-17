@@ -8,6 +8,7 @@ import type {
   LabelResponse,
   RefreshTrackingResponse,
   RetryShiprocketResponse,
+  SetSentToPrinterResponse,
   UserOrderDetail,
   UserOrderRow,
   UserOrderTracking,
@@ -47,6 +48,7 @@ export async function fetchAdminOrders(
   if (filters?.search) params.append("search", filters.search);
   if (filters?.sortBy) params.append("sortBy", filters.sortBy);
   if (filters?.sortOrder) params.append("sortOrder", filters.sortOrder);
+  if (filters?.sentToPrinter) params.append("sentToPrinter", filters.sentToPrinter);
 
   const query = params.toString();
   const { data } = await api.get<AdminOrdersResponse>(
@@ -110,6 +112,17 @@ export async function downloadBillOfSupply(
   link.click();
   link.remove();
   URL.revokeObjectURL(url);
+}
+
+export async function setSentToPrinter(
+  orderId: string,
+  sent: boolean
+): Promise<SetSentToPrinterResponse> {
+  const { data } = await api.patch<SetSentToPrinterResponse>(
+    `/api/admin/orders/${orderId}/sent-to-printer`,
+    { sent }
+  );
+  return data;
 }
 
 export async function refreshTracking(orderId: string): Promise<RefreshTrackingResponse> {

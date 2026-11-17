@@ -31,6 +31,7 @@ export interface AdminOrdersFilters {
   search?: string;
   sortBy?: OrderSortBy;
   sortOrder?: SortOrder;
+  sentToPrinter?: "sent" | "not_sent";
 }
 
 /**
@@ -69,6 +70,8 @@ export interface AdminOrderRow {
   courierName: string | null;
   shippedAt: string | null;
   deliveredAt: string | null;
+  /** When the PDF was sent to the printer; null when not yet. */
+  sentToPrinterAt: string | null;
   childName: string | null;
   comicTitle: string;
   /** Null when page 1 has not generated yet — render a placeholder, not the template art. */
@@ -188,7 +191,11 @@ export interface AdminOrderDetail {
     pickupGeneratedAt: string | null;
     shippedAt: string | null;
     deliveredAt: string | null;
+    sentToPrinterAt: string | null;
   };
+
+  /** Decided by the server (print-ready PDF exists, order not cancelled). */
+  canMarkSentToPrinter: boolean;
 
   session: {
     id: string;
@@ -331,6 +338,11 @@ export interface TrackActivity {
   activity: string;
   location: string;
   shiprocketStatusLabel: string;
+}
+
+export interface SetSentToPrinterResponse {
+  id: string;
+  sentToPrinterAt: string | null;
 }
 
 export interface RefreshTrackingResponse {

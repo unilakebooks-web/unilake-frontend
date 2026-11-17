@@ -6,6 +6,7 @@ import {
   retryShiprocket,
   fetchOrderLabel,
   refreshTracking,
+  setSentToPrinter,
   fetchUserOrders,
   fetchUserOrder,
   fetchOrderTracking,
@@ -79,6 +80,14 @@ export function useRetryShiprocket(orderId: string) {
   const invalidate = useOrderActionInvalidation(orderId);
   return useMutation({
     mutationFn: () => retryShiprocket(orderId),
+    onSuccess: invalidate,
+  });
+}
+
+export function useSetSentToPrinter(orderId: string) {
+  const invalidate = useOrderActionInvalidation(orderId);
+  return useMutation({
+    mutationFn: (sent: boolean) => setSentToPrinter(orderId, sent),
     onSuccess: invalidate,
   });
 }
