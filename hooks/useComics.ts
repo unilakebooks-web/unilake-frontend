@@ -8,6 +8,7 @@ import {
   updateComicStatus,
   setThumbnails,
   setComicVideo,
+  reorderComics,
 } from "@/app/actions/comic";
 import type { ComicStatus, CreateComicPayload } from "@/app/types/comic";
 import { normalizeComicFilters, type ComicTagFilters } from "@/lib/comicTags";
@@ -98,6 +99,27 @@ export function useSetComicVideo() {
     onSuccess: (data, variables) => {
       queryClient.invalidateQueries({ queryKey: ["comics"] });
       queryClient.invalidateQueries({ queryKey: ["comic", variables.comicId] });
+    },
+  });
+}
+
+// The Arrange Books screen needs the list as it is NOW (a book published a minute
+// ago must be in it, or the first Save is refused), so it ignores the 30 s cache.
+export function useArrangeComics() {
+  return useQuery({
+    queryKey: ["comics", normalizeComicFilters(undefined)],
+    queryFn: () => fetchComics(),
+    staleTime: 0,
+    refetchOnMount: "always",
+  });
+}
+
+export function useReorderComics() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: reorderComics,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["comics"] });
     },
   });
 }

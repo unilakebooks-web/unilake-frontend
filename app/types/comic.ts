@@ -81,6 +81,8 @@ export interface Comic {
   publishJobId: string | null;
   publishError: string | null;
   isBestseller: boolean;
+  /** Website order, ascending (Arrange Books). Only published books' order is shown to customers. */
+  sortOrder: number;
   description: string | null;
   /**
    * Youngest first. Required on save, but may be empty on comics created
