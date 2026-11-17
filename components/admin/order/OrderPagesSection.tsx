@@ -38,7 +38,7 @@ const STATE_STYLE: Record<
     className: "bg-emerald-50 text-emerald-700 border-emerald-200",
   },
   BLOCKED: {
-    label: "Blocked: a retry of this page is stuck",
+    label: "Blocked",
     className: "bg-amber-50 text-amber-800 border-amber-200",
   },
   WAITING: {
@@ -78,7 +78,9 @@ const SKIP_TEXT: Record<string, string> = {
   NOT_IN_BOOK: "not part of the book",
 };
 
-const clock = (iso: string) => format(new Date(iso), "h:mm a");
+// A non-breaking space keeps "1:51 AM" on one line.
+const clock = (iso: string) =>
+  format(new Date(iso), "h:mm a").replace(" ", "\u00a0");
 
 function summaryLine(s: AdminOrderPages["summary"]) {
   const parts: [number, string][] = [
@@ -119,20 +121,25 @@ function PageRow({
             Page {page.pageNumber}
           </span>
           {page.isPreviewPage && (
-            <span className="text-[10px] font-semibold text-neutral-500 uppercase tracking-wide">
+            <span className="text-[11px] font-semibold text-neutral-500 uppercase tracking-wide">
               free preview
             </span>
           )}
           <span
             className={cn(
-              "inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold border",
+              "inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold border whitespace-nowrap",
               style.className,
             )}
           >
             {label}
           </span>
         </div>
-        {page.cooldownEndsAt && (
+        {page.state === "BLOCKED" && (
+          <p className="text-xs text-amber-800">
+            A retry of this page is stuck and holds the book back.
+          </p>
+        )}
+        {page.cooldownEndsAt && page.restartable && (
           <p className="text-xs text-amber-800">
             Restarted or failed a few minutes ago. Can be restarted at{" "}
             {clock(page.cooldownEndsAt)}.
@@ -143,7 +150,10 @@ function PageRow({
             className="text-xs text-neutral-500 break-words"
             title={page.lastError}
           >
-            Last error: {page.lastError}
+            {page.state === "IN_PROGRESS" || page.state === "WAITING"
+              ? "Previous error (before the restart)"
+              : "Last error"}
+            : {page.lastError}
           </p>
         )}
       </div>
@@ -154,8 +164,13 @@ function PageRow({
           variant="outline"
           disabled={busy}
           onClick={() => onRestart(page)}
-          aria-label={`${page.requiresForce ? "Restart anyway" : "Restart"} page ${page.pageNumber}`}
-          className="rounded-xl border-[#914A8C]/40 text-[#914A8C] hover:bg-[#914A8C]/10 font-semibold h-9 px-4 shrink-0 self-start sm:self-center"
+          aria-label={`Restart page ${page.pageNumber}${page.requiresForce ? " anyway" : ""}`}
+          className={cn(
+            "rounded-xl font-semibold h-9 px-4 shrink-0 self-start sm:self-center",
+            page.requiresForce
+              ? "border-amber-400 text-amber-800 hover:bg-amber-50"
+              : "border-[#914A8C]/40 text-[#914A8C] hover:bg-[#914A8C]/10",
+          )}
         >
           <RotateCcw className="w-4 h-4 mr-2" />
           {page.requiresForce ? "Restart anyway" : "Restart"}
@@ -166,13 +181,17 @@ function PageRow({
 }
 
 function PagesBody({ order }: { order: AdminOrderDetail }) {
-  const { data, error, isLoading, watchAgain } = useAdminOrderPages(order.id);
+  const { data, error, isLoading, watchAgain, refetch } = useAdminOrderPages(
+    order.id,
+  );
   const regenerate = useRegenerateOrderPages(order.id, watchAgain);
 
   const [dialog, setDialog] = useState<{
     mode: "restart" | "finish";
     pages: AdminOrderPage[];
     wholeBook: boolean;
+    /** Frozen when the dialog opened, so its button cannot change under the admin's cursor. */
+    needsForce: boolean;
   } | null>(null);
   const [dialogError, setDialogError] = useState<string | null>(null);
   const [result, setResult] = useState<RegenerateOrderPagesResult | null>(null);
@@ -199,7 +218,9 @@ function PagesBody({ order }: { order: AdminOrderDetail }) {
     };
   }, [data]);
 
-  if (error) return null;
+  // A first load that fails hides the section (older backend, outage). A later failure keeps
+  // the last good list on screen rather than making it vanish in the middle of a restart.
+  if (error && !data) return null;
 
   if (isLoading || !data) {
     return (
@@ -224,16 +245,27 @@ function PagesBody({ order }: { order: AdminOrderDetail }) {
   const inProgress =
     groups.running.length > 0 || data.pages.some((p) => p.retryRunning);
 
-  // A failed session restarts every failed page, so a page cooling down elsewhere in the
-  // book makes the server ask for "Restart anyway" too, not only the pages clicked.
-  const forceNeeded = (pages: AdminOrderPage[]) =>
-    restoresSession
-      ? data.pages.some((p) => p.restartable && p.requiresForce)
-      : pages.some((p) => p.requiresForce);
-
+  // A failed session restarts every failed page together (the customer is told the book is
+  // ready only when it is): the dialog lists them all and asks for "Restart anyway" if any
+  // of them is cooling down, exactly as the server will.
   const openRestart = (pages: AdminOrderPage[], wholeBook: boolean) => {
+    const list =
+      restoresSession && !wholeBook
+        ? data.pages.filter(
+            (p) =>
+              p.restartable &&
+              (!p.isPreviewPage ||
+                pages.some((n) => n.pageNumber === p.pageNumber)),
+          )
+        : pages;
     setDialogError(null);
-    setDialog({ mode: "restart", pages, wholeBook });
+    setDialog({
+      mode: "restart",
+      pages: list,
+      wholeBook,
+      needsForce: list.some((p) => p.requiresForce),
+    });
+    refetch(); // so a cooldown that has just ended is not shown as still running
   };
 
   const confirm = async () => {
@@ -247,7 +279,7 @@ function PagesBody({ order }: { order: AdminOrderDetail }) {
               ...(dialog.wholeBook
                 ? {}
                 : { pageNumbers: dialog.pages.map((p) => p.pageNumber) }),
-              ...(forceNeeded(dialog.pages) && { force: true }),
+              ...(dialog.needsForce && { force: true }),
             };
       const outcome = await regenerate.mutateAsync(input);
       setDialog(null);
@@ -274,7 +306,7 @@ function PagesBody({ order }: { order: AdminOrderDetail }) {
             </h2>
           </div>
           <p className="mt-1 text-sm font-semibold text-neutral-800">
-            {summaryLine(data.summary)}
+            {summaryLine(data.summary) || "No pages found for this book."}
           </p>
         </div>
 
@@ -327,7 +359,12 @@ function PagesBody({ order }: { order: AdminOrderDetail }) {
             disabled={regenerate.isPending}
             onClick={() => {
               setDialogError(null);
-              setDialog({ mode: "finish", pages: [], wholeBook: true });
+              setDialog({
+                mode: "finish",
+                pages: [],
+                wholeBook: true,
+                needsForce: false,
+              });
             }}
             className="rounded-xl bg-[#914A8C] hover:bg-[#7a3e75] text-white font-semibold h-10 px-5 shadow-sm self-start sm:self-auto"
           >
@@ -353,7 +390,12 @@ function PagesBody({ order }: { order: AdminOrderDetail }) {
               type="button"
               onClick={() => setResult(null)}
               aria-label="Dismiss"
-              className="text-emerald-700 hover:text-emerald-900 shrink-0"
+              className={cn(
+                "shrink-0 p-1.5 -m-1.5 rounded-lg",
+                result.queued.length > 0 || result.repaired
+                  ? "text-emerald-700 hover:text-emerald-900"
+                  : "text-amber-700 hover:text-amber-900",
+              )}
             >
               <X className="w-4 h-4" />
             </button>
@@ -457,7 +499,7 @@ function PagesBody({ order }: { order: AdminOrderDetail }) {
         mode={dialog?.mode ?? "restart"}
         pages={dialog?.pages ?? []}
         restoresSession={restoresSession}
-        needsForce={dialog ? forceNeeded(dialog.pages) : false}
+        needsForce={dialog?.needsForce ?? false}
         onConfirm={confirm}
         isPending={regenerate.isPending}
         errorMessage={dialogError}

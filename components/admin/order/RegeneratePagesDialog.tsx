@@ -9,7 +9,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Loader2, RotateCcw } from "lucide-react";
+import { CheckCircle2, Loader2, RotateCcw } from "lucide-react";
+import { cn } from "@/lib/utils";
 import type { AdminOrderPage } from "@/app/types/order";
 
 interface RegeneratePagesDialogProps {
@@ -49,7 +50,9 @@ export function RegeneratePagesDialog({
   const title =
     mode === "finish"
       ? "Finish this order?"
-      : `Restart ${count} page${count === 1 ? "" : "s"} (${pageList(pages)})?`;
+      : count > 5
+        ? `Restart ${count} pages?`
+        : `Restart ${count} page${count === 1 ? "" : "s"} (${pageList(pages)})?`;
 
   return (
     <Dialog open={open} onOpenChange={isPending ? undefined : onOpenChange}>
@@ -60,14 +63,20 @@ export function RegeneratePagesDialog({
         <DialogHeader className="space-y-3">
           <div className="flex items-center gap-3">
             <div className="w-11 h-11 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center shrink-0">
-              <RotateCcw className="w-6 h-6" />
+              {mode === "finish" ? (
+                <CheckCircle2 className="w-6 h-6" />
+              ) : (
+                <RotateCcw className="w-6 h-6" />
+              )}
             </div>
             <div className="min-w-0">
               <DialogTitle className="text-xl font-bold text-neutral-900 break-words">
                 {title}
               </DialogTitle>
               <DialogDescription className="text-xs text-neutral-500 font-medium">
-                The customer is not charged and finished pages are not touched.
+                {mode === "finish"
+                  ? "This sends the customer the “your book is ready” email."
+                  : "The customer is not charged and finished pages are not touched."}
               </DialogDescription>
             </div>
           </div>
@@ -85,24 +94,25 @@ export function RegeneratePagesDialog({
               {usesImageService && (
                 <p>
                   These pages are made by the image service (RunPod). If the
-                  first attempt is still running there, the restart can use
-                  credit twice for that page (about 1.4 cents per page), and the
-                  first result is thrown away. The credit balance is not shown
-                  here: if it is empty the restart will fail again.
+                  first attempt is still running there, restarting can use
+                  credit twice for that page (about 1.4 US cents per page), and
+                  the first result is thrown away. If the account has no credit
+                  left, the restart will fail again; the balance is not shown
+                  here.
                 </p>
               )}
               {restoresSession && (
                 <p>
-                  This restarts every failed page of the book, not just this
-                  one, so that the customer is only told the book is ready when
-                  it is.
+                  Because the book failed, every failed page is restarted
+                  together, so that the customer is only told the book is ready
+                  when it is.
                 </p>
               )}
               {anyForced && (
                 <p className="font-semibold text-amber-800">
                   Some of these pages were restarted or failed only a few
-                  minutes ago, or may still be running. Restarting them now is
-                  your call.
+                  minutes ago, or may still be running. Restarting them now may
+                  repeat work that is still in progress.
                 </p>
               )}
               <p>
@@ -136,7 +146,12 @@ export function RegeneratePagesDialog({
             type="button"
             onClick={onConfirm}
             disabled={isPending}
-            className="rounded-xl bg-[#914A8C] hover:bg-[#7a3e75] text-white font-semibold h-10 px-5 shadow-sm"
+            className={cn(
+              "rounded-xl text-white font-semibold h-10 px-5 shadow-sm",
+              mode === "restart" && anyForced
+                ? "bg-amber-600 hover:bg-amber-700"
+                : "bg-[#914A8C] hover:bg-[#7a3e75]",
+            )}
           >
             {isPending ? (
               <>
