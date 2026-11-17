@@ -224,6 +224,13 @@ function PagesBody({ order }: { order: AdminOrderDetail }) {
   const inProgress =
     groups.running.length > 0 || data.pages.some((p) => p.retryRunning);
 
+  // A failed session restarts every failed page, so a page cooling down elsewhere in the
+  // book makes the server ask for "Restart anyway" too, not only the pages clicked.
+  const forceNeeded = (pages: AdminOrderPage[]) =>
+    restoresSession
+      ? data.pages.some((p) => p.restartable && p.requiresForce)
+      : pages.some((p) => p.requiresForce);
+
   const openRestart = (pages: AdminOrderPage[], wholeBook: boolean) => {
     setDialogError(null);
     setDialog({ mode: "restart", pages, wholeBook });
@@ -235,17 +242,21 @@ function PagesBody({ order }: { order: AdminOrderDetail }) {
     try {
       const input =
         dialog.mode === "finish"
-          ? {}
+          ? { repairOnly: true }
           : {
               ...(dialog.wholeBook
                 ? {}
                 : { pageNumbers: dialog.pages.map((p) => p.pageNumber) }),
-              ...(dialog.pages.some((p) => p.requiresForce) && { force: true }),
+              ...(forceNeeded(dialog.pages) && { force: true }),
             };
       const outcome = await regenerate.mutateAsync(input);
       setDialog(null);
       setResult(outcome);
-      toast.success(outcome.message ?? "Done.");
+      if (outcome.queued.length > 0 || outcome.repaired) {
+        toast.success(outcome.message ?? "Done.");
+      } else {
+        toast.info(outcome.message ?? "Nothing was restarted.");
+      }
     } catch (err) {
       const { message } = (err ?? {}) as { message?: string };
       setDialogError(message ?? "Could not restart the pages.");
@@ -329,7 +340,12 @@ function PagesBody({ order }: { order: AdminOrderDetail }) {
       {result && (
         <div
           role="status"
-          className="rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-900 space-y-2"
+          className={cn(
+            "rounded-xl border p-4 text-sm space-y-2",
+            result.queued.length > 0 || result.repaired
+              ? "border-emerald-200 bg-emerald-50 text-emerald-900"
+              : "border-amber-200 bg-amber-50 text-amber-900",
+          )}
         >
           <div className="flex items-start justify-between gap-3">
             <p className="font-bold">{result.message ?? "Done."}</p>
@@ -441,6 +457,7 @@ function PagesBody({ order }: { order: AdminOrderDetail }) {
         mode={dialog?.mode ?? "restart"}
         pages={dialog?.pages ?? []}
         restoresSession={restoresSession}
+        needsForce={dialog ? forceNeeded(dialog.pages) : false}
         onConfirm={confirm}
         isPending={regenerate.isPending}
         errorMessage={dialogError}

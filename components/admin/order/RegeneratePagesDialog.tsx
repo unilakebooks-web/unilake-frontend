@@ -20,6 +20,8 @@ interface RegeneratePagesDialogProps {
   pages: AdminOrderPage[];
   /** The session failed after payment, so every failed page is restarted, not only these. */
   restoresSession: boolean;
+  /** Some page that will be restarted needs "Restart anyway" (a restore restarts every failed page). */
+  needsForce: boolean;
   onConfirm: () => void;
   isPending: boolean;
   errorMessage: string | null;
@@ -35,12 +37,13 @@ export function RegeneratePagesDialog({
   mode,
   pages,
   restoresSession,
+  needsForce,
   onConfirm,
   isPending,
   errorMessage,
 }: RegeneratePagesDialogProps) {
   const usesImageService = pages.some((p) => p.usesImageService);
-  const anyForced = pages.some((p) => p.requiresForce);
+  const anyForced = needsForce;
   const count = pages.length;
 
   const title =

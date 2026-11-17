@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   fetchAdminOrders,
@@ -122,7 +122,10 @@ export function useOrderLabel(orderId: string) {
 
 /** The long poll stops after this long on one visit, so a forgotten tab does not hold the server awake for ever. */
 const PAGES_WATCH_MS = 30 * 60 * 1000;
+// Keep in step with MAX_WAIT_SECONDS in the backend's config/pageRecovery.ts (the longest the server holds a request).
 const PAGES_WAIT_SECONDS = 25;
+/** Pause before the next long poll starts, so a fast answer cannot loop the request. */
+const PAGES_REPOLL_MS = 300;
 
 const hasPagesInProgress = (data: AdminOrderPages | undefined) =>
   !!data?.pages.some(
@@ -159,11 +162,28 @@ export function useAdminOrderPages(orderId: string) {
     enabled: !!orderId,
     retry: false,
     staleTime: 0,
+    // Not after an error: the last good data is kept, and would otherwise be re-requested
+    // three times a second for as long as the backend keeps failing.
     refetchInterval: (q) =>
-      hasPagesInProgress(q.state.data) && watching() ? 300 : false,
+      q.state.status !== "error" && hasPagesInProgress(q.state.data) && watching()
+        ? PAGES_REPOLL_MS
+        : false,
+    // The long poll is what keeps the request-billed server working on the pages, so it
+    // carries on in a background tab (until the 30 minutes are up).
+    refetchIntervalInBackground: true,
   });
 
-  /** Start watching again (after a restart, or when the admin comes back to the tab). */
+  // Coming back to the tab starts a fresh 30 minutes of watching.
+  useEffect(() => {
+    const resume = () => {
+      watchStarted.current = Date.now();
+      signature.current = undefined;
+    };
+    window.addEventListener("focus", resume);
+    return () => window.removeEventListener("focus", resume);
+  }, []);
+
+  /** Start watching again after a restart. */
   const watchAgain = () => {
     watchStarted.current = Date.now();
     signature.current = undefined;
@@ -184,4 +204,3 @@ export function useRegenerateOrderPages(orderId: string, watchAgain: () => void)
     },
   });
 }
-

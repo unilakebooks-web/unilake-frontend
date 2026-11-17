@@ -425,6 +425,8 @@ export interface AdminOrderPages {
 export interface RegenerateOrderPagesInput {
   pageNumbers?: number[];
   force?: boolean;
+  /** "Finish this order": only move the order on, never restart a page. */
+  repairOnly?: boolean;
 }
 
 export type RegenerateSkipReason =
@@ -449,4 +451,3 @@ export interface RegenerateOrderPagesResult {
   repaired: boolean;
   message: string | null;
 }
-
