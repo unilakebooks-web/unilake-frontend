@@ -126,6 +126,8 @@ export interface Page {
   maskUrl: string | null;
   artworkWidth: number | null;
   artworkHeight: number | null;
+  artworkFileName?: string | null;
+  maskFileName?: string | null;
   hasFace: boolean;
   mirrorFace: boolean;
   faceDirection: string | null;

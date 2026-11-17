@@ -15,6 +15,7 @@ import { requestPageUploadUrl } from "@/app/actions/page";
 import { uploadToR2 } from "@/app/lib/r2-upload";
 import { ComicDetail, PageWithBubbles, FaceDirection } from "@/app/types/comic";
 import { PAGE_CONTENT_TYPES, PAGE_FILE_ERROR, getPageExtension } from "./pageFileTypes";
+import { PageFileInfo } from "./PageFileInfo";
 
 interface PageEditModalProps {
   open: boolean;
@@ -161,6 +162,9 @@ export function PageEditModal({ open, onOpenChange, page, comic, comicId }: Page
 
       if (artworkKey) updates.artworkUrl = artworkKey;
       if (maskKey) updates.maskUrl = maskKey;
+      // Display-only names; the server stores one only together with its file.
+      if (artworkKey && artworkFile) updates.artworkFileName = artworkFile.name;
+      if (maskKey && maskFile) updates.maskFileName = maskFile.name;
 
       if (Object.keys(updates).length > 0) {
         await updatePage({ pageId: page.id, comicId, data: updates });
@@ -337,6 +341,14 @@ export function PageEditModal({ open, onOpenChange, page, comic, comicId }: Page
               {/* Artwork Replace */}
               <div className="space-y-1.5">
                 <Label className="text-sm font-semibold text-neutral-900">Replace Artwork</Label>
+                <PageFileInfo
+                  key={page.artworkUrl ?? "none"}
+                  kind="artwork"
+                  url={page.artworkUrl}
+                  fileName={page.artworkFileName ?? null}
+                  storedWidth={page.artworkWidth}
+                  storedHeight={page.artworkHeight}
+                />
                 <div 
                   className={`border-2 border-dashed rounded-xl p-3 text-center transition-colors h-36 flex flex-col justify-center ${
                     artworkFile ? "border-amber-300 bg-amber-50" : "border-neutral-200 hover:border-[#914A8C]/50 hover:bg-neutral-50 cursor-pointer"
@@ -381,6 +393,14 @@ export function PageEditModal({ open, onOpenChange, page, comic, comicId }: Page
                 <Label className={`text-sm font-semibold ${hasFace ? "text-neutral-900" : "text-neutral-400"}`}>
                   Replace Mask
                 </Label>
+                {(page.maskUrl || hasFace) && (
+                  <PageFileInfo
+                    key={page.maskUrl ?? "none"}
+                    kind="mask"
+                    url={page.maskUrl}
+                    fileName={page.maskFileName ?? null}
+                  />
+                )}
                 <div 
                   className={`border-2 border-dashed rounded-xl p-3 text-center transition-colors h-36 flex flex-col justify-center ${
                     !hasFace ? "bg-neutral-100 border-neutral-200 opacity-50 cursor-not-allowed" :
