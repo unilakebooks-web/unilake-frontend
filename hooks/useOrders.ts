@@ -219,5 +219,11 @@ export function useRegenerateOrderPages(orderId: string, watchAgain: () => void)
       queryClient.invalidateQueries({ queryKey: ["admin-order", orderId] });
       queryClient.invalidateQueries({ queryKey: ["admin-orders"] });
     },
+    // A refused or failed restart may still have changed things (a 503 after the rows were
+    // reset): show what is true now instead of a list that still offers the same buttons.
+    onError: () => {
+      watchAgain();
+      queryClient.invalidateQueries({ queryKey: ["admin-order-pages", orderId] });
+    },
   });
 }

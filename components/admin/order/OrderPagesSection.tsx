@@ -192,6 +192,9 @@ function PagesBody({ order }: { order: AdminOrderDetail }) {
     /** Frozen when the dialog opened, so its button cannot change under the admin's cursor. */
     needsForce: boolean;
   } | null>(null);
+  // Open or closed is kept apart from the dialog's content, so while it fades out it still
+  // shows what it showed (not "Restart 0 pages?").
+  const [dialogOpen, setDialogOpen] = useState(false);
   const [dialogError, setDialogError] = useState<string | null>(null);
   const [result, setResult] = useState<RegenerateOrderPagesResult | null>(null);
   const [showReady, setShowReady] = useState(false);
@@ -209,17 +212,24 @@ function PagesBody({ order }: { order: AdminOrderDetail }) {
   // The green "restarted" banner is true only while the restart is running: once the pages
   // have been seen running and are not any more (finished, or failed again), it goes.
   const sawRunning = useRef(false);
+  const resultAt = useRef(0);
   useEffect(() => {
     if (!result) {
       sawRunning.current = false;
+      resultAt.current = 0;
       return;
     }
+    if (resultAt.current === 0) resultAt.current = Date.now();
     const running = data?.pages.some(
       (p) =>
         p.state === "IN_PROGRESS" || p.state === "WAITING" || p.retryRunning,
     );
     if (running) sawRunning.current = true;
-    else if (sawRunning.current) setResult(null);
+    // Gone once the pages were seen running and are not any more, or when a check some time
+    // later finds nothing running (they failed again before a check caught them running).
+    else if (sawRunning.current || Date.now() - resultAt.current > 20_000) {
+      setResult(null);
+    }
   }, [result, data]);
 
   const groups = useMemo(() => {
@@ -286,6 +296,7 @@ function PagesBody({ order }: { order: AdminOrderDetail }) {
           )
         : pages;
     setDialogError(null);
+    setDialogOpen(true);
     setDialog({
       mode: "restart",
       pages: list,
@@ -309,7 +320,7 @@ function PagesBody({ order }: { order: AdminOrderDetail }) {
               ...(dialog.needsForce && { force: true }),
             };
       const outcome = await regenerate.mutateAsync(input);
-      setDialog(null);
+      setDialogOpen(false);
       setResult(outcome);
       if (outcome.queued.length > 0 || outcome.repaired) {
         toast.success(outcome.message ?? "Done.");
@@ -398,7 +409,7 @@ function PagesBody({ order }: { order: AdminOrderDetail }) {
           className="flex flex-wrap items-center gap-3 rounded-xl border border-neutral-200 bg-neutral-50 p-3 text-sm text-neutral-700"
         >
           <p>
-            This page stopped checking by itself after 30 minutes, so the list
+            This tab stopped checking by itself after 30 minutes, so the list
             may be out of date.
           </p>
           <button
@@ -440,6 +451,7 @@ function PagesBody({ order }: { order: AdminOrderDetail }) {
             disabled={regenerate.isPending}
             onClick={() => {
               setDialogError(null);
+              setDialogOpen(true);
               setDialog({
                 mode: "finish",
                 pages: [],
@@ -472,7 +484,7 @@ function PagesBody({ order }: { order: AdminOrderDetail }) {
               onClick={() => setResult(null)}
               aria-label="Dismiss"
               className={cn(
-                "shrink-0 p-1.5 -m-1.5 rounded-lg",
+                "shrink-0 p-2 -m-2 rounded-lg",
                 result.queued.length > 0 || result.repaired
                   ? "text-emerald-700 hover:text-emerald-900"
                   : "text-amber-700 hover:text-amber-900",
@@ -508,9 +520,9 @@ function PagesBody({ order }: { order: AdminOrderDetail }) {
         </div>
       )}
 
-      {inProgress && (
+      {inProgress && !watchStopped && !error && (
         <p className="text-xs text-neutral-500">
-          Pages are being made. Keep this page open: it keeps the server working
+          Pages are being made. Keep this tab open: it keeps the server working
           on them, and it updates by itself.
         </p>
       )}
@@ -583,9 +595,9 @@ function PagesBody({ order }: { order: AdminOrderDetail }) {
       )}
 
       <RegeneratePagesDialog
-        open={dialog !== null}
+        open={dialogOpen}
         onOpenChange={(open) => {
-          if (!open) setDialog(null);
+          if (!open) setDialogOpen(false);
         }}
         mode={dialog?.mode ?? "restart"}
         pages={dialog?.pages ?? []}

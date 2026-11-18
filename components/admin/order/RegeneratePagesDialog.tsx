@@ -19,7 +19,6 @@ interface RegeneratePagesDialogProps {
   /** "restart": the pages below. "finish": every page is ready, move the order on. */
   mode: "restart" | "finish";
   pages: AdminOrderPage[];
-  /** The session failed after payment, so every failed page is restarted, not only these. */
   /** Why every restartable page is restarted together: the book failed, or its payment's pages were never started. */
   groupReason: "failed" | "stalled" | null;
   /** Some page that will be restarted needs "Restart anyway" (a restore restarts every failed page). */
@@ -69,7 +68,7 @@ export function RegeneratePagesDialog({
     <Dialog open={open} onOpenChange={isPending ? undefined : onOpenChange}>
       <DialogContent
         showCloseButton={!isPending}
-        className="sm:max-w-md max-h-[90vh] overflow-y-auto bg-white border border-[#914A8C]/20 shadow-xl rounded-2xl p-6"
+        className="sm:max-w-md max-h-[90dvh] overflow-y-auto bg-white border border-[#914A8C]/20 shadow-xl rounded-2xl p-6"
       >
         <DialogHeader className="space-y-3">
           <div className="flex items-center gap-3">
@@ -144,7 +143,7 @@ export function RegeneratePagesDialog({
               )}
               <p>
                 The customer&rsquo;s book updates by itself when the pages are
-                ready. Keep this page open until they are.
+                ready. Keep this tab open until they are.
               </p>
             </>
           )}
@@ -186,7 +185,7 @@ export function RegeneratePagesDialog({
                 {mode === "finish" ? "Sending…" : "Restarting…"}
               </>
             ) : mode === "finish" ? (
-              "Mark ready and email"
+              "Mark ready and email customer"
             ) : anyForced ? (
               "Restart anyway"
             ) : (
