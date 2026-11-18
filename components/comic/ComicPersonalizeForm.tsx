@@ -32,7 +32,7 @@ import {
 import { uploadToR2 } from "@/app/lib/r2-upload";
 import { saveSession } from "@/app/lib/session-storage";
 import { normalizePhoto } from "@/app/lib/photo-normalize";
-import { checkPhoto } from "@/app/lib/photo-validate";
+import { checkPhoto, warmUpFaceDetector } from "@/app/lib/photo-validate";
 import ImageCropModal from "./ImageCropModal";
 import { PhotoGuidelinesButton } from "./PhotoGuidelines";
 import { MAX_NAME_LENGTH } from "@/lib/dialogueTokens";
@@ -81,6 +81,8 @@ export default function ComicPersonalizeForm({ comic, onSuccess }: ComicPersonal
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
     if (!file) return;
+
+    warmUpFaceDetector();
 
     if (photoPreview) URL.revokeObjectURL(photoPreview);
     setPhotoPreview(null);

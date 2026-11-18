@@ -1,4 +1,4 @@
-import api from "@/app/lib/axios";
+import api, { SERVER_REQUEST_TIMEOUT } from "@/app/lib/axios";
 import type { HeroImage, UploadUrlResponse } from "@/app/types/heroimage";
 
 /**
@@ -55,6 +55,8 @@ export async function getPublicHeroImages(): Promise<HeroImage[]> {
   try {
     const res = await fetch(`${baseURL}/api/public/hero-images`, {
       cache: "no-store", // Always fetch the latest active images
+      // A bare fetch has no limit of its own; without this a stuck backend would hold up the whole home page.
+      signal: SERVER_REQUEST_TIMEOUT ? AbortSignal.timeout(SERVER_REQUEST_TIMEOUT) : undefined,
     });
     if (!res.ok) {
       return [];

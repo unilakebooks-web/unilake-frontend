@@ -40,7 +40,7 @@ import {
 import { uploadToR2 } from "@/app/lib/r2-upload";
 import { saveSession } from "@/app/lib/session-storage";
 import { normalizePhoto } from "@/app/lib/photo-normalize";
-import { checkPhoto } from "@/app/lib/photo-validate";
+import { checkPhoto, warmUpFaceDetector } from "@/app/lib/photo-validate";
 import ImageCropModal from "@/components/comic/ImageCropModal";
 import { MAX_NAME_LENGTH } from "@/lib/dialogueTokens";
 
@@ -100,6 +100,8 @@ export default function NewPhotoForm({ previousSession }: NewPhotoFormProps) {
     async (acceptedFiles: File[]) => {
       const file = acceptedFiles[0];
       if (!file) return;
+
+      warmUpFaceDetector();
 
       if (photoPreview) URL.revokeObjectURL(photoPreview);
       setPhotoPreview(null);
