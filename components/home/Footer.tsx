@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Mail } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { hankenGrotesk } from "@/app/fonts";
-import { scrollToFaqAgain } from "@/lib/scrollToFaqAgain";
+import { scrollToFaq } from "@/lib/scrollToFaq";
 import { usePublicSiteSetting } from "@/hooks/useSiteSettings";
 
 // Used until an admin saves settings, and whenever a field is left blank.
@@ -218,7 +218,7 @@ export default function Footer() {
                     </Link>
                   </li>
                   <li>
-                    <Link href="/#faq" onClick={(e) => scrollToFaqAgain(e, "/#faq", pathname)} className="hover:text-white transition-colors duration-200">
+                    <Link href="/#faq" onClick={(e) => scrollToFaq(e, "/#faq", pathname)} className="hover:text-white transition-colors duration-200">
                       FAQ
                     </Link>
                   </li>
