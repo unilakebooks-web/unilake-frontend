@@ -80,8 +80,8 @@ export function OrderListFilters({
   const hasActiveFilters = search !== "" || status !== "ALL" || sentToPrinter !== "ALL";
 
   return (
-    <div className="flex flex-col sm:flex-row gap-3 items-center bg-white/60 backdrop-blur-sm p-3 rounded-2xl border border-[#914A8C]/15 shadow-sm">
-      <div className="relative flex-1 w-full">
+    <div className="flex flex-col sm:flex-row sm:flex-wrap gap-3 items-center bg-white/60 backdrop-blur-sm p-3 rounded-2xl border border-[#914A8C]/15 shadow-sm">
+      <div className="relative flex-1 w-full sm:min-w-[220px]">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-400" />
         <Input
           placeholder="Search by order ID, customer, phone, AWB, child or comic…"
