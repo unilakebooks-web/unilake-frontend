@@ -1,5 +1,6 @@
 import api from "@/app/lib/axios";
 import type {
+  BulkCouponsResponse,
   Coupon,
   CouponCustomer,
   CouponInput,
@@ -24,6 +25,16 @@ export async function fetchCoupons(filters?: CouponListFilters): Promise<CouponL
 
 export async function createCoupon(payload: CouponInput): Promise<Coupon> {
   const { data } = await api.post<Coupon>("/api/admin/coupons", payload);
+  return data;
+}
+
+/**
+ * Creates `quantity` single-use coupons with the same rules, one generated code each.
+ * The server ignores what does not apply to a batch (a typed code, the kind, a total
+ * limit, a reserved customer, checkout display).
+ */
+export async function createBulkCoupons(payload: CouponInput, quantity: number): Promise<BulkCouponsResponse> {
+  const { data } = await api.post<BulkCouponsResponse>("/api/admin/coupons/bulk", { ...payload, quantity });
   return data;
 }
 

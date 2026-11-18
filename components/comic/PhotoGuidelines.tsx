@@ -83,7 +83,7 @@ export default function PhotoGuidelines({ showImage = true }: PhotoGuidelinesPro
 }
 
 /**
- * "ⓘ Photo guidelines" button that opens the good/bad example image in a
+ * "ⓘ Photo Guidelines - Important" button that opens the good/bad example image in a
  * popup. Sits in the personalize form, just above the consent checkbox, on
  * phones and tablets — where the full guidelines card is moved below the form
  * and would otherwise be out of sight while the parent picks a photo.
@@ -96,10 +96,10 @@ export function PhotoGuidelinesButton({ className = "" }: { className?: string }
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className={`inline-flex items-center gap-1.5 text-sm font-semibold text-[#3F3C95] hover:underline cursor-pointer ${className}`}
+        className={`inline-flex items-center gap-1.5 text-sm font-semibold text-red-600 hover:underline cursor-pointer ${className}`}
       >
         <Info size={16} className="shrink-0" />
-        Photo guidelines
+        Photo Guidelines - Important
       </button>
 
       <Dialog open={open} onOpenChange={setOpen}>

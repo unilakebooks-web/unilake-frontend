@@ -43,6 +43,8 @@ import {
   validateName,
   validatePerCustomer,
   validatePercent,
+  validateQuantity,
+  MAX_BULK_COUPONS,
 } from "./couponFormRules";
 
 export type CouponModalMode = "create" | "edit";
@@ -53,6 +55,8 @@ interface CouponModalProps {
   mode: CouponModalMode;
   initialData: Coupon | null;
   onSave: (payload: CouponInput) => Promise<void>;
+  /** Creates `quantity` single-use coupons with these rules. Create mode only. */
+  onSaveBulk?: (payload: CouponInput, quantity: number) => Promise<void>;
 }
 
 const COVER_OPTIONS: { value: CoverType; label: string }[] = [
@@ -70,11 +74,12 @@ interface CouponFormProps {
   mode: CouponModalMode;
   initialData: Coupon | null;
   onSave: CouponModalProps["onSave"];
+  onSaveBulk: CouponModalProps["onSaveBulk"];
   onClose: () => void;
 }
 
 // Mounted fresh each time the dialog opens, so the fields start from the coupon being edited.
-function CouponForm({ mode, initialData, onSave, onClose }: CouponFormProps) {
+function CouponForm({ mode, initialData, onSave, onSaveBulk, onClose }: CouponFormProps) {
   const isEdit = mode === "edit";
   const c = isEdit ? initialData : null;
 
@@ -109,6 +114,7 @@ function CouponForm({ mode, initialData, onSave, onClose }: CouponFormProps) {
   const [firstOrderOnly, setFirstOrderOnly] = useState(c?.firstOrderOnly ?? false);
   const [isActive, setIsActive] = useState(c?.isActive ?? true);
   const [codeLength, setCodeLength] = useState("8");
+  const [quantity, setQuantity] = useState("1");
 
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -148,6 +154,9 @@ function CouponForm({ mode, initialData, onSave, onClose }: CouponFormProps) {
   const needsCurrency = discountType === "FIXED" || (discountType === "PERCENT" && maxDiscount.trim() !== "");
   const isSingleUse = kind === "SINGLE_USE";
   const showAtCheckoutLocked = isSingleUse || restrictedUser !== null;
+  // Several single-use codes at once: only when the codes are generated and not for one customer.
+  const bulkAvailable = !isEdit && isSingleUse && onSaveBulk !== undefined && code.trim() === "" && restrictedUser === null;
+  const bulkQuantity = bulkAvailable ? Number(quantity) : 1;
   const usedCount = (c?.usage.redeemed ?? 0) + (c?.usage.reserved ?? 0);
 
   // Settings that could cost money if they are a slip of the finger. On edit, only what is
@@ -182,6 +191,7 @@ function CouponForm({ mode, initialData, onSave, onClose }: CouponFormProps) {
     currency: needsCurrency && !currency ? "Choose a currency for this coupon." : null,
     usageLimit: isSingleUse ? null : validateLimit(usageLimit, "Max uses"),
     perCustomerLimit: validatePerCustomer(perCustomerLimit, usageLimit, isSingleUse, firstOrderOnly),
+    quantity: bulkAvailable ? validateQuantity(quantity) : null,
   };
   const emptyRequired = { name: name.trim() === "", percentOff: percentOff.trim() === "", amountOff: amountOff.trim() === "", currency: true };
   const shown = (field: keyof typeof fieldErrors): string | null => {
@@ -265,7 +275,7 @@ function CouponForm({ mode, initialData, onSave, onClose }: CouponFormProps) {
       const typedCode = code.trim();
       const codeField =
         typedCode && typedCode !== (isEdit ? initialData?.code : "") ? { code: typedCode } : {};
-      await onSave({
+      const payload = {
         ...shared,
         ...codeField,
         // Only used when the code field is left empty.
@@ -273,7 +283,9 @@ function CouponForm({ mode, initialData, onSave, onClose }: CouponFormProps) {
         kind,
         // A single-use code is always one use in total.
         usageLimit: isSingleUse ? 1 : orNull(numberOrNull(usageLimit)),
-      });
+      };
+      if (bulkQuantity > 1 && onSaveBulk) await onSaveBulk(payload, bulkQuantity);
+      else await onSave(payload);
       onClose();
     } catch (err) {
       setErrorMessage(friendlyServerMessage(getErrorMessage(err, "Failed to save coupon")));
@@ -347,6 +359,23 @@ function CouponForm({ mode, initialData, onSave, onClose }: CouponFormProps) {
             </select>
             {restrictedUser && <p className={hintClass}>Only this customer can use it.</p>}
           </div>
+          {bulkAvailable && (
+            <div className="max-w-xs">
+              <label className={labelClass} htmlFor="coupon-quantity">How many codes</label>
+              <Input
+                id="coupon-quantity"
+                className="h-10"
+                inputMode="numeric"
+                value={quantity}
+                onChange={(e) => setQuantity(sanitizeDecimal(e.target.value))}
+                {...fieldProps("quantity", "coupon-quantity")}
+              />
+              <FieldError id="coupon-quantity-error" message={shown("quantity")} />
+              {!shown("quantity") && (
+                <p className={hintClass}>Up to {MAX_BULK_COUPONS}. Each gets its own generated code and works once.</p>
+              )}
+            </div>
+          )}
         </FormSection>
 
         <FormSection title="Discount">
@@ -644,7 +673,7 @@ function CouponForm({ mode, initialData, onSave, onClose }: CouponFormProps) {
           </Button>
           <Button type="submit" disabled={isSubmitting} className="rounded-xl bg-[#914A8C] hover:bg-[#914A8C]/90 text-white font-bold h-11 sm:h-10 px-6 flex items-center justify-center gap-2 cursor-pointer">
             {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
-            {riskShown && riskNotes.length > 0 ? "Save anyway" : isEdit ? "Save changes" : "Create coupon"}
+            {riskShown && riskNotes.length > 0 ? "Save anyway" : isEdit ? "Save changes" : bulkQuantity > 1 && Number.isInteger(bulkQuantity) ? `Create ${bulkQuantity} coupons` : "Create coupon"}
           </Button>
         </div>
       </DialogFooter>
@@ -652,7 +681,7 @@ function CouponForm({ mode, initialData, onSave, onClose }: CouponFormProps) {
   );
 }
 
-export function CouponModal({ open, onOpenChange, mode, initialData, onSave }: CouponModalProps) {
+export function CouponModal({ open, onOpenChange, mode, initialData, onSave, onSaveBulk }: CouponModalProps) {
   const title = mode === "edit" ? "Edit Coupon" : "Add Coupon";
 
   return (
@@ -672,7 +701,7 @@ export function CouponModal({ open, onOpenChange, mode, initialData, onSave }: C
           </div>
         </DialogHeader>
         {open && (
-          <CouponForm mode={mode} initialData={initialData} onSave={onSave} onClose={() => onOpenChange(false)} />
+          <CouponForm mode={mode} initialData={initialData} onSave={onSave} onSaveBulk={onSaveBulk} onClose={() => onOpenChange(false)} />
         )}
       </DialogContent>
     </Dialog>

@@ -14,6 +14,7 @@ import {
 import { PublicComicListItem } from "@/app/types/comic";
 import { hankenGrotesk, poppins, protestStrike } from "@/app/fonts";
 import { formatAgeGroup, formatGender } from "@/lib/comicTags";
+import { toImageUrl } from "@/lib/imageUrl";
 
 /** Price as StoryCard already resolved it — null when not sold in the country. */
 export interface QuickViewPrice {
@@ -93,7 +94,7 @@ function CoverSlider({
         {images.map((src, i) => (
           <Image
             key={`${i}-${src}`}
-            src={src}
+            src={toImageUrl(src)}
             alt={hasMany ? `${title} — cover ${i + 1} of ${images.length}` : title}
             fill
             sizes="(max-width: 768px) 92vw, 340px"
@@ -307,7 +308,7 @@ export default function ComicQuickViewModal({
                 disabled={!pricing}
                 className={`hidden md:block mt-6 min-w-[220px] self-start ${PERSONALISE_BUTTON} ${buttonState}`}
               >
-                Personalise
+                Free Preview
               </button>
             </div>
           </div>
@@ -323,7 +324,7 @@ export default function ComicQuickViewModal({
             disabled={!pricing}
             className={`w-full ${PERSONALISE_BUTTON} ${buttonState}`}
           >
-            Personalise
+            Free Preview
           </button>
         </div>
       </DialogContent>

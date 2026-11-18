@@ -115,6 +115,11 @@ export interface CouponInput {
   isActive: boolean;
 }
 
+/** What creating several single-use coupons at once returns: one coupon per generated code. */
+export interface BulkCouponsResponse {
+  coupons: Coupon[];
+}
+
 /** A registered account, as offered when a coupon is reserved for one customer. */
 export interface CouponCustomer {
   id: string;

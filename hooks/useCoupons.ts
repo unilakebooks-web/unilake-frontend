@@ -3,6 +3,7 @@ import { fetchCouponOffers } from "@/app/actions/session";
 import {
   fetchCoupons,
   createCoupon,
+  createBulkCoupons,
   updateCoupon,
   toggleCouponStatus,
   deleteCoupon,
@@ -23,6 +24,17 @@ export function useCreateCoupon() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: createCoupon,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["coupons"] });
+    },
+  });
+}
+
+export function useCreateBulkCoupons() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ payload, quantity }: { payload: CouponInput; quantity: number }) =>
+      createBulkCoupons(payload, quantity),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["coupons"] });
     },

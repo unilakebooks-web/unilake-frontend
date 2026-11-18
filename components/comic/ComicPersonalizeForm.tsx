@@ -178,12 +178,21 @@ export default function ComicPersonalizeForm({ comic, onSuccess }: ComicPersonal
     // Client-side Validation
     // Gender and age are checked explicitly now that they no longer carry a
     // default — before, an untouched dropdown quietly submitted "Boy" and 4.
-    if (!formData.name.trim()) return toast.error("Please enter the child's name");
-    if (!formData.gender) return toast.error("Please select the child's gender");
-    if (!formData.age) return toast.error("Please select the child's age");
-    if (!formData.email) return toast.error("Please enter a notification email");
-    if (!formData.consent) return toast.error("You must agree to the privacy policy");
+    // Everything that is missing is named at once, so the parent does not have
+    // to press the button once per field. A photo still being checked is not
+    // "missing"; it gets its own message below.
+    const missing = [
+      !formData.name.trim() && "child's name",
+      !formData.gender && "gender",
+      !formData.age && "age",
+      !formData.email && "email",
+      !formData.consent && "privacy policy consent",
+      !normalizedPhoto && photoState !== "checking" && "child's photo",
+    ].filter(Boolean);
+    if (missing.length > 0) return toast.error(`Please complete: ${missing.join(", ")}`);
     if (photoState === "checking") return toast.error("Still checking your photo — one moment");
+    // Cannot run: a missing photo is already in `missing` above. Kept so TypeScript
+    // knows the photo is set below.
     if (!normalizedPhoto) return toast.error("Please upload a photo of the child");
 
     setIsLoading(true);
@@ -491,7 +500,7 @@ export default function ComicPersonalizeForm({ comic, onSuccess }: ComicPersonal
             <span>{loadingStep}</span>
           </div>
         ) : (
-          "PERSONALISE"
+          "Click for Free Preview"
         )}
       </button>
 

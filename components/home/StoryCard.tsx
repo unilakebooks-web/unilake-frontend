@@ -10,6 +10,7 @@ import { hankenGrotesk, poppins, protestStrike } from "@/app/fonts";
 import { resolveMrp } from "@/lib/utils";
 import { formatAgeRange } from "@/lib/comicTags";
 import ComicQuickViewModal from "@/components/home/ComicQuickViewModal";
+import { toImageUrl } from "@/lib/imageUrl";
 
 /** Shared by the Personalise link and its disabled stand-in. */
 const PERSONALISE_CLASSES = `
@@ -157,7 +158,6 @@ export default function StoryCard({ comic }: StoryCardProps) {
         alt="Story Card Background"
         fill
         className="pointer-events-none select-none z-0"
-        priority
       />
 
       {/* Book Cover — fills the blackboard, leaving an equal 10px strip of
@@ -189,7 +189,7 @@ export default function StoryCard({ comic }: StoryCardProps) {
         {/* Image, clipped to softly rounded corners. */}
         <div className="absolute inset-0 overflow-hidden rounded-[1.6cqw]">
           <Image
-            src={images[currentImageIndex]}
+            src={toImageUrl(images[currentImageIndex])}
             alt={comic.title}
             fill
             // The box is ~76% of a card that is at most 380px wide.
@@ -231,7 +231,6 @@ export default function StoryCard({ comic }: StoryCardProps) {
         fill
         sizes="(max-width: 640px) 100vw, 380px"
         className="pointer-events-none select-none z-20"
-        priority
       />
 
       {/* White Body Container */}
@@ -383,7 +382,7 @@ export default function StoryCard({ comic }: StoryCardProps) {
               onClick={(e) => e.stopPropagation()}
               className={`${PERSONALISE_CLASSES} hover:brightness-110 active:translate-y-[2px] active:border-b-[2px] cursor-pointer`}
             >
-              Personalise
+              Free Preview
             </Link>
           ) : (
             <button
@@ -391,7 +390,7 @@ export default function StoryCard({ comic }: StoryCardProps) {
               disabled
               className={`${PERSONALISE_CLASSES} opacity-50 cursor-not-allowed pointer-events-none`}
             >
-              Personalise
+              Free Preview
             </button>
           )}
         </div>

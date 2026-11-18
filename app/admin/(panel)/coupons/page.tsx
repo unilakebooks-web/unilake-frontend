@@ -4,6 +4,7 @@ import { useCallback, useState } from "react";
 import {
   useCoupons,
   useCreateCoupon,
+  useCreateBulkCoupons,
   useUpdateCoupon,
   useToggleCouponStatus,
   useDeleteCoupon,
@@ -14,6 +15,7 @@ import { CouponPageHeader } from "@/components/admin/coupon/CouponPageHeader";
 import { CouponTable } from "@/components/admin/coupon/CouponTable";
 import { CouponModal, type CouponModalMode } from "@/components/admin/coupon/CouponModal";
 import { CouponDeleteDialog } from "@/components/admin/coupon/CouponDeleteDialog";
+import { BulkCodesDialog } from "@/components/admin/coupon/BulkCodesDialog";
 import { CouponListFilters } from "@/components/admin/coupon/CouponListFilters";
 import { OrderPagination } from "@/components/admin/order/OrderPagination";
 
@@ -37,6 +39,7 @@ export default function CouponsPage() {
   });
 
   const createMutation = useCreateCoupon();
+  const bulkMutation = useCreateBulkCoupons();
   const updateMutation = useUpdateCoupon();
   const toggleMutation = useToggleCouponStatus();
   const deleteMutation = useDeleteCoupon();
@@ -48,6 +51,8 @@ export default function CouponsPage() {
   }>({ open: false, mode: "create", target: null });
 
   const [deleteTarget, setDeleteTarget] = useState<Coupon | null>(null);
+  // The coupons of the batch just created, shown once so the admin can copy their codes.
+  const [bulkCreated, setBulkCreated] = useState<Coupon[] | null>(null);
 
   const handleSave = async (payload: CouponInput) => {
     if (modalState.mode === "create") {
@@ -57,6 +62,12 @@ export default function CouponsPage() {
       await updateMutation.mutateAsync({ id: modalState.target.id, data: payload });
       toast.success("Coupon updated successfully");
     }
+  };
+
+  const handleSaveBulk = async (payload: CouponInput, quantity: number) => {
+    const { coupons } = await bulkMutation.mutateAsync({ payload, quantity });
+    setBulkCreated(coupons);
+    toast.success(`${coupons.length} coupons created`);
   };
 
   const handleToggle = async (coupon: Coupon) => {
@@ -146,7 +157,10 @@ export default function CouponsPage() {
         mode={modalState.mode}
         initialData={modalState.target}
         onSave={handleSave}
+        onSaveBulk={handleSaveBulk}
       />
+
+      <BulkCodesDialog coupons={bulkCreated} onClose={() => setBulkCreated(null)} />
 
       <CouponDeleteDialog
         key={deleteTarget?.id ?? "none"}

@@ -10,14 +10,16 @@ import FeedbackForm from "@/components/home/FaqFeedback";
 import Footer from "@/components/home/Footer";
 
 import { fetchPublicCustomerReviews, fetchPublicTeamMembers, fetchPublicHowItWorks, fetchPublicFaqs, fetchPublicBlogs } from "@/app/actions/public";
+import { getPublicHeroImages } from "@/app/actions/heroimage";
 
 export default async function Home() {
-  const [reviewsResult, teamResult, howItWorksResult, faqsResult, blogsResult] = await Promise.allSettled([
+  const [reviewsResult, teamResult, howItWorksResult, faqsResult, blogsResult, heroResult] = await Promise.allSettled([
     fetchPublicCustomerReviews(),
     fetchPublicTeamMembers(),
     fetchPublicHowItWorks(),
     fetchPublicFaqs("HOME"),
     fetchPublicBlogs(),
+    getPublicHeroImages(),
   ]);
 
   const reviews = reviewsResult.status === "fulfilled" ? reviewsResult.value : [];
@@ -25,6 +27,8 @@ export default async function Home() {
   const howItWorksData = howItWorksResult.status === "fulfilled" ? howItWorksResult.value : null;
   const homeFaqs = faqsResult.status === "fulfilled" ? faqsResult.value : [];
   const blogs = blogsResult.status === "fulfilled" ? blogsResult.value : [];
+  // Never rejects (it returns [] on failure); undefined only if it somehow did, and Hero then fetches for itself.
+  const heroSlides = heroResult.status === "fulfilled" ? heroResult.value : undefined;
 
   return (
     <main className="min-h-screen bg-[#F8E7D2] overflow-x-hidden">
@@ -34,7 +38,7 @@ export default async function Home() {
 
 
       {/*Home Page */}
-      <Hero />
+      <Hero heroImages={heroSlides} />
       < ChooseStory howItWorks={howItWorksData} />
       {reviews.length > 0 && <HappyCustomers reviews={reviews} />}
       <GoogleReviews />

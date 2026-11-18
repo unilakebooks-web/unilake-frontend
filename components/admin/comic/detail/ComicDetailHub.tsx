@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { ComicDetail } from "@/app/types/comic";
 import { ComicSummaryCard } from "./ComicSummaryCard";
-import { ComicTabBar, TabValue } from "./ComicTabBar";
+import { ComicTabBar, TAB_VALUES, TabValue } from "./ComicTabBar";
 import { ComicInfoEditor } from "./ComicInfoEditor";
 import { ThumbnailManager } from "./ThumbnailManager";
 import { VideoManager } from "./VideoManager";
@@ -20,13 +21,25 @@ interface ComicDetailHubProps {
 }
 
 export function ComicDetailHub({ comic }: ComicDetailHubProps) {
-  const [activeTab, setActiveTab] = useState<TabValue>("overview");
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  // The open tab lives in the URL (?tab=pages), so coming back from the bubble
+  // editor, a refresh or the browser's Back button lands on the same tab.
+  const tabParam = searchParams.get("tab");
+  const [activeTab, setActiveTab] = useState<TabValue>(
+    tabParam && TAB_VALUES.includes(tabParam) ? (tabParam as TabValue) : "overview"
+  );
+
+  const changeTab = (tab: TabValue) => {
+    setActiveTab(tab);
+    router.replace(`?tab=${tab}`, { scroll: false });
+  };
 
   return (
     <div className="space-y-6">
       <ComicSummaryCard comic={comic} />
       
-      <ComicTabBar activeTab={activeTab} onTabChange={setActiveTab} />
+      <ComicTabBar activeTab={activeTab} onTabChange={changeTab} />
       
       <div className="pt-2 animate-in fade-in slide-in-from-bottom-4 duration-500">
         {activeTab === "overview" && (

@@ -198,14 +198,21 @@ export default function NewPhotoForm({ previousSession }: NewPhotoFormProps) {
 
     // Gender and age are checked explicitly now that they no longer fall back
     // to an invented default — matches ComicPersonalizeForm.
-    if (!formData.name.trim()) return toast.error("Please enter the child's name");
-    if (!formData.gender) return toast.error("Please select the child's gender");
-    if (!formData.age) return toast.error("Please select the child's age");
-    if (!formData.email) return toast.error("Please enter a notification email");
-    if (!formData.consent)
-      return toast.error("You must agree to the privacy policy");
+    // Everything that is missing is named at once (same as ComicPersonalizeForm).
+    const missing = [
+      !formData.name.trim() && "child's name",
+      !formData.gender && "gender",
+      !formData.age && "age",
+      !formData.email && "email",
+      !formData.consent && "privacy policy consent",
+      !normalizedPhoto && photoState !== "checking" && "child's photo",
+    ].filter(Boolean);
+    if (missing.length > 0)
+      return toast.error(`Please complete: ${missing.join(", ")}`);
     if (photoState === "checking")
       return toast.error("Still checking your photo — one moment");
+    // Cannot run: a missing photo is already in `missing` above. Kept so TypeScript
+    // knows the photo is set below.
     if (!normalizedPhoto)
       return toast.error("Please upload a photo of the child");
 
