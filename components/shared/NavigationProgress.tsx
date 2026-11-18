@@ -17,7 +17,8 @@ import { usePathname } from "next/navigation";
 
 // A navigation that finishes within this time shows no bar, so fast clicks do not flicker.
 const SHOW_AFTER_MS = 150;
-// If the page has still not changed after this long, stop showing the bar rather than leave it up for ever.
+// If the page has still not changed after this long, stop showing the bar rather than leave it up for ever. The bar
+// also takes this long to fill, so it is nearly full when it gives up.
 const GIVE_UP_AFTER_MS = 30000;
 
 function ProgressBar() {
@@ -70,6 +71,7 @@ function ProgressBar() {
     <>
       <div
         aria-hidden="true"
+        // z-[200]: above the header, the announcement banner and the phone menu drawer (z-[101]).
         className={`pointer-events-none fixed inset-x-0 top-0 z-[200] h-[3px] transition-opacity duration-200 ${
           visible ? "opacity-100" : "opacity-0"
         }`}
