@@ -102,7 +102,7 @@ export function OrderListFilters({
 
       <Select value={status} onValueChange={(val) => setStatus(val || "ALL")}>
         <SelectTrigger className="w-full sm:w-[190px] h-10 rounded-xl bg-white border-neutral-200">
-          <SelectValue placeholder="Status" />
+          <SelectValue placeholder="Status">{status === "ALL" ? "All statuses" : STATUS_LABELS[status as OrderStatus]}</SelectValue>
         </SelectTrigger>
         <SelectContent className="rounded-xl">
           <SelectItem value="ALL">All statuses</SelectItem>
@@ -127,7 +127,7 @@ export function OrderListFilters({
 
       <Select value={sortBy} onValueChange={(val) => setSortBy((val as OrderSortBy) || "createdAt")}>
         <SelectTrigger className="w-full sm:w-[150px] h-10 rounded-xl bg-white border-neutral-200">
-          <SelectValue placeholder="Sort by" />
+          <SelectValue placeholder="Sort by">{sortBy === "updatedAt" ? "Last updated" : "Created"}</SelectValue>
         </SelectTrigger>
         <SelectContent className="rounded-xl">
           <SelectItem value="createdAt">Created</SelectItem>
