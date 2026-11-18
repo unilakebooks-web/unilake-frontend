@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
+import { preload } from "react-dom";
 import "./globals.css";
+import "./fonts.css";
 import { AuthProvider } from "@/app/contexts/AuthContext";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -12,7 +14,6 @@ import {
   chauPhilomeneOne,
   hankenGrotesk,
 } from "@/app/fonts";
-import { Geist } from "next/font/google";
 import { cn } from "@/lib/utils";
 import {
   getSiteSetting,
@@ -22,8 +23,6 @@ import {
   DEFAULT_TITLE,
   DEFAULT_DESCRIPTION,
 } from "@/lib/seo";
-
-const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
 /**
  * Site-wide metadata, read from the admin's Settings row.
@@ -73,15 +72,33 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
+// next/font used to preload the Latin file of each font declared here; with the fonts self-hosted that is done by hand.
+const PRELOADED_FONTS = [
+  "geist-caa3a2e1cccd8315",
+  "geist-mono-797e433ab948586e",
+  "poppins-c875c6f5d3e977ac", // 300
+  "poppins-a218039a3287bcfd", // 400
+  "poppins-8e6fa89aa22d24ec", // 500
+  "poppins-e2334d715941921e", // 600
+  "poppins-47fe1b7cd6e6ed85", // 700
+  "poppins-829ba4228c966254", // 800
+  "poppins-4b766aa38fdaaae3", // 900
+  "chau-philomene-one-9e4592de12c05293",
+  "hanken-grotesk-c47649aa31f9e140",
+];
+
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  for (const f of PRELOADED_FONTS) {
+    preload(`/fonts/${f}.woff2`, { as: "font", type: "font/woff2", crossOrigin: "anonymous" });
+  }
   return (
     <html
       lang="en"
-      className={cn(geistSans.variable, geistMono.variable, poppins.variable, chauPhilomeneOne.variable, hankenGrotesk.variable, "font-sans", geist.variable)}
+      className={cn(geistSans.variable, geistMono.variable, poppins.variable, chauPhilomeneOne.variable, hankenGrotesk.variable, "font-sans", "ffv-sans")}
     >
       <body className={`${poppins.className} min-h-screen`}>
         <PublicQueryProvider>
