@@ -14,7 +14,7 @@ import {
   X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { cn, getErrorCode } from "@/lib/utils";
 import { useAdminOrderPages, useRegenerateOrderPages } from "@/hooks/useOrders";
 import type {
   AdminOrderDetail,
@@ -332,7 +332,8 @@ function PagesBody({ order }: { order: AdminOrderDetail }) {
       setDialogError(message ?? "Could not restart the pages.");
       // The server found a page cooling down that the dialog did not know about (it changed
       // while the dialog was open): offer the override now instead of repeating the refusal.
-      if (message?.includes("Restart anyway")) {
+      // Only the cooldown refusal (its own code), never a queue failure whose text also says it.
+      if (getErrorCode(err) === "COOLING_DOWN") {
         setDialog((d) => (d ? { ...d, needsForce: true } : d));
       }
     }
