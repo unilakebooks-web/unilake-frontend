@@ -20,7 +20,7 @@ export function PageCard({ page, displayNumber, onEdit, onDelete }: PageCardProp
   const router = useRouter();
 
   return (
-    <div className="relative bg-white rounded-2xl border border-neutral-200 shadow-sm overflow-hidden flex flex-col group transition-all hover:border-[#914A8C]/30 hover:shadow-md">
+    <div className="relative bg-white rounded-2xl border border-neutral-200 shadow-sm overflow-hidden flex flex-col h-full group transition-all hover:border-[#914A8C]/30 hover:shadow-md">
       {/* Thumbnail Area */}
       <div className="relative h-56 flex items-center justify-center bg-neutral-100 overflow-hidden shrink-0 border-b border-neutral-100 p-2">
         {page.artworkUrl ? (
