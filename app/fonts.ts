@@ -1,56 +1,25 @@
-import {
-  Geist,
-  Geist_Mono,
-  Poppins,
-  Chau_Philomene_One,
-  Hanken_Grotesk,
-  Protest_Strike,
-  Boogaloo,
-} from "next/font/google";
 import localFont from "next/font/local";
 
-export const geistSans = Geist({
-  subsets: ["latin"],
-  variable: "--font-geist-sans",
-});
+// The Google fonts below are self-hosted (public/fonts, rules in app/fonts.css) so a build does not depend on
+// Google Fonts being reachable. Each export keeps the { className, variable } shape that next/font returned.
+type SelfHostedFont = { className: string; variable: string };
 
-export const geistMono = Geist_Mono({
-  subsets: ["latin"],
-  variable: "--font-geist-mono",
-});
+export const geistSans: SelfHostedFont = { className: "ff-geist", variable: "ffv-geist-sans" };
 
-export const poppins = Poppins({
-  subsets: ["latin"],
-  variable: "--font-poppins",
-  weight: ["300", "400", "500", "600", "700", "800", "900"],
-});
+export const geistMono: SelfHostedFont = { className: "ff-geist-mono", variable: "ffv-geist-mono" };
 
-export const chauPhilomeneOne = Chau_Philomene_One({
-  subsets: ["latin"],
-  weight: "400",
-  variable: "--font-chau-philomene-one",
-});
+export const poppins: SelfHostedFont = { className: "ff-poppins", variable: "ffv-poppins" };
 
-export const hankenGrotesk = Hanken_Grotesk({
-  subsets: ["latin"],
-  variable: "--font-hanken-grotesk",
-  weight: ["300", "400", "500", "600", "700", "800", "900"],
-});
+export const chauPhilomeneOne: SelfHostedFont = { className: "ff-chau", variable: "ffv-chau-philomene-one" };
 
-export const protestStrike = Protest_Strike({
-  subsets: ["latin"],
-  weight: "400",
-  variable: "--font-protest-strike",
-});
+export const hankenGrotesk: SelfHostedFont = { className: "ff-hanken", variable: "ffv-hanken-grotesk" };
+
+export const protestStrike: SelfHostedFont = { className: "ff-protest", variable: "ffv-protest-strike" };
 
 // FAQ's & Feedback headings (home + comic page bands) and the
 // "Feedback & Suggestion" sub-heading. Google ships a single 400 weight, so
 // never pair it with font-bold/extrabold — the browser would fake a bold.
-export const boogaloo = Boogaloo({
-  subsets: ["latin"],
-  weight: "400",
-  variable: "--font-boogaloo",
-});
+export const boogaloo: SelfHostedFont = { className: "ff-boogaloo", variable: "ffv-boogaloo" };
 
 // Checkout box on the preview page (PricingSection — the full section and the
 // floating CheckoutBar). Licensed font, so it is self-hosted from
