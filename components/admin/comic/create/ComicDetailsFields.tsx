@@ -159,7 +159,7 @@ export function ComicDetailsFields({ form }: ComicDetailsFieldsProps) {
               <div className="space-y-0.5">
                 <FormLabel className="text-base font-semibold text-neutral-900">Bestseller Badge</FormLabel>
                 <FormDescription className="text-xs text-neutral-500">
-                  Highlight this comic as a bestseller on the storefront.
+                  Shows a Bestseller badge on the cover. It does not change the order; use Arrange Books.
                 </FormDescription>
               </div>
               <FormControl>
