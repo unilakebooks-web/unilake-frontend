@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
+import { scrollToFaqAgain } from "@/lib/scrollToFaqAgain";
 import { Heart, Search, User, ShoppingBag, ChevronDown, Settings, LogOut, Loader2, Menu, X } from "lucide-react";
 import { useAuth } from "@/app/hooks/useAuth";
 import { UserRole } from "@/app/types/auth";
@@ -162,7 +163,7 @@ export default function Header({ topOffset = 0, hideBulbForced = false, flatBack
         <ul className="relative hidden lg:flex items-center justify-center gap-6 xl:gap-8 2xl:gap-10 text-white text-[15px] font-medium tracking-wide select-none whitespace-nowrap">
           {NAV_LINKS.map((item) => (
             <li key={item.name} className={`${isActive(item.href) ? "text-[#FFD54A]" : "hover:text-[#FFD54A]"} cursor-pointer transition-colors duration-200`}>
-              <Link href={item.href}>{item.name}</Link>
+              <Link href={item.href} onClick={(e) => scrollToFaqAgain(e, item.href, pathname)}>{item.name}</Link>
             </li>
           ))}
           {/* Admin only, and only once the sign-in check has finished. It is placed to the right of the row, out of the
@@ -400,7 +401,10 @@ export default function Header({ topOffset = 0, hideBulbForced = false, flatBack
             <Link
               key={item.name} 
               href={item.href} 
-              onClick={() => setIsMobileMenuOpen(false)}
+              onClick={(e) => {
+                scrollToFaqAgain(e, item.href, pathname);
+                setIsMobileMenuOpen(false);
+              }}
               className={`py-2.5 px-4 font-medium rounded-xl transition-colors text-sm ${isActive(item.href) ? "text-[#FFD54A] bg-white/10" : "text-white hover:bg-white/10"}`}
             >
               {item.name}

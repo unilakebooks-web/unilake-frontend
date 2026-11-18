@@ -3,7 +3,9 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Mail } from "lucide-react";
+import { usePathname } from "next/navigation";
 import { hankenGrotesk } from "@/app/fonts";
+import { scrollToFaqAgain } from "@/lib/scrollToFaqAgain";
 import { usePublicSiteSetting } from "@/hooks/useSiteSettings";
 
 // Used until an admin saves settings, and whenever a field is left blank.
@@ -15,6 +17,7 @@ const FALLBACK_INSTAGRAM = "https://instagram.com";
 const FALLBACK_EMAIL = "contact@unilake.com";
 
 export default function Footer() {
+  const pathname = usePathname();
   // Deliberately no loading state: the fallbacks render immediately and are
   // swapped once the query resolves. A skeleton in the footer would be more
   // distracting than a brief default.
@@ -215,7 +218,7 @@ export default function Footer() {
                     </Link>
                   </li>
                   <li>
-                    <Link href="/#faq" className="hover:text-white transition-colors duration-200">
+                    <Link href="/#faq" onClick={(e) => scrollToFaqAgain(e, "/#faq", pathname)} className="hover:text-white transition-colors duration-200">
                       FAQ
                     </Link>
                   </li>
