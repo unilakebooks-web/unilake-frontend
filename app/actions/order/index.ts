@@ -1,5 +1,6 @@
 import api from "@/app/lib/axios";
 import type {
+  AdminOrderPages,
   AdminOrderDetail,
   AdminOrdersFilters,
   AdminOrdersResponse,
@@ -7,6 +8,8 @@ import type {
   ConfirmDimensionsResponse,
   LabelResponse,
   RefreshTrackingResponse,
+  RegenerateOrderPagesInput,
+  RegenerateOrderPagesResult,
   RetryShiprocketResponse,
   SetSentToPrinterResponse,
   UserOrderDetail,
@@ -128,6 +131,37 @@ export async function setSentToPrinter(
 export async function refreshTracking(orderId: string): Promise<RefreshTrackingResponse> {
   const { data } = await api.post<RefreshTrackingResponse>(
     `/api/admin/orders/${orderId}/refresh-tracking`
+  );
+  return data;
+}
+
+// ============================================================
+// ADMIN: pages of a paid order (restart stuck or failed pages)
+// ============================================================
+
+// `wait` (seconds, at most 25) holds the request while something is in progress and
+// nothing has changed since `sig`: a long poll that also keeps the server awake.
+export async function fetchAdminOrderPages(
+  orderId: string,
+  opts: { wait?: number; sig?: string } = {}
+): Promise<AdminOrderPages> {
+  const params = new URLSearchParams();
+  if (opts.wait) params.set("wait", String(opts.wait));
+  if (opts.sig) params.set("sig", opts.sig);
+  const query = params.toString();
+  const { data } = await api.get<AdminOrderPages>(
+    `/api/admin/orders/${orderId}/pages${query ? `?${query}` : ""}`
+  );
+  return data;
+}
+
+export async function regenerateOrderPages(
+  orderId: string,
+  input: RegenerateOrderPagesInput
+): Promise<RegenerateOrderPagesResult> {
+  const { data } = await api.post<RegenerateOrderPagesResult>(
+    `/api/admin/orders/${orderId}/regenerate-pages`,
+    input
   );
   return data;
 }
