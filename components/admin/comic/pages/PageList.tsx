@@ -218,7 +218,7 @@ export function PageList({ comic }: PageListProps) {
       {pagesRemaining > 0 && (
         <Button
           onClick={() => setCreateModalOpen(true)}
-          className="sticky bottom-4 z-10 flex w-fit ml-auto mt-6 h-10 rounded-xl bg-[#914A8C] hover:bg-[#7a3e75] text-white font-semibold shadow-lg px-5"
+          className="sticky bottom-4 z-40 flex w-fit ml-auto mt-6 h-10 rounded-xl bg-[#914A8C] hover:bg-[#7a3e75] text-white font-semibold shadow-lg px-5"
         >
           <Plus className="w-4 h-4 mr-2" />
           Add Page
