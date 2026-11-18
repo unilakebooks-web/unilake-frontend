@@ -20,7 +20,7 @@ export function PageCard({ page, displayNumber, onEdit, onDelete }: PageCardProp
   const router = useRouter();
 
   return (
-    <div className="relative bg-white rounded-2xl border border-neutral-200 shadow-sm overflow-hidden flex flex-col group transition-all hover:border-[#914A8C]/30 hover:shadow-md">
+    <div className="relative bg-white rounded-2xl border border-neutral-200 shadow-sm overflow-hidden flex flex-col h-full group transition-all hover:border-[#914A8C]/30 hover:shadow-md">
       {/* Thumbnail Area */}
       <div className="relative h-56 flex items-center justify-center bg-neutral-100 overflow-hidden shrink-0 border-b border-neutral-100 p-2">
         {page.artworkUrl ? (
@@ -56,7 +56,7 @@ export function PageCard({ page, displayNumber, onEdit, onDelete }: PageCardProp
       <div className="p-3 pb-4 flex flex-col flex-1">
         
         {/* Status Indicators */}
-        <div className="grid grid-cols-2 gap-2 mb-3">
+        <div className="flex flex-wrap gap-2 mb-3">
           <div className="flex items-center gap-1.5 text-xs font-medium text-neutral-600 bg-neutral-50 p-1.5 rounded-lg border border-neutral-100">
             {page.artworkUrl ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <X className="w-3.5 h-3.5 text-red-400" />}
             <span className="truncate">Artwork</span>
@@ -69,7 +69,6 @@ export function PageCard({ page, displayNumber, onEdit, onDelete }: PageCardProp
           )}
           <div className={cn(
             "flex items-center gap-1.5 text-xs font-medium p-1.5 rounded-lg border",
-            !page.hasFace ? "col-span-2" : "",
             page.bubbles.length > 0 ? "bg-blue-50 border-blue-100 text-blue-700" : "bg-neutral-50 border-neutral-100 text-neutral-600"
           )}>
             <MessageSquare className="w-3.5 h-3.5" />

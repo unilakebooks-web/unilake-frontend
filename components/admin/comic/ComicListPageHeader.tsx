@@ -1,5 +1,5 @@
 import { useRouter } from "next/navigation";
-import { BookOpen, Plus } from "lucide-react";
+import { ArrowUpDown, BookOpen, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export function ComicListPageHeader() {
@@ -21,7 +21,15 @@ export function ComicListPageHeader() {
         </div>
       </div>
 
-      <div className="flex items-center gap-3">
+      <div className="flex flex-wrap items-center gap-3">
+        <Button
+          variant="outline"
+          onClick={() => router.push("/admin/comics/arrange")}
+          className="rounded-xl font-semibold h-11 px-5"
+        >
+          <ArrowUpDown className="w-5 h-5 mr-2" />
+          Arrange Books
+        </Button>
         <Button
           onClick={() => router.push("/admin/comics/new")}
           className="rounded-xl bg-[#914A8C] hover:bg-[#7a3e75] text-white shadow-sm font-semibold h-11 px-5 transition-all active:scale-95"

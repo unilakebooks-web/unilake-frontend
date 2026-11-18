@@ -31,6 +31,7 @@ export interface AdminOrdersFilters {
   search?: string;
   sortBy?: OrderSortBy;
   sortOrder?: SortOrder;
+  sentToPrinter?: "sent" | "not_sent";
 }
 
 /**
@@ -69,6 +70,8 @@ export interface AdminOrderRow {
   courierName: string | null;
   shippedAt: string | null;
   deliveredAt: string | null;
+  /** When the PDF was sent to the printer; null when not yet. */
+  sentToPrinterAt: string | null;
   childName: string | null;
   comicTitle: string;
   /** Null when page 1 has not generated yet — render a placeholder, not the template art. */
@@ -188,7 +191,11 @@ export interface AdminOrderDetail {
     pickupGeneratedAt: string | null;
     shippedAt: string | null;
     deliveredAt: string | null;
+    sentToPrinterAt: string | null;
   };
+
+  /** Decided by the server (print-ready PDF exists, order not cancelled). */
+  canMarkSentToPrinter: boolean;
 
   session: {
     id: string;
@@ -333,6 +340,11 @@ export interface TrackActivity {
   shiprocketStatusLabel: string;
 }
 
+export interface SetSentToPrinterResponse {
+  id: string;
+  sentToPrinterAt: string | null;
+}
+
 export interface RefreshTrackingResponse {
   shiprocket: {
     /** "pending" means no courier scans yet — normal right after AWB assignment. */
@@ -354,4 +366,88 @@ export interface RefreshTrackingResponse {
     shippedAt: string | null;
     deliveredAt: string | null;
   };
+}
+
+// ============================================================
+// ADMIN: pages of a paid order (restart stuck or failed pages)
+// ============================================================
+
+export type AdminPageStateName =
+  | "READY"
+  | "BLOCKED" // a finished variant exists, but a newer retry is stuck and holds the book back
+  | "WAITING"
+  | "IN_PROGRESS"
+  | "STUCK"
+  | "FAILED"
+  | "NOT_STARTED";
+
+export interface AdminOrderPage {
+  pageNumber: number;
+  isPreviewPage: boolean;
+  state: AdminPageStateName;
+  /** The server's verdict: nothing is offered when the order or the queue does not allow it. */
+  restartable: boolean;
+  /** Needs "Restart anyway": the page may still be running at the image service. */
+  requiresForce: boolean;
+  cooldownEndsAt: string | null;
+  lastError: string | null;
+  lastUpdatedAt: string | null;
+  /** A finished page with a retry that is running. */
+  retryRunning: boolean;
+  /** The page goes through the image service (RunPod), so a restart can spend credit. */
+  usesImageService: boolean;
+}
+
+export interface AdminOrderPages {
+  orderId: string;
+  sessionId: string;
+  orderStatus: OrderStatus;
+  sessionStatus: string;
+  canRegenerate: boolean;
+  blockedReason: string | null;
+  queueAvailable: boolean;
+  /** Every page is finished but the order never moved on. */
+  needsRepair: boolean;
+  signature: string;
+  summary: {
+    total: number;
+    ready: number;
+    waiting: number;
+    inProgress: number;
+    stuck: number;
+    blocked: number;
+    failed: number;
+    notStarted: number;
+  };
+  pages: AdminOrderPage[];
+}
+
+export interface RegenerateOrderPagesInput {
+  pageNumbers?: number[];
+  force?: boolean;
+  /** "Finish this order": only move the order on, never restart a page. */
+  repairOnly?: boolean;
+}
+
+export type RegenerateSkipReason =
+  | "FINISHED"
+  | "ALREADY_RUNNING"
+  | "CHANGED"
+  | "COOLING_DOWN"
+  | "NOT_IN_BOOK";
+
+export interface RegenerateOrderPagesResult {
+  queued: { pageNumber: number; pageVersionId: string }[];
+  skipped: {
+    pageNumber: number;
+    reason: RegenerateSkipReason;
+    message: string;
+    cooldownEndsAt?: string;
+  }[];
+  notTouched: { finished: number; running: number };
+  sessionRestored: boolean;
+  /** More pages were restarted than were named (a failed session restarts all its failed pages). */
+  expanded: boolean;
+  repaired: boolean;
+  message: string | null;
 }

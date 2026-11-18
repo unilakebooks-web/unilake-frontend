@@ -214,6 +214,23 @@ export function PageList({ comic }: PageListProps) {
         </DndContext>
       )}
 
+      {/* Sticky so Add Page stays reachable on a long list; the header button is unchanged. */}
+      {pagesRemaining > 0 && (
+        <Button
+          onClick={() => setCreateModalOpen(true)}
+          className="sticky bottom-4 z-40 flex w-fit ml-auto mt-6 h-10 rounded-xl bg-[#914A8C] hover:bg-[#7a3e75] text-white font-semibold shadow-lg px-5"
+        >
+          <Plus className="w-4 h-4 mr-2" />
+          Add Page
+        </Button>
+      )}
+
+      {pagesRemaining === 0 && (
+        <p className="mt-6 text-xs font-medium text-neutral-500">
+          All {comic.pageCount} pages are created. To add more, raise the page count on the Overview tab.
+        </p>
+      )}
+
       <PageCreateModal 
         open={createModalOpen} 
         onOpenChange={setCreateModalOpen} 

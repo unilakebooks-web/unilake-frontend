@@ -5,6 +5,7 @@ import {
   updateTeamMember,
   toggleTeamMemberStatus,
   deleteTeamMember,
+  reorderTeamMembers,
 } from "@/app/actions/teamMember";
 import { CreateTeamMemberPayload, UpdateTeamMemberPayload } from "@/app/types/teamMember";
 
@@ -56,6 +57,19 @@ export function useDeleteTeamMember() {
     mutationFn: deleteTeamMember,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-team-members"] });
+    },
+  });
+}
+
+export function useReorderTeamMembers() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: reorderTeamMembers,
+    // The answer is the full list in the saved order: put it straight in the
+    // cache so the screen does not flash while a refetch runs.
+    onSuccess: (members) => {
+      queryClient.setQueryData(["admin-team-members"], members);
     },
   });
 }

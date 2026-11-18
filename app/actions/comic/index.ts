@@ -120,3 +120,8 @@ export async function fetchPublicComic(comicId: string): Promise<PublicComicDeta
   return data;
 }
 
+// Saves the website order of the published books (answers with their saved numbers).
+export async function reorderComics(orderedIds: string[]): Promise<{ id: string; sortOrder: number }[]> {
+  const { data } = await api.patch<{ id: string; sortOrder: number }[]>("/api/admin/comics/reorder", { orderedIds });
+  return data;
+}

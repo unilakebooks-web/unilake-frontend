@@ -3,6 +3,8 @@
 import { TeamMember } from "@/app/types/teamMember";
 import { Users, Trash2, Edit2, Briefcase, Camera, MessageCircle } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
+import { SortableTeamMemberList } from "./SortableTeamMemberList";
+import { SortableTeamMemberItem } from "./SortableTeamMemberItem";
 
 interface TeamMemberTableProps {
   members: TeamMember[];
@@ -11,6 +13,7 @@ interface TeamMemberTableProps {
   onEdit: (member: TeamMember) => void;
   onDelete: (member: TeamMember) => void;
   onAddFirst: () => void;
+  onReorder: (members: TeamMember[]) => void;
 }
 
 export function TeamMemberTable({
@@ -20,6 +23,7 @@ export function TeamMemberTable({
   onEdit,
   onDelete,
   onAddFirst,
+  onReorder,
 }: TeamMemberTableProps) {
   if (members.length === 0) {
     return (
@@ -44,11 +48,13 @@ export function TeamMemberTable({
   }
 
   return (
+    <SortableTeamMemberList members={members} onReorder={onReorder}>
     <div className="space-y-3">
       {members.map((member) => {
         const isToggling = togglingId === member.id;
         
         return (
+          <SortableTeamMemberItem key={member.id} id={member.id} label={member.name}>
           <div
             key={member.id}
             className={`
@@ -130,8 +136,10 @@ export function TeamMemberTable({
               </div>
             </div>
           </div>
+          </SortableTeamMemberItem>
         );
       })}
     </div>
+    </SortableTeamMemberList>
   );
 }

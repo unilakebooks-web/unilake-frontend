@@ -19,6 +19,7 @@ interface OrderListFiltersProps {
     status?: OrderStatus;
     sortBy: OrderSortBy;
     sortOrder: SortOrder;
+    sentToPrinter?: "sent" | "not_sent";
   }) => void;
   /**
    * Seeds the status dropdown on first render, so a link like
@@ -31,6 +32,13 @@ interface OrderListFiltersProps {
    */
   initialStatus?: OrderStatus;
 }
+
+// The closed dropdown shows these (not the raw values "ALL" / "not_sent").
+const SENT_TO_PRINTER_LABELS: Record<"ALL" | "sent" | "not_sent", string> = {
+  ALL: "Any printer status",
+  sent: "Sent to printer",
+  not_sent: "Not sent",
+};
 
 const STATUS_LABELS: Record<OrderStatus, string> = {
   CREATED: "Awaiting payment",
@@ -50,6 +58,7 @@ export function OrderListFilters({
 }: OrderListFiltersProps) {
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState<string>(initialStatus ?? "ALL");
+  const [sentToPrinter, setSentToPrinter] = useState<string>("ALL");
   const [sortBy, setSortBy] = useState<OrderSortBy>("createdAt");
   const [sortOrder, setSortOrder] = useState<SortOrder>("desc");
 
@@ -60,18 +69,19 @@ export function OrderListFilters({
       onFiltersChange({
         search: search.trim() || undefined,
         status: status === "ALL" ? undefined : (status as OrderStatus),
+        sentToPrinter: sentToPrinter === "ALL" ? undefined : (sentToPrinter as "sent" | "not_sent"),
         sortBy,
         sortOrder,
       });
     }, 400);
     return () => clearTimeout(handler);
-  }, [search, status, sortBy, sortOrder, onFiltersChange]);
+  }, [search, status, sentToPrinter, sortBy, sortOrder, onFiltersChange]);
 
-  const hasActiveFilters = search !== "" || status !== "ALL";
+  const hasActiveFilters = search !== "" || status !== "ALL" || sentToPrinter !== "ALL";
 
   return (
-    <div className="flex flex-col sm:flex-row gap-3 items-center bg-white/60 backdrop-blur-sm p-3 rounded-2xl border border-[#914A8C]/15 shadow-sm">
-      <div className="relative flex-1 w-full">
+    <div className="flex flex-col sm:flex-row sm:flex-wrap gap-3 items-center bg-white/60 backdrop-blur-sm p-3 rounded-2xl border border-[#914A8C]/15 shadow-sm">
+      <div className="relative flex-1 w-full sm:min-w-[220px]">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-400" />
         <Input
           placeholder="Search by order ID, customer, phone, AWB, child or comic…"
@@ -92,7 +102,7 @@ export function OrderListFilters({
 
       <Select value={status} onValueChange={(val) => setStatus(val || "ALL")}>
         <SelectTrigger className="w-full sm:w-[190px] h-10 rounded-xl bg-white border-neutral-200">
-          <SelectValue placeholder="Status" />
+          <SelectValue placeholder="Status">{status === "ALL" ? "All statuses" : STATUS_LABELS[status as OrderStatus]}</SelectValue>
         </SelectTrigger>
         <SelectContent className="rounded-xl">
           <SelectItem value="ALL">All statuses</SelectItem>
@@ -104,9 +114,20 @@ export function OrderListFilters({
         </SelectContent>
       </Select>
 
+      <Select value={sentToPrinter} onValueChange={(val) => setSentToPrinter(val || "ALL")}>
+        <SelectTrigger className="w-full sm:w-[190px] h-10 rounded-xl bg-white border-neutral-200">
+          <SelectValue placeholder="Sent to printer">{SENT_TO_PRINTER_LABELS[sentToPrinter as keyof typeof SENT_TO_PRINTER_LABELS]}</SelectValue>
+        </SelectTrigger>
+        <SelectContent className="rounded-xl">
+          <SelectItem value="ALL">{SENT_TO_PRINTER_LABELS.ALL}</SelectItem>
+          <SelectItem value="sent">{SENT_TO_PRINTER_LABELS.sent}</SelectItem>
+          <SelectItem value="not_sent">{SENT_TO_PRINTER_LABELS.not_sent}</SelectItem>
+        </SelectContent>
+      </Select>
+
       <Select value={sortBy} onValueChange={(val) => setSortBy((val as OrderSortBy) || "createdAt")}>
         <SelectTrigger className="w-full sm:w-[150px] h-10 rounded-xl bg-white border-neutral-200">
-          <SelectValue placeholder="Sort by" />
+          <SelectValue placeholder="Sort by">{sortBy === "updatedAt" ? "Last updated" : "Created"}</SelectValue>
         </SelectTrigger>
         <SelectContent className="rounded-xl">
           <SelectItem value="createdAt">Created</SelectItem>
@@ -133,6 +154,7 @@ export function OrderListFilters({
           onClick={() => {
             setSearch("");
             setStatus("ALL");
+            setSentToPrinter("ALL");
           }}
           className="h-10 px-3 text-neutral-500 hover:text-neutral-900 rounded-xl shrink-0"
         >
