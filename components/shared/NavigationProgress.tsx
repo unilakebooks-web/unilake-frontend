@@ -9,6 +9,10 @@ import { usePathname } from "next/navigation";
  * Pages that are built on the server on every visit show nothing until the server answers, so a slow answer
  * looked like a button that did nothing. Quick navigations never show the bar (see SHOW_AFTER_MS), and neither do
  * links that stay on the same page (#faq, ?tab=), links that open elsewhere, and clicks with a modifier key.
+ *
+ * Limits, on purpose: it reacts to clicks on links only, not to buttons that navigate from code (router.push). It
+ * cannot tell a click that leads nowhere (the link redirects straight back to this page, or a handler cancels the
+ * navigation) from a slow one, so in that case it clears itself after GIVE_UP_AFTER_MS.
  */
 
 // A navigation that finishes within this time shows no bar, so fast clicks do not flicker.
@@ -41,9 +45,20 @@ function ProgressBar() {
       giveUpTimer = window.setTimeout(() => setPending(false), GIVE_UP_AFTER_MS);
     };
 
+    // A page restored from the browser's back-forward cache comes back exactly as it was left, including a pending bar.
+    const onPageShow = (event: PageTransitionEvent) => {
+      if (!event.persisted) return;
+      window.clearTimeout(showTimer);
+      window.clearTimeout(giveUpTimer);
+      setWaitedLongEnough(false);
+      setPending(false);
+    };
+
     document.addEventListener("click", onClick);
+    window.addEventListener("pageshow", onPageShow);
     return () => {
       document.removeEventListener("click", onClick);
+      window.removeEventListener("pageshow", onPageShow);
       window.clearTimeout(showTimer);
       window.clearTimeout(giveUpTimer);
     };

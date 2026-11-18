@@ -6,8 +6,10 @@ const baseURL = process.env.NEXT_PUBLIC_AUTH_URL || "http://localhost:8080";
 // Calls made while a page is built on the server must not hang it for ever (before this a stuck backend call kept
 // the page waiting until the hosting platform cut it off). Longer than the slowest backend wake-up seen in a week of
 // logs (14 s), so a slow but real answer is still used. The browser keeps no limit: uploads and the admin restart
-// are slow on purpose.
+// are slow on purpose. Nor does `next build`: pages that swallow a failed fetch would otherwise be built empty and
+// stay that way until the next deploy, so the build keeps waiting for the backend as it always did.
 const SERVER_REQUEST_TIMEOUT_MS = 20000;
+const isServerRequestWithLimit = typeof window === "undefined" && process.env.NEXT_PHASE !== "phase-production-build";
 
 export const api = axios.create({
   baseURL,
@@ -15,7 +17,7 @@ export const api = axios.create({
   headers: {
     "Content-Type": "application/json",
   },
-  timeout: typeof window === "undefined" ? SERVER_REQUEST_TIMEOUT_MS : 0,
+  timeout: isServerRequestWithLimit ? SERVER_REQUEST_TIMEOUT_MS : 0,
 });
 
 api.interceptors.response.use(
@@ -48,7 +50,8 @@ api.interceptors.response.use(
     }
     return Promise.reject({
       code: error.code || "NETWORK_ERROR",
-      message: error.message || "Network request failed",
+      // Only a server-side timeout has this code, and its own text ("timeout of 20000ms exceeded") reaches customers.
+      message: error.code === "ECONNABORTED" ? "The server took too long to answer." : error.message || "Network request failed",
     });
   }
 );

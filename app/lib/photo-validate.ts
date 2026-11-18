@@ -43,7 +43,8 @@ export function warmUpFaceDetector(): void {
 }
 
 export async function checkPhoto(blob: Blob): Promise<PhotoCheck> {
-  const detector = await initializeFaceDetector();
+  // If an early warm-up load failed, try once more here, as this call did before the warm-up existed.
+  const detector = await initializeFaceDetector().catch(() => initializeFaceDetector());
   
   // Create an image element to feed to MediaPipe
   const img = new Image();
