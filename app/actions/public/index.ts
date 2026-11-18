@@ -126,3 +126,14 @@ export async function fetchPublicSitePage(
   const { data } = await api.get<SitePage>(`/api/public/site-pages/${slug}`);
   return data;
 }
+
+/**
+ * Same call as fetchPublicTeamMembers, but a failure THROWS instead of returning
+ * []. For the Team page, which is cached and refreshed in the background: a
+ * refresh that fails must keep the last good page, not replace it with an empty
+ * "No team members found." page. A genuinely empty team still returns [].
+ */
+export async function fetchPublicTeamMembersOrThrow(): Promise<TeamMember[]> {
+  const { data } = await api.get<TeamMember[]>("/api/public/team-members");
+  return data || [];
+}

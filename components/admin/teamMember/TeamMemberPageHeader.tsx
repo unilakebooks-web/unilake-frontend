@@ -2,12 +2,16 @@
 
 import { Users, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { SaveOrderButton } from "@/components/admin/announcement/SaveOrderButton";
 
 interface TeamMemberPageHeaderProps {
   onAddClick: () => void;
+  isOrderDirty: boolean;
+  isSavingOrder: boolean;
+  onSaveOrder: () => void;
 }
 
-export function TeamMemberPageHeader({ onAddClick }: TeamMemberPageHeaderProps) {
+export function TeamMemberPageHeader({ onAddClick, isOrderDirty, isSavingOrder, onSaveOrder }: TeamMemberPageHeaderProps) {
   return (
     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-6 border-b border-[#914A8C]/15 mb-6">
       <div className="flex items-center gap-3.5">
@@ -24,7 +28,12 @@ export function TeamMemberPageHeader({ onAddClick }: TeamMemberPageHeaderProps) 
         </div>
       </div>
 
-      <div className="flex items-center shrink-0">
+      <div className="flex items-center gap-3 shrink-0">
+        <SaveOrderButton
+          isDirty={isOrderDirty}
+          isSaving={isSavingOrder}
+          onSave={onSaveOrder}
+        />
         <Button
           onClick={onAddClick}
           className="h-10 px-5 rounded-xl bg-[#914A8C] hover:bg-[#914A8C]/90 text-white font-bold text-sm shadow-md shadow-[#914A8C]/20 flex items-center gap-2 transition-transform duration-200 hover:scale-[1.02] cursor-pointer"

@@ -35,3 +35,10 @@ export async function toggleTeamMemberStatus(id: string): Promise<TeamMember> {
 export async function deleteTeamMember(id: string): Promise<void> {
   await api.delete(`/api/admin/team-members/${id}`);
 }
+
+// Every member's id, in the new order (the whole list, hidden members included).
+// Answers with the full list in the saved order.
+export async function reorderTeamMembers(orderedIds: string[]): Promise<TeamMember[]> {
+  const { data } = await api.patch<TeamMember[]>("/api/admin/team-members/reorder", { orderedIds });
+  return data;
+}

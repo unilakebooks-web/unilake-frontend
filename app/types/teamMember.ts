@@ -8,6 +8,7 @@ export interface TeamMember {
   instagramUrl: string | null;
   twitterUrl: string | null;
   isActive: boolean;
+  sortOrder: number;
   createdAt: string;
   updatedAt: string;
 }

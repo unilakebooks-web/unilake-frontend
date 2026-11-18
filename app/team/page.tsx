@@ -4,7 +4,7 @@ import { chauPhilomeneOne } from "@/app/fonts";
 import HomeHeaderSection from "@/components/home/HomeHeaderSection";
 import Footer from "@/components/home/Footer";
 import TeamMemberCard from "@/components/team/TeamMemberCard";
-import { fetchPublicTeamMembers } from "@/app/actions/public";
+import { fetchPublicTeamMembersOrThrow } from "@/app/actions/public";
 import type { Metadata } from "next";
 import { absoluteUrl } from "@/lib/seo";
 
@@ -22,8 +22,14 @@ export const metadata: Metadata = {
   },
 };
 
+// The page is built once and refreshed in the background at most every 60 seconds,
+// so a team change or reorder shows within about a minute. Without this it only
+// showed after the next deploy. The fetch below throws on failure so a failed
+// refresh keeps the last good page.
+export const revalidate = 60;
+
 export default async function TeamPage() {
-  const members = await fetchPublicTeamMembers();
+  const members = await fetchPublicTeamMembersOrThrow();
 
   return (
     <main className="min-h-screen bg-[#F8E7D2] flex flex-col">
