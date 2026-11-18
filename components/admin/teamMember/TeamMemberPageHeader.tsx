@@ -28,7 +28,7 @@ export function TeamMemberPageHeader({ onAddClick, isOrderDirty, isSavingOrder, 
         </div>
       </div>
 
-      <div className="flex items-center gap-3 shrink-0">
+      <div className="flex flex-wrap items-center gap-3 max-w-full sm:shrink-0">
         <SaveOrderButton
           isDirty={isOrderDirty}
           isSaving={isSavingOrder}
