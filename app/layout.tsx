@@ -4,6 +4,7 @@ import "./globals.css";
 import "./fonts.css";
 import { AuthProvider } from "@/app/contexts/AuthContext";
 import { Toaster } from "@/components/ui/sonner";
+import NavigationProgress from "@/components/shared/NavigationProgress";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { PublicQueryProvider } from "@/components/providers/PublicQueryProvider";
 
@@ -108,6 +109,7 @@ export default function RootLayout({
             </TooltipProvider>
           </AuthProvider>
         </PublicQueryProvider>
+        <NavigationProgress />
         <Toaster richColors position="top-right" />
       </body>
     </html>
