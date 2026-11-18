@@ -146,6 +146,8 @@ export function PageCreateModal({ open, onOpenChange, comic, nextPageNumber }: P
           cfg: hasFace ? cfg : 1.0,
           mirrorFace: hasFace ? mirrorFace : false,
           faceDirection: hasFace && faceDirection !== "none" ? faceDirection : undefined,
+          artworkFileName: artworkFile.name,
+          maskFileName: maskKey && maskFile ? maskFile.name : undefined,
           artworkUrl: artworkKey,
           maskUrl: maskKey
         }
