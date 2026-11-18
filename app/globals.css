@@ -63,6 +63,19 @@ body {
   font-family: var(--font-poppins), Arial, Helvetica, sans-serif;
 }
 
+/* Height of the announcement banner (AnnouncementBanner.tsx: h-9, or sm:h-10, plus its 1px border), so the
+ * header can be placed below it before the browser has measured anything and does not move when the
+ * banner appears. In rem like the banner's own classes, so it still matches when a visitor's browser font
+ * size is not the default (37px and 41px at 16px). ⚠️ keep in step with the banner's height classes. */
+:root {
+  --announcement-h: calc(2.25rem + 1px);
+}
+@media (min-width: 40rem) {
+  :root {
+    --announcement-h: calc(2.5rem + 1px);
+  }
+}
+
 :root {
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);

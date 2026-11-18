@@ -24,7 +24,8 @@ const NAV_LINKS = [
 ];
 
 interface HeaderProps {
-  topOffset?: number;
+  /** Pixels, or a CSS length such as "var(--announcement-h)" when it is known before the browser can measure it. */
+  topOffset?: number | string;
   hideBulbForced?: boolean;
   flatBackground?: boolean;
   /**
@@ -43,6 +44,9 @@ export default function Header({ topOffset = 0, hideBulbForced = false, flatBack
   const countries = useCountryStore((state) => state.countries);
   const selectedCountry = useCountryStore((state) => state.selectedCountry);
   const selectCountry = useCountryStore((state) => state.selectCountry);
+
+  // A number is pixels; a string is already a CSS length.
+  const topOffsetCss = typeof topOffset === "number" ? `${topOffset}px` : topOffset;
 
   const [isOpen, setIsOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -115,7 +119,7 @@ export default function Header({ topOffset = 0, hideBulbForced = false, flatBack
       <nav
       style={{
         top: topOffset,
-        transform: showHeader ? "translateY(0)" : `translateY(calc(-100% - ${topOffset}px))`,
+        transform: showHeader ? "translateY(0)" : `translateY(calc(-100% - ${topOffsetCss}))`,
       }}
       className={`
         fixed
@@ -155,14 +159,17 @@ export default function Header({ topOffset = 0, hideBulbForced = false, flatBack
         </div>
 
         {/* Zone 2 — Center: Main Navigation */}
-        <ul className="hidden lg:flex items-center justify-center gap-6 xl:gap-8 2xl:gap-10 text-white text-[15px] font-medium tracking-wide select-none whitespace-nowrap">
+        <ul className="relative hidden lg:flex items-center justify-center gap-6 xl:gap-8 2xl:gap-10 text-white text-[15px] font-medium tracking-wide select-none whitespace-nowrap">
           {NAV_LINKS.map((item) => (
             <li key={item.name} className={`${isActive(item.href) ? "text-[#FFD54A]" : "hover:text-[#FFD54A]"} cursor-pointer transition-colors duration-200`}>
               <Link href={item.href}>{item.name}</Link>
             </li>
           ))}
+          {/* Admin only, and only once the sign-in check has finished. It is placed to the right of the row, out of the
+              flow, so its arrival does not move the links the visitor may already be aiming at. Below xl there is no
+              room beside the icons on the right, so the profile menu has the same link there. */}
           {!loading && user?.role === UserRole.ADMIN && (
-            <li className={`${isActive("/admin") ? "text-[#FFD54A]" : "hover:text-[#FFD54A]"} cursor-pointer transition-colors duration-200`}>
+            <li className={`${isActive("/admin") ? "text-[#FFD54A]" : "hover:text-[#FFD54A]"} cursor-pointer transition-colors duration-200 hidden xl:block absolute left-full top-1/2 -translate-y-1/2 ml-8 2xl:ml-10`}>
               <Link href="/admin">Dashboard</Link>
             </li>
           )}
@@ -180,6 +187,8 @@ export default function Header({ topOffset = 0, hideBulbForced = false, flatBack
             <div className="relative" ref={profileDropdownRef}>
               <button
                 onClick={() => {
+                  // While the sign-in check runs a signed-in visitor still looks signed out; do not send them to /login.
+                  if (loading) return;
                   if (isAuthenticated) {
                     setIsProfileOpen(!isProfileOpen);
                   } else {
@@ -209,6 +218,19 @@ export default function Header({ topOffset = 0, hideBulbForced = false, flatBack
                     <Settings size={16} />
                     <span className="font-medium flex-1">Dashboard</span>
                   </button>
+
+                  {user.role === UserRole.ADMIN && (
+                    <button
+                      onClick={() => {
+                        setIsProfileOpen(false);
+                        router.push("/admin");
+                      }}
+                      className="xl:hidden w-full flex items-center gap-3 px-4 py-2.5 text-left text-sm hover:bg-white/15 transition-colors text-[#FFD54A] cursor-pointer"
+                    >
+                      <Settings size={16} />
+                      <span className="font-medium flex-1">Admin Dashboard</span>
+                    </button>
+                  )}
                   
                   <div className="h-px bg-white/10 my-1 mx-2"></div>
                   
@@ -231,9 +253,10 @@ export default function Header({ topOffset = 0, hideBulbForced = false, flatBack
 
           {/* Language Selector Dropdown (Visible on both mobile & desktop) */}
           <div className="relative" ref={dropdownRef}>
+            {/* min-w = the loaded width (flag + 2-letter code + chevron), so the Profile icon beside it does not move when the list arrives */}
             <button
                onClick={() => !isLoading && !isError && countries.length > 0 && setIsOpen(!isOpen)}
-               className={`flex items-center gap-2 border border-white/80 rounded-full px-2.5 sm:px-3 py-1 text-[13px] hover:bg-white/10 transition-all font-medium select-none ${isLoading || isError || countries.length === 0 ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
+               className={`flex items-center justify-center gap-2 min-w-[57px] sm:min-w-[89px] border border-white/80 rounded-full px-2.5 sm:px-3 py-1 text-[13px] hover:bg-white/10 transition-all font-medium select-none ${isLoading || isError || countries.length === 0 ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
             >
               {isLoading ? (
                 <Loader2 className="w-4 h-4 animate-spin text-white" />

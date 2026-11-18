@@ -6,28 +6,34 @@ import { Announcement } from "@/app/types/announcement";
 
 interface AnnouncementBannerProps {
   onHeightChange?: (height: number) => void;
+  /** Announcements already loaded by the page. When given, the banner does not fetch them itself. */
+  initialAnnouncements?: Announcement[];
 }
 
-export default function AnnouncementBanner({ onHeightChange }: AnnouncementBannerProps) {
-  const [announcements, setAnnouncements] = useState<Announcement[]>([]);
+export default function AnnouncementBanner({ onHeightChange, initialAnnouncements }: AnnouncementBannerProps) {
+  const [fetchedAnnouncements, setFetchedAnnouncements] = useState<Announcement[]>([]);
+  // The page's list wins when it supplied one, so the banner and the header's offset always follow the same data.
+  const announcements = initialAnnouncements ?? fetchedAnnouncements;
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isVisible, setIsVisible] = useState(true);
   const [showBanner, setShowBanner] = useState(true);
   const bannerRef = useRef<HTMLDivElement>(null);
   const lastScrollY = useRef(0);
 
-  // Fetch active announcements on mount
+  // Fetch active announcements on mount (unless the page already supplied them)
+  const suppliedByPage = useRef(initialAnnouncements !== undefined);
   useEffect(() => {
+    if (suppliedByPage.current) return;
     let isMounted = true;
     async function load() {
       try {
         const data = await fetchPublicAnnouncements();
         if (isMounted) {
-          setAnnouncements(data || []);
+          setFetchedAnnouncements(data || []);
         }
       } catch (e: any) {
         if (isMounted) {
-          setAnnouncements([]);
+          setFetchedAnnouncements([]);
         }
         if (e?.code !== "ERR_NETWORK" && e?.code !== "NETWORK_ERROR") {
           console.error("Failed to load storefront announcements", e);
@@ -102,6 +108,7 @@ export default function AnnouncementBanner({ onHeightChange }: AnnouncementBanne
       }}
       className="fixed top-0 left-0 w-full z-[60] bg-[#914A8C] text-white border-b border-white/15 shadow-sm transition-transform duration-300 select-none"
     >
+      {/* ⚠️ h-9 / sm:h-10 (plus the 1px border above) are also --announcement-h in app/globals.css */}
       <div className="max-w-[1440px] mx-auto px-6 h-9 sm:h-10 flex items-center justify-center">
         <div className="flex items-center gap-2 text-center text-xs sm:text-sm font-semibold tracking-wide overflow-hidden">
           {/* Pulsing indicator dot */}
