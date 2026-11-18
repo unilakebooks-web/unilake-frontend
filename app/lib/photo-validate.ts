@@ -7,10 +7,10 @@ export type PhotoCheck = {
 };
 
 let faceDetector: FaceDetector | null = null;
+// Shared by warmUpFaceDetector and checkPhoto, so the files are never loaded twice at once.
+let faceDetectorLoading: Promise<FaceDetector> | null = null;
 
-async function initializeFaceDetector() {
-  if (faceDetector) return faceDetector;
-
+async function createFaceDetector() {
   const vision = await FilesetResolver.forVisionTasks(
     "/mediapipe/wasm"
   );
@@ -22,6 +22,24 @@ async function initializeFaceDetector() {
     runningMode: "IMAGE",
   });
   return faceDetector;
+}
+
+async function initializeFaceDetector() {
+  if (faceDetector) return faceDetector;
+  // A failed load is forgotten, so the next call tries again.
+  faceDetectorLoading ??= createFaceDetector().finally(() => {
+    faceDetectorLoading = null;
+  });
+  return faceDetectorLoading;
+}
+
+/**
+ * Starts loading the face check (about 3.8 MB of files) in the background. Call it when the visitor picks a
+ * photo: cropping takes several seconds, so the check is ready by the time they confirm. Never throws; a failed
+ * load is retried by checkPhoto.
+ */
+export function warmUpFaceDetector(): void {
+  initializeFaceDetector().catch(() => {});
 }
 
 export async function checkPhoto(blob: Blob): Promise<PhotoCheck> {
