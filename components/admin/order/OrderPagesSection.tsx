@@ -369,7 +369,7 @@ function PagesBody({ order }: { order: AdminOrderDetail }) {
             className="rounded-xl bg-[#914A8C] hover:bg-[#7a3e75] text-white font-semibold h-auto min-h-10 py-2 px-5 shadow-sm whitespace-normal text-left w-full sm:w-auto"
           >
             <RotateCcw className="w-4 h-4 mr-2 shrink-0" />
-            Restart all failed and stuck pages ({restartable.length})
+            Restart all pages that need attention ({restartable.length})
           </Button>
         )}
       </div>
