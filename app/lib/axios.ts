@@ -3,12 +3,19 @@ import type { ApiResponse } from "@/app/types/api";
 
 const baseURL = process.env.NEXT_PUBLIC_AUTH_URL || "http://localhost:8080";
 
+// Calls made while a page is built on the server must not hang it for ever (before this a stuck backend call kept
+// the page waiting until the hosting platform cut it off). Longer than the slowest backend wake-up seen in a week of
+// logs (14 s), so a slow but real answer is still used. The browser keeps no limit: uploads and the admin restart
+// are slow on purpose.
+const SERVER_REQUEST_TIMEOUT_MS = 20000;
+
 export const api = axios.create({
   baseURL,
   withCredentials: true,
   headers: {
     "Content-Type": "application/json",
   },
+  timeout: typeof window === "undefined" ? SERVER_REQUEST_TIMEOUT_MS : 0,
 });
 
 api.interceptors.response.use(
