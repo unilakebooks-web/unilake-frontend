@@ -73,7 +73,7 @@ export function AddressHistory({ order }: { order: AdminOrderDetail }) {
   const history = order.addressHistory ?? [];
   const { user } = useAuth();
   // The Master admin is the ADMIN role. Hand-marking switches off the backend check, so it is
-  // offered to Master admins only (the sub-admin role arrives with its own feature).
+  // offered to Master admins only (a sub-admin can retry the sync but not mark it).
   const isMaster = user?.role === UserRole.ADMIN;
   const retry = useRetryAddressSync(order.id);
   // The newest change on screen when the hand-mark dialog was opened (null = closed).
@@ -120,6 +120,7 @@ export function AddressHistory({ order }: { order: AdminOrderDetail }) {
             Shiprocket may still hold the old address, so Generate AWB is blocked until it is
             confirmed.
             {noShiprocketOrder && " The Shiprocket order is not created yet: try again when the order shows Ready to ship."}
+            {!isMaster && " If the retry keeps failing, ask a Master admin to confirm it by hand."}
           </p>
           <div className="flex flex-wrap gap-2">
             <Button
