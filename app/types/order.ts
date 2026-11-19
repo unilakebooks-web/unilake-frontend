@@ -209,6 +209,10 @@ export interface AdminOrderDetail {
   generatedCover: GeneratedCover | null;
 
   webhookEvents: WebhookEvent[];
+
+  /** Absent when the backend predates address edits: treat as "no history, not editable". */
+  addressEditable?: { editable: boolean; reason: string | null };
+  addressHistory?: AddressChange[];
 }
 
 export interface WebhookEvent {
@@ -218,6 +222,81 @@ export interface WebhookEvent {
   eventType: string;
   processedAt: string;
   payloadJson: unknown;
+}
+
+// ============================================================
+// DELIVERY ADDRESS EDITS (admin)
+// ============================================================
+
+// ⚠️ Also written out in the backend prisma/schema.prisma (enum AddressSyncStatus) and in
+// components/admin/order/AddressHistory.tsx (labels, colours and the list of open states).
+export type AddressSyncStatus =
+  | "NOT_REQUIRED"
+  | "PENDING"
+  | "SYNCING"
+  | "SYNCED"
+  | "FAILED"
+  | "UNVERIFIED"
+  | "MANUAL";
+
+// ⚠️ The same keys are stored as JSON in the backend's order_address_changes (before and after;
+// see ShippingAddress in services/orderAddress.service.ts).
+export interface OrderAddressValues {
+  name: string | null;
+  line1: string | null;
+  line2: string | null;
+  city: string | null;
+  state: string | null;
+  zip: string | null;
+  country: string | null;
+  phone: string | null;
+}
+
+export interface AddressChange {
+  id: string;
+  /** Order of the changes of one order; the list arrives newest first. */
+  seq: number;
+  createdAt: string;
+  before: OrderAddressValues;
+  after: OrderAddressValues;
+  changedByEmail: string;
+  syncStatus: AddressSyncStatus;
+  syncError: string | null;
+  syncNote: string | null;
+  syncedAt: string | null;
+  syncedByEmail: string | null;
+}
+
+export interface EditOrderAddressInput {
+  /** The newest change the form was filled in from (0 when there was none); a stale save is refused. */
+  expectedSeq: number;
+  name: string;
+  line1: string;
+  line2?: string;
+  city: string;
+  state: string;
+  zip: string;
+  phone: string;
+}
+
+export type EditOrderAddressResponse =
+  | { changed: false; /** A change is still waiting for Shiprocket (Retry sync). */ unsynced: boolean }
+  | { changed: true; changeId: string; seq: number; syncStatus: AddressSyncStatus };
+
+export interface AddressSyncResponse {
+  status: "SYNCED" | "FAILED" | "UNVERIFIED";
+  error: string | null;
+  covered: number;
+}
+
+export interface MarkAddressSyncedInput {
+  note: string;
+  /** The newest change the admin saw when the dialog opened; newer ones are never marked for them. */
+  upToSeq: number;
+}
+
+export interface MarkAddressSyncedResponse {
+  marked: number;
 }
 
 // ============================================================

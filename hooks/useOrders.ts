@@ -10,6 +10,9 @@ import {
   fetchOrderLabel,
   refreshTracking,
   setSentToPrinter,
+  editOrderAddress,
+  retryAddressSync,
+  markAddressSynced,
   fetchUserOrders,
   fetchUserOrder,
   fetchOrderTracking,
@@ -18,6 +21,8 @@ import type {
   AdminOrderPages,
   AdminOrdersFilters,
   ConfirmDimensionsInput,
+  EditOrderAddressInput,
+  MarkAddressSyncedInput,
   RegenerateOrderPagesInput,
 } from "@/app/types/order";
 
@@ -225,5 +230,35 @@ export function useRegenerateOrderPages(orderId: string, watchAgain: () => void)
       watchAgain();
       queryClient.invalidateQueries({ queryKey: ["admin-order-pages", orderId] });
     },
+  });
+}
+
+// ----- Delivery address (admin edits it until the AWB exists) -----
+
+export function useEditOrderAddress(orderId: string) {
+  const invalidate = useOrderActionInvalidation(orderId);
+  return useMutation({
+    mutationFn: (input: EditOrderAddressInput) => editOrderAddress(orderId, input),
+    onSuccess: invalidate,
+    // A refusal (the address changed meanwhile, the AWB appeared) means the screen is stale.
+    onError: invalidate,
+  });
+}
+
+export function useRetryAddressSync(orderId: string) {
+  const invalidate = useOrderActionInvalidation(orderId);
+  return useMutation({
+    mutationFn: () => retryAddressSync(orderId),
+    onSuccess: invalidate,
+    onError: invalidate,
+  });
+}
+
+export function useMarkAddressSynced(orderId: string) {
+  const invalidate = useOrderActionInvalidation(orderId);
+  return useMutation({
+    mutationFn: (input: MarkAddressSyncedInput) => markAddressSynced(orderId, input),
+    onSuccess: invalidate,
+    onError: invalidate,
   });
 }
