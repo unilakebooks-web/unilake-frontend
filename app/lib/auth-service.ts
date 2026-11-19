@@ -1,5 +1,5 @@
 import { authClient } from "./auth-client";
-import { UserRole } from "@/app/types/auth";
+import { parseUserRole } from "@/app/types/auth";
 import type { Session } from "@/app/types/auth";
 
 /** Cloud Run cold-start returns 503 with a specific message. Surface that nicely. */
@@ -87,7 +87,7 @@ export const authService = {
                     name: rawUser.name,
                     email: rawUser.email,
                     image: rawUser.image || undefined,
-                    role: rawUser.role === "ADMIN" ? UserRole.ADMIN : UserRole.USER,
+                    role: parseUserRole(rawUser.role),
                 },
                 expiresAt: data.session.expiresAt.toString(),
             };

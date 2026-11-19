@@ -12,7 +12,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { clearSession, isValidSessionId, consumeShowPreloader, getSessionBySessionId } from "@/app/lib/session-storage";
 import { useAuth } from "@/app/hooks/useAuth";
-import { UserRole } from "@/app/types/auth";
+import { isStaff } from "@/app/types/auth";
 
 function PreviewErrorState({
   title,
@@ -63,7 +63,7 @@ export default function PreviewPage({
   const { user, loading: authLoading } = useAuth();
   const adminViewRequested = resolvedSearchParams.view === "admin";
   const adminView =
-    adminViewRequested && (authLoading || user?.role === UserRole.ADMIN);
+    adminViewRequested && (authLoading || isStaff(user?.role));
 
   // The ID comes off the URL, so it can be anything. A malformed one 500s on the server
   // rather than 404ing (§13.1), so screen it here and never make the call at all.

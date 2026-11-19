@@ -8,7 +8,7 @@ import {
 } from "react";
 import { authClient } from "@/app/lib/auth-client";
 import { authService } from "@/app/lib/auth-service";
-import { UserRole } from "@/app/types/auth";
+import { parseUserRole } from "@/app/types/auth";
 import type { AuthContextType, User } from "@/app/types/auth";
 
 // ── Context ────────────────────────────────────────────────────────────────────
@@ -44,7 +44,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               name: rawUser.name,
               email: rawUser.email,
               image: rawUser.image || undefined,
-              role: rawUser.role === "ADMIN" ? UserRole.ADMIN : UserRole.USER,
+              role: parseUserRole(rawUser.role),
           }
         : null;
 
