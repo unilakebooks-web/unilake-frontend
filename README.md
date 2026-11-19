@@ -203,8 +203,10 @@ a hook in `hooks/`, then use the hook in the component.
   `/login`, by checking for the session cookie (named differently in development
   and production).
 - **The admin panel is guarded in its layout** (`app/admin/(panel)/layout.tsx`),
-  which redirects anyone who isn't an `ADMIN`. The real protection is the
-  backend, which checks the role on every `/api/admin` request.
+  which redirects anyone who isn't an `ADMIN` or a `SUB_ADMIN`; a sub-admin may
+  open only the order pages (the sidebar and the layout both follow the backend's
+  list of routes a sub-admin may use). The real protection is the backend, which
+  checks the role on every `/api/admin` request.
 - Personalising and previewing need **no login**; it is only required at
   checkout. The checkout flow opens a login modal and attaches the anonymous
   session to the user afterwards.

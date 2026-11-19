@@ -27,6 +27,7 @@ import {
   FlaskConical,
 } from "lucide-react";
 import { useAuth } from "@/app/hooks/useAuth";
+import { UserRole } from "@/app/types/auth";
 
 import {
   Sidebar,
@@ -64,9 +65,18 @@ const NAV_ITEMS = [
   { label: "Settings", icon: Settings, href: "/admin/settings" },
 ];
 
+// What a sub-admin sees: an allowlist of entries, so an entry added to NAV_ITEMS later stays hidden from
+// them until it is listed here on purpose. ⚠️ Follows the backend list of routes a sub-admin may use
+// (Unilake-backend src/config/subAdminRoutes.ts, the order routes): change both together.
+const SUB_ADMIN_NAV_HREFS = ["/admin/orders"];
+
 export function AdminSidebar() {
   const pathname = usePathname();
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
+  const navItems =
+    user?.role === UserRole.SUB_ADMIN
+      ? NAV_ITEMS.filter((item) => SUB_ADMIN_NAV_HREFS.includes(item.href))
+      : NAV_ITEMS;
 
   const handleLogout = async () => {
     try {
@@ -91,7 +101,7 @@ export function AdminSidebar() {
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
-              {NAV_ITEMS.map((item) => {
+              {navItems.map((item) => {
                 const isActive = pathname === item.href;
                 return (
                   <SidebarMenuItem key={item.label}>

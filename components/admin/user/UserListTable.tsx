@@ -46,17 +46,16 @@ function UserAvatar({ user }: { user: AdminUserRow }) {
 }
 
 function RoleBadge({ role }: { role: UserRole }) {
-  const isAdmin = role === UserRole.ADMIN;
   return (
     <span
       className={cn(
         "inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold border shadow-sm whitespace-nowrap",
-        isAdmin
-          ? "bg-[#914A8C]/10 text-[#914A8C] border-[#914A8C]/30"
-          : "bg-neutral-100 text-neutral-600 border-neutral-200"
+        role === UserRole.ADMIN && "bg-[#914A8C]/10 text-[#914A8C] border-[#914A8C]/30",
+        role === UserRole.SUB_ADMIN && "bg-[#FFD54A]/25 text-[#7a5d00] border-[#FFD54A]/70",
+        role === UserRole.USER && "bg-neutral-100 text-neutral-600 border-neutral-200"
       )}
     >
-      {isAdmin ? "ADMIN" : "USER"}
+      {role === UserRole.SUB_ADMIN ? "SUB-ADMIN" : role}
     </span>
   );
 }
@@ -134,7 +133,7 @@ export function UserListTable({ users, currentUserId, onChangeRole }: UserListTa
                         lives on a wrapper rather than the button itself. */}
                     <span
                       className="inline-block"
-                      title={demoteBlocked ? "You can't remove your own admin access" : undefined}
+                      title={demoteBlocked ? "You can't remove your own Master admin access" : undefined}
                     >
                       <Button
                         type="button"
@@ -152,12 +151,12 @@ export function UserListTable({ users, currentUserId, onChangeRole }: UserListTa
                         {isAdmin ? (
                           <>
                             <ShieldOff className="w-3.5 h-3.5 mr-1.5" />
-                            Remove admin
+                            Change role
                           </>
                         ) : (
                           <>
                             <ShieldCheck className="w-3.5 h-3.5 mr-1.5" />
-                            Make admin
+                            Change role
                           </>
                         )}
                       </Button>

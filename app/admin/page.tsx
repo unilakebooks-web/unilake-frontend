@@ -36,7 +36,9 @@ export default function AdminPage() {
         if (loading) return;
         if (isAuthenticated && user?.role === UserRole.ADMIN) {
             router.replace("/admin/overview");
-        } else if (isAuthenticated && user?.role !== UserRole.ADMIN) {
+        } else if (isAuthenticated && user?.role === UserRole.SUB_ADMIN) {
+            router.replace("/admin/orders");
+        } else if (isAuthenticated) {
             toast.error("You are not an admin");
             router.replace("/");
         } else {

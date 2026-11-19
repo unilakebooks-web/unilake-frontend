@@ -22,5 +22,9 @@ export function useUpdateUserRole() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-users"] });
     },
+    // A refusal usually means the role changed under us: reload so the dialog shows the real role.
+    onError: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-users"] });
+    },
   });
 }
