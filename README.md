@@ -156,7 +156,7 @@ frontend/
 | Personalisation | `/personalize/[sessionId]/preview`, `…/checkout`, `…/new-photo` |
 | Auth | `/login` |
 | Customer dashboard | `/dashboard/orders`, `/dashboard/orders/[orderId]`, `/dashboard/addresses` (+ overview, wishlist) |
-| Admin | `/admin/*` — overview, orders, customers, comics, countries, themes, users and every CMS section |
+| Admin | `/admin/*` — overview, orders, customers, comics, countries, themes, users, sample books (`/admin/samples`, an admin's try-out of a book that is never paid for and is deleted after 6 hours) and every CMS section |
 
 Route groups named `(panel)` (`app/admin/(panel)`, `app/dashboard/(panel)`)
 share a layout with a sidebar without adding a URL segment.
