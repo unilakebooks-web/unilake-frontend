@@ -1,12 +1,17 @@
 import api from "@/app/lib/axios";
 import type {
+  AddressSyncResponse,
   AdminOrderPages,
   AdminOrderDetail,
   AdminOrdersFilters,
   AdminOrdersResponse,
   ConfirmDimensionsInput,
   ConfirmDimensionsResponse,
+  EditOrderAddressInput,
+  EditOrderAddressResponse,
   LabelResponse,
+  MarkAddressSyncedInput,
+  MarkAddressSyncedResponse,
   RefreshTrackingResponse,
   RegenerateOrderPagesInput,
   RegenerateOrderPagesResult,
@@ -161,6 +166,35 @@ export async function regenerateOrderPages(
 ): Promise<RegenerateOrderPagesResult> {
   const { data } = await api.post<RegenerateOrderPagesResult>(
     `/api/admin/orders/${orderId}/regenerate-pages`,
+    input
+  );
+  return data;
+}
+
+export async function editOrderAddress(
+  orderId: string,
+  input: EditOrderAddressInput
+): Promise<EditOrderAddressResponse> {
+  const { data } = await api.patch<EditOrderAddressResponse>(
+    `/api/admin/orders/${orderId}/shipping-address`,
+    input
+  );
+  return data;
+}
+
+export async function retryAddressSync(orderId: string): Promise<AddressSyncResponse> {
+  const { data } = await api.post<AddressSyncResponse>(
+    `/api/admin/orders/${orderId}/shipping-address/retry-sync`
+  );
+  return data;
+}
+
+export async function markAddressSynced(
+  orderId: string,
+  input: MarkAddressSyncedInput
+): Promise<MarkAddressSyncedResponse> {
+  const { data } = await api.post<MarkAddressSyncedResponse>(
+    `/api/admin/orders/${orderId}/shipping-address/mark-synced`,
     input
   );
   return data;

@@ -20,7 +20,7 @@ export function UserListPageHeader({
           {total === undefined || adminCount === undefined
             ? "Loading users…"
             : `${total} ${total === 1 ? "user" : "users"} · ${adminCount} ${
-                adminCount === 1 ? "admin" : "admins"
+                adminCount === 1 ? "Master admin" : "Master admins"
               }`}
         </p>
       </div>

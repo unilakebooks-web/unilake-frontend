@@ -19,7 +19,8 @@ interface UserListFiltersProps {
 
 const ROLE_OPTIONS = [
   { value: "ALL", label: "All users" },
-  { value: UserRole.ADMIN, label: "Admins" },
+  { value: UserRole.ADMIN, label: "Master admins" },
+  { value: UserRole.SUB_ADMIN, label: "Sub-admins" },
   { value: UserRole.USER, label: "Users" },
 ];
 

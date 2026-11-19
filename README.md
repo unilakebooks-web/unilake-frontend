@@ -156,7 +156,7 @@ frontend/
 | Personalisation | `/personalize/[sessionId]/preview`, `…/checkout`, `…/new-photo` |
 | Auth | `/login` |
 | Customer dashboard | `/dashboard/orders`, `/dashboard/orders/[orderId]`, `/dashboard/addresses` (+ overview, wishlist) |
-| Admin | `/admin/*` — overview, orders, customers, comics, countries, themes, users and every CMS section |
+| Admin | `/admin/*` — overview, orders, customers, comics, countries, themes, users, sample books (`/admin/samples`, an admin's try-out of a book that is never paid for and is deleted after 6 hours) and every CMS section |
 
 Route groups named `(panel)` (`app/admin/(panel)`, `app/dashboard/(panel)`)
 share a layout with a sidebar without adding a URL segment.
@@ -203,8 +203,10 @@ a hook in `hooks/`, then use the hook in the component.
   `/login`, by checking for the session cookie (named differently in development
   and production).
 - **The admin panel is guarded in its layout** (`app/admin/(panel)/layout.tsx`),
-  which redirects anyone who isn't an `ADMIN`. The real protection is the
-  backend, which checks the role on every `/api/admin` request.
+  which redirects anyone who isn't an `ADMIN` or a `SUB_ADMIN`; a sub-admin may
+  open only the order pages (the sidebar and the layout both follow the backend's
+  list of routes a sub-admin may use). The real protection is the backend, which
+  checks the role on every `/api/admin` request.
 - Personalising and previewing need **no login**; it is only required at
   checkout. The checkout flow opens a login modal and attaches the anonymous
   session to the user afterwards.

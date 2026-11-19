@@ -7,7 +7,7 @@ import { useRouter, usePathname } from "next/navigation";
 import { scrollToFaq } from "@/lib/scrollToFaq";
 import { Heart, Search, User, ShoppingBag, ChevronDown, Settings, LogOut, Loader2, Menu, X } from "lucide-react";
 import { useAuth } from "@/app/hooks/useAuth";
-import { UserRole } from "@/app/types/auth";
+import { isStaff } from "@/app/types/auth";
 import { useCountryStore } from "@/stores/useCountryStore";
 import { useCountryHydration } from "@/hooks/useCountryHydration";
 
@@ -166,10 +166,10 @@ export default function Header({ topOffset = 0, hideBulbForced = false, flatBack
               <Link href={item.href} onClick={(e) => scrollToFaq(e, item.href, pathname)}>{item.name}</Link>
             </li>
           ))}
-          {/* Admin only, and only once the sign-in check has finished. It is placed to the right of the row, out of the
+          {/* Staff only (Master admin or sub-admin), and only once the sign-in check has finished. It is placed to the right of the row, out of the
               flow, so its arrival does not move the links the visitor may already be aiming at. Below xl there is no
               room beside the icons on the right, so the profile menu has the same link there. */}
-          {!loading && user?.role === UserRole.ADMIN && (
+          {!loading && isStaff(user?.role) && (
             <li className={`${isActive("/admin") ? "text-[#FFD54A]" : "hover:text-[#FFD54A]"} cursor-pointer transition-colors duration-200 hidden xl:block absolute left-full top-1/2 -translate-y-1/2 ml-8 2xl:ml-10`}>
               <Link href="/admin">Dashboard</Link>
             </li>
@@ -220,7 +220,7 @@ export default function Header({ topOffset = 0, hideBulbForced = false, flatBack
                     <span className="font-medium flex-1">Dashboard</span>
                   </button>
 
-                  {user.role === UserRole.ADMIN && (
+                  {isStaff(user.role) && (
                     <button
                       onClick={() => {
                         setIsProfileOpen(false);
@@ -428,7 +428,7 @@ export default function Header({ topOffset = 0, hideBulbForced = false, flatBack
                 <Settings size={18} strokeWidth={2.5} />
                 <span className="font-medium text-sm">Dashboard</span>
               </Link>
-              {user?.role === UserRole.ADMIN && (
+              {isStaff(user?.role) && (
                 <Link 
                   href="/admin" 
                   onClick={() => setIsMobileMenuOpen(false)}

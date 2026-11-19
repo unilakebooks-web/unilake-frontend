@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { useAuth } from "@/app/hooks/useAuth";
-import { UserRole } from "@/app/types/auth";
+import { UserRole, isStaff } from "@/app/types/auth";
 import { toast } from "sonner";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -49,21 +49,34 @@ export default function AdminPanelLayout({
     const pathname = usePathname();
     const [isAuthorized, setIsAuthorized] = useState(false);
 
+    // A sub-admin may use the order pages only. This is decided from the current path on every render, so a
+    // client-side navigation to another admin page never shows it (the sticky flag above is set once). The
+    // backend refuses every other route for a sub-admin anyway.
+    // ⚠️ Same rule as SUB_ADMIN_NAV_HREFS in components/admin/AdminSidebar.tsx, the /admin redirect in
+    // app/admin/page.tsx and the backend list (Unilake-backend src/config/subAdminRoutes.ts): change them together.
+    // proxy.ts also checks for ADMIN, but its admin list is empty today; it would lock sub-admins out if filled.
+    const onOrderPages = pathname === "/admin/orders" || pathname.startsWith("/admin/orders/");
+    const allowed =
+        user?.role === UserRole.ADMIN || (user?.role === UserRole.SUB_ADMIN && onOrderPages);
+
     useEffect(() => {
         if (loading) return;
 
         if (!isAuthenticated) {
             toast.error("You must be logged in to view the admin panel");
             router.replace("/login");
-        } else if (user?.role !== UserRole.ADMIN) {
+        } else if (!isStaff(user?.role)) {
             toast.error("You are not an admin");
             router.replace("/");
+        } else if (!allowed) {
+            toast.info("Your account can only use the Orders section");
+            router.replace("/admin/orders");
         } else {
             setIsAuthorized(true);
         }
-    }, [loading, isAuthenticated, user, router, pathname]);
+    }, [loading, isAuthenticated, user, router, pathname, allowed]);
 
-    if (loading || !isAuthorized) {
+    if (loading || !isAuthorized || !allowed) {
         return <LoadingScreen />;
     }
 
