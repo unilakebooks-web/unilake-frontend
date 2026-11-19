@@ -24,6 +24,7 @@ import {
   MessageSquareQuote,
   Contact,
   Ticket,
+  FlaskConical,
 } from "lucide-react";
 import { useAuth } from "@/app/hooks/useAuth";
 
@@ -46,6 +47,7 @@ const NAV_ITEMS = [
   { label: "Comics", icon: BookOpen, href: "/admin/comics" },
   { label: "Countries", icon: Globe, href: "/admin/countries" },
   { label: "Coupons", icon: Ticket, href: "/admin/coupons" },
+  { label: "Sample Books", icon: FlaskConical, href: "/admin/samples" },
   { label: "Themes", icon: Palette, href: "/admin/themes" },
   { label: "Users", icon: Users, href: "/admin/users" },
   { label: "Announcement Bar", icon: Megaphone, href: "/admin/announcement-bar" },
