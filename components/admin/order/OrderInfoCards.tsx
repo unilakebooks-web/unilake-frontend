@@ -1,9 +1,13 @@
 "use client";
 
+import { useState } from "react";
 import { format } from "date-fns";
-import { CreditCard, FileText, MapPin, Sparkles, User } from "lucide-react";
+import { CreditCard, FileText, MapPin, Pencil, Sparkles, User } from "lucide-react";
 import type { AdminOrderDetail } from "@/app/types/order";
 import { SentToPrinterControl } from "./SentToPrinterControl";
+import { AddressHistory } from "./AddressHistory";
+import { EditAddressDialog } from "./EditAddressDialog";
+import { Button } from "@/components/ui/button";
 
 function Card({
   title,
@@ -38,6 +42,8 @@ function Field({ label, value }: { label: string; value: React.ReactNode }) {
 
 export function OrderInfoCards({ order }: { order: AdminOrderDetail }) {
   const { shipping, customer, payment, pdf, session, generatedCover } = order;
+  const [editOpen, setEditOpen] = useState(false);
+  const addressState = order.addressEditable;
 
   const addressLines = [
     shipping.line1,
@@ -76,8 +82,29 @@ export function OrderInfoCards({ order }: { order: AdminOrderDetail }) {
         />
         <Field label="Phone" value={shipping.phone} />
         <p className="text-xs text-neutral-400 pt-2 border-t border-neutral-100">
-          Frozen snapshot taken at order time — edits to a saved address never change this.
+          Copied from the checkout. Every admin change is kept in the history below.
         </p>
+        {addressState?.editable ? (
+          <Button
+            type="button"
+            size="sm"
+            variant="outline"
+            onClick={() => setEditOpen(true)}
+            className="rounded-lg"
+          >
+            <Pencil className="w-3.5 h-3.5 mr-1.5" /> Edit address
+          </Button>
+        ) : (
+          addressState && (
+            <p className="text-xs text-neutral-400">
+              {addressState.reason}.
+            </p>
+          )
+        )}
+        <AddressHistory order={order} />
+        {editOpen && (
+          <EditAddressDialog order={order} open onOpenChange={setEditOpen} />
+        )}
       </Card>
 
       <Card title="Payment" icon={<CreditCard className="w-4 h-4" />}>
