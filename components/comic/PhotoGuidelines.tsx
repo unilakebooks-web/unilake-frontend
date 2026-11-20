@@ -52,7 +52,7 @@ function PhotoRules({
       {PHOTO_RULES.map((rule) => (
         <li
           key={rule.text}
-          className={rule.important ? "font-semibold text-red-600" : undefined}
+          className={rule.important ? "font-semibold text-[#C7483F]" : undefined}
         >
           {rule.text}
         </li>
