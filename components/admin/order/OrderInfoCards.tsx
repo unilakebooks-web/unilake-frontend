@@ -57,7 +57,7 @@ export function OrderInfoCards({ order }: { order: AdminOrderDetail }) {
     : false;
 
   return (
-    <div className="grid gap-6 md:grid-cols-2">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       <Card title="Customer" icon={<User className="w-4 h-4" />}>
         <Field label="Notification email" value={customer.notificationEmail} />
         {/* Who paid, deliberately distinct from who receives — they differ on gifts. */}
