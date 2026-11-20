@@ -170,7 +170,7 @@ export function AddressHistory({ order }: { order: AdminOrderDetail }) {
             <ul className="space-y-0.5 pl-1">{changedLines(change)}</ul>
             {change.syncError && <p className="text-red-700">{change.syncError}</p>}
             {change.syncNote && (
-              <p className="text-neutral-600">
+              <p className="text-neutral-600 break-words">
                 Note{change.syncedByEmail ? ` (${change.syncedByEmail})` : ""}: {change.syncNote}
               </p>
             )}

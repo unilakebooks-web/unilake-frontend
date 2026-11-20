@@ -32,7 +32,7 @@ function Card({
 function Field({ label, value }: { label: string; value: React.ReactNode }) {
   return (
     <div className="flex justify-between gap-4 text-sm">
-      <span className="text-neutral-500 shrink-0">{label}</span>
+      <span className="text-neutral-500 shrink-0 max-w-[60%] break-words">{label}</span>
       <span className="font-semibold text-neutral-900 text-right break-words min-w-0">
         {value ?? <span className="text-neutral-400 font-normal">—</span>}
       </span>
