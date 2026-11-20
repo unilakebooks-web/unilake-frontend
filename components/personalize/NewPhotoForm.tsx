@@ -27,7 +27,7 @@ import Link from "next/link";
 import { useDropzone } from "react-dropzone";
 import { toast } from "sonner";
 import { Check, CloudUpload, Loader2, X } from "lucide-react";
-import { PHOTO_EXAMPLES_IMAGE } from "@/components/comic/PhotoGuidelines";
+import { PHOTO_CONFIDENTIAL_TEXT, PHOTO_EXAMPLES_IMAGE } from "@/components/comic/PhotoGuidelines";
 
 import { chauPhilomeneOne, hankenGrotesk } from "@/app/fonts";
 import { SessionSnapshot } from "@/app/types/session";
@@ -325,8 +325,7 @@ export default function NewPhotoForm({ previousSession }: NewPhotoFormProps) {
           />
 
           <p className="text-[10px] text-[#777] mt-2 lg:mt-3">
-            * All photos are kept confidential and used only for creating your
-            personalized book panels.
+            * {PHOTO_CONFIDENTIAL_TEXT}
           </p>
         </section>
 
