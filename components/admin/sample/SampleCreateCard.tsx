@@ -24,6 +24,7 @@ import {
   SAMPLE_TTL_HOURS,
 } from "./sampleConfig";
 import { sampleFormSchema, type SampleFormValues } from "./sampleFormSchema";
+import { SamplePagePicker } from "./SamplePagePicker";
 
 const FIELD =
   "h-10 w-full rounded-xl border border-[#914A8C]/25 bg-white px-3 text-sm font-semibold text-[#914A8C] focus:outline-none focus:ring-2 focus:ring-[#914A8C]/30";
@@ -92,19 +93,15 @@ export function SampleCreateCard({
   const pages = [...(comic?.pages ?? [])].sort(
     (a, b) => a.pageNumber - b.pageNumber,
   );
+  // A page that was deleted elsewhere while it was chosen has no tile to take it off, and an emptied book
+  // shows no pages at all: the selection is read against the pages the book has now. A page that is only
+  // unusable now stays chosen and keeps its tile, so it can still be removed.
+  const knownIds = new Set(pages.map((p) => p.id));
+  const picked = comic ? chosen.filter((id) => knownIds.has(id)) : chosen;
   const facePages = pages.filter(
-    (p) => chosen.includes(p.id) && p.hasFace,
+    (p) => picked.includes(p.id) && p.hasFace,
   ).length;
   const estimate = estimateSampleCost(facePages);
-
-  const togglePage = (id: string) =>
-    setChosen((current) =>
-      current.includes(id)
-        ? current.filter((x) => x !== id)
-        : current.length >= MAX_SAMPLE_PAGES
-          ? current
-          : [...current, id],
-    );
 
   const handleFile = async (file: File | undefined) => {
     if (!file) return;
@@ -152,7 +149,7 @@ export function SampleCreateCard({
     }
   };
 
-  const ready = isValid && chosen.length > 0 && !!photo && !step;
+  const ready = isValid && picked.length > 0 && !!photo && !step;
 
   // A second click before the screen has re-rendered must not start a second sample.
   const submittingRef = useRef(false);
@@ -169,7 +166,7 @@ export function SampleCreateCard({
         childName: values.childName.trim(),
         age: values.age,
         pronounKey: values.pronounKey,
-        pageIds: chosen,
+        pageIds: picked,
       });
       createdId = created.sessionId;
 
@@ -313,8 +310,8 @@ export function SampleCreateCard({
 
       {comicId && (
         <div className="space-y-2">
-          <p className="text-xs font-bold text-[#914A8C]/80">
-            Pages to generate ({chosen.length} of at most {MAX_SAMPLE_PAGES})
+          <p aria-live="polite" className="text-xs font-bold text-[#914A8C]/80">
+            Pages to generate ({picked.length} of at most {MAX_SAMPLE_PAGES})
           </p>
           {comicLoading ? (
             <p className="text-sm text-[#914A8C]/70">Loading pages...</p>
@@ -327,45 +324,13 @@ export function SampleCreateCard({
               This book has no pages yet.
             </p>
           ) : (
-            <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
-              {pages.map((p) => {
-                const on = chosen.includes(p.id);
-                // A page without artwork, or a face page without its mask and prompt, cannot be generated
-                // (the worker would fail it after its retries). Same rule as createSample in the backend.
-                const hasArtwork = !!(
-                  p.artworkUrl &&
-                  p.artworkWidth &&
-                  p.artworkHeight
-                );
-                const faceReady = !p.hasFace || !!(p.maskUrl && p.pagePrompt);
-                const usable = hasArtwork && faceReady;
-                return (
-                  <button
-                    key={p.id}
-                    type="button"
-                    onClick={() => togglePage(p.id)}
-                    disabled={!usable}
-                    aria-pressed={on}
-                    className={`rounded-xl border px-2 py-2 text-xs font-bold cursor-pointer disabled:cursor-not-allowed disabled:opacity-40 ${
-                      on
-                        ? "border-[#914A8C] bg-[#914A8C] text-white"
-                        : "border-[#914A8C]/25 bg-white text-[#914A8C]"
-                    }`}
-                  >
-                    Page {p.pageNumber}
-                    <span className="block text-[10px] font-semibold opacity-80">
-                      {!hasArtwork
-                        ? "no artwork"
-                        : !faceReady
-                          ? "needs mask"
-                          : p.hasFace
-                            ? "with face"
-                            : "no face"}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
+            <SamplePagePicker
+              key={comicId}
+              pages={pages}
+              chosen={picked}
+              onChange={setChosen}
+              disabled={!!step}
+            />
           )}
         </div>
       )}
@@ -424,7 +389,10 @@ export function SampleCreateCard({
         </p>
       </div>
 
-      <div className="flex flex-wrap gap-3">
+      <div className="sticky bottom-4 z-40 [@media(max-height:480px)]:static flex flex-wrap items-center gap-3 rounded-2xl border border-[#914A8C]/20 bg-white p-3 shadow-lg">
+        <p className="mr-auto text-xs font-bold text-[#914A8C]">
+          {picked.length} of {MAX_SAMPLE_PAGES} pages, about ${estimate}
+        </p>
         <Button
           onClick={handleCreate}
           disabled={!ready}
