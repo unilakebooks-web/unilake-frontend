@@ -39,7 +39,14 @@ const PHOTO_RULES = [
   { text: "No group photos or distant shots." },
 ];
 
-function PhotoRules({ className = "" }: { className?: string }) {
+function PhotoRules({
+  className = "",
+  withConfidentialNote = false,
+}: {
+  className?: string;
+  /** Adds the confidentiality line as the last bullet, as in the client's Photo Guidelines picture. */
+  withConfidentialNote?: boolean;
+}) {
   return (
     <ul className={`list-disc list-inside space-y-0.5 text-[#333] ${className}`}>
       {PHOTO_RULES.map((rule) => (
@@ -50,16 +57,17 @@ function PhotoRules({ className = "" }: { className?: string }) {
           {rule.text}
         </li>
       ))}
+      {withConfidentialNote && <li>{PHOTO_CONFIDENTIAL_TEXT}</li>}
     </ul>
   );
 }
 
 /** Shared with components/personalize/NewPhotoForm.tsx so every screen makes the same promise. */
 export const PHOTO_CONFIDENTIAL_TEXT =
-  "* All photos are kept confidential and used only for creating your personalized book panels and deleted after 7 days.";
+  "All photos are kept confidential and used only for creating your personalized book panels and deleted after 7 days.";
 
 function ConfidentialNote() {
-  return <p className="text-[10px] text-[#777] mt-2">{PHOTO_CONFIDENTIAL_TEXT}</p>;
+  return <p className="text-[10px] text-[#777] mt-2">* {PHOTO_CONFIDENTIAL_TEXT}</p>;
 }
 
 interface PhotoGuidelinesProps {
@@ -134,7 +142,7 @@ export function PhotoGuidelinesButton({ className = "" }: { className?: string }
             mirror the p-4 of DialogContent (components/ui/dialog.tsx). */}
         <DialogContent
           showCloseButton={false}
-          className="sm:max-w-lg max-h-[90dvh] overflow-y-auto"
+          className="sm:max-w-lg max-h-[90vh] supports-[height:100dvh]:max-h-[90dvh] overflow-y-auto"
         >
           <DialogHeader className="sticky -top-4 z-10 -mx-4 -mt-4 flex-row items-center justify-between gap-3 rounded-t-xl bg-popover px-4 pt-4 pb-2">
             <DialogTitle className="text-base font-bold text-[#3F3C95]">
@@ -156,8 +164,7 @@ export function PhotoGuidelinesButton({ className = "" }: { className?: string }
               sizes="(max-width: 640px) 90vw, 480px"
               className="w-full h-auto rounded-lg"
             />
-            <PhotoRules className="text-sm mt-3" />
-            <ConfidentialNote />
+            <PhotoRules className="text-sm mt-3" withConfidentialNote />
           </div>
         </DialogContent>
       </Dialog>

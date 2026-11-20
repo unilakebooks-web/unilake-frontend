@@ -325,7 +325,7 @@ export default function NewPhotoForm({ previousSession }: NewPhotoFormProps) {
           />
 
           <p className="text-[10px] text-[#777] mt-2 lg:mt-3">
-            {PHOTO_CONFIDENTIAL_TEXT}
+            * {PHOTO_CONFIDENTIAL_TEXT}
           </p>
         </section>
 
