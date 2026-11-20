@@ -104,8 +104,8 @@ export default function ComicDetailContent({ comic }: ComicDetailContentProps) {
 
               {/* Right Column: Form, then (below lg only) the text guidelines
                   and the four tiles. The example image is not repeated here —
-                  on these screens it opens from the form's "Photo Guidelines - Important"
-                  button, just above the consent checkbox. */}
+                  on these screens it opens from the form's "Click here for
+                  Photo Guidelines: Important" button, just above the consent checkbox. */}
               <div className="w-full lg:w-[55%] flex flex-col items-center lg:items-start">
                 <ComicPersonalizeForm
                   comic={comic}
