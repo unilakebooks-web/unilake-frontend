@@ -29,10 +29,20 @@ function Card({
   );
 }
 
-function Field({ label, value }: { label: string; value: React.ReactNode }) {
+function Field({
+  label,
+  value,
+  wrapLabel,
+}: {
+  label: string;
+  value: React.ReactNode;
+  wrapLabel?: boolean;
+}) {
   return (
     <div className="flex justify-between gap-4 text-sm">
-      <span className="text-neutral-500 shrink-0 max-w-[60%] break-words">{label}</span>
+      <span className={`text-neutral-500 shrink-0${wrapLabel ? " max-w-[60%] break-words" : ""}`}>
+        {label}
+      </span>
       <span className="font-semibold text-neutral-900 text-right break-words min-w-0">
         {value ?? <span className="text-neutral-400 font-normal">—</span>}
       </span>
@@ -121,6 +131,7 @@ export function OrderInfoCards({ order }: { order: AdminOrderDetail }) {
             <Field label="List price" value={`${order.currency} ${order.listAmount}`} />
             <Field
               label={`Coupon ${order.couponCode}`}
+              wrapLabel
               value={`-${order.currency} ${order.discountAmount}`}
             />
           </>
