@@ -97,6 +97,20 @@ export interface ComicListItem extends Comic {
   /** May be empty on older comics — see `ageGroups`. */
   themes: ComicTheme[];
   _count: { pages: number; orderSessions: number; pricingRules: number };
+  /** ISO strings, or null. Absent when the backend predates automatic data deletion. */
+  unpublishedAt?: string | null;
+  retiredAt?: string | null;
+  filesDeletedAt?: string | null;
+  /**
+   * The server's verdict on the delete button: "delete" removes the comic, "retire" keeps its row for the
+   * orders and deletes its files automatically, "retired" already is, "blocked" cannot be done (see `reason`).
+   * Absent when the backend predates it: fall back to `_count.orderSessions`.
+   */
+  deleteEligibility?: {
+    canDelete: boolean;
+    kind: "delete" | "retire" | "retired" | "blocked";
+    reason: string | null;
+  };
 }
 
 export interface ComicDetail extends Comic {

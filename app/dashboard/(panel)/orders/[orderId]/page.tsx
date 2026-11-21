@@ -7,6 +7,7 @@ import { AlertCircle, ArrowLeft, CreditCard, Loader2, XCircle } from "lucide-rea
 import { useOrderTracking, useUserOrder } from "@/hooks/useOrders";
 import { OrderDetailCards } from "@/components/dashboard/order/OrderDetailCards";
 import { OrderTrackingTimeline } from "@/components/dashboard/order/OrderTrackingTimeline";
+import { getOrderDeletion } from "@/components/dashboard/order/OrderDeletedNote";
 
 function BackLink() {
   return (
@@ -94,11 +95,14 @@ export default function OrderDetailPage({
     );
   }
 
+  const paymentBlocked = getOrderDeletion(order) === "UNPAID_EXPIRED";
+
   return (
     <div className="max-w-2xl mx-auto py-2 font-poppins space-y-6">
       <BackLink />
 
-      {statusCode === "AWAITING_PAYMENT" ? (
+      {/* An expired, deleted preview cannot be paid: nothing here, and the "Your book" card below says so. */}
+      {statusCode === "AWAITING_PAYMENT" && paymentBlocked ? null : statusCode === "AWAITING_PAYMENT" ? (
         <div className="p-6 bg-amber-50 rounded-2xl border-2 border-amber-300">
           <h2 className="font-bold text-gray-900 mb-1">This order isn&apos;t paid for yet</h2>
           <p className="text-sm text-amber-900 mb-4">

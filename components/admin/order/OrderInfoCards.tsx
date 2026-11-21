@@ -183,6 +183,9 @@ export function OrderInfoCards({ order }: { order: AdminOrderDetail }) {
                     src={generatedCover.imageUrl}
                     alt={`Generated cover for ${session.childName ?? "this order"}`}
                     className="w-full h-auto object-contain"
+                    onError={(e) => {
+                      e.currentTarget.style.display = "none";
+                    }}
                   />
                 </a>
                 <p className="text-[11px] text-neutral-400 mt-1.5 text-center">
@@ -194,7 +197,7 @@ export function OrderInfoCards({ order }: { order: AdminOrderDetail }) {
               <>
                 <div className="w-full h-48 rounded-lg bg-neutral-100 border border-neutral-200" />
                 <p className="text-[11px] text-neutral-400 mt-1.5 text-center">
-                  Cover not generated yet.
+                  {order.deletion?.filesDeleted ? "Deleted for privacy." : "Cover not generated yet."}
                 </p>
               </>
             )}
@@ -245,7 +248,9 @@ export function OrderInfoCards({ order }: { order: AdminOrderDetail }) {
           </>
         ) : (
           <p className="text-sm text-neutral-500">
-            Not compiled yet — the PDF is built after the customer sends the book to print.
+            {pdf.pdfDeleted
+              ? "The PDF was deleted for privacy."
+              : "Not compiled yet — the PDF is built after the customer sends the book to print."}
           </p>
         )}
         {/* Shown in every state of this card; the control decides what to offer. */}

@@ -57,6 +57,7 @@ export async function fetchAdminOrders(
   if (filters?.sortBy) params.append("sortBy", filters.sortBy);
   if (filters?.sortOrder) params.append("sortOrder", filters.sortOrder);
   if (filters?.sentToPrinter) params.append("sentToPrinter", filters.sentToPrinter);
+  if (filters?.awaitingCustomerPrint) params.append("awaitingCustomerPrint", filters.awaitingCustomerPrint);
 
   const query = params.toString();
   const { data } = await api.get<AdminOrdersResponse>(
