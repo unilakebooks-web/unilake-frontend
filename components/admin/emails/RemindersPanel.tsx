@@ -84,6 +84,24 @@ export function RemindersPanel() {
     seededFrom !== null &&
     JSON.stringify(values) !== JSON.stringify(toFormValues(seededFrom));
 
+  // Mirrors the server: a reminder that is on starts afresh when it is switched on, or when its times or the
+  // sending hours change, so reminders already due and not yet sent are dropped.
+  const before = seededFrom ? toFormValues(seededFrom) : null;
+  const windowChanged =
+    before !== null &&
+    (values.windowStartHour.trim() !== before.windowStartHour ||
+      values.windowEndHour.trim() !== before.windowEndHour);
+  const resetsSchedule =
+    before !== null &&
+    REMINDER_KIND_INFO.some(
+      (info) =>
+        values[info.enabledKey] &&
+        (!before[info.enabledKey] ||
+          windowChanged ||
+          values[info.offsetsKey].map((h) => h.trim()).join(",") !==
+            before[info.offsetsKey].join(","))
+    );
+
   const onSave = async () => {
     const found = validateReminderForm(values);
     setProblems(found);
@@ -373,6 +391,17 @@ export function RemindersPanel() {
             <p key={p}>{p}</p>
           ))}
         </div>
+      ) : null}
+
+      {dirty && resetsSchedule ? (
+        <p
+          role="status"
+          className="rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm font-medium text-amber-800"
+        >
+          Saving will restart the schedule of the reminders you switched on or
+          changed: anything already due but not yet sent is skipped, and only
+          send times that come after you save are used.
+        </p>
       ) : null}
 
       <div className="flex justify-end">
