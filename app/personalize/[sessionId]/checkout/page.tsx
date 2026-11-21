@@ -46,6 +46,11 @@ export default async function CheckoutRoute({
 
   const snapshot = result.snapshot;
 
+  // Automatic data deletion: an unpaid preview whose files were deleted is expired, and the preview page says so.
+  if (snapshot.isExpired && (snapshot.photoDeleted || snapshot.filesDeleted)) {
+    redirect(`/personalize/${sessionId}/preview`);
+  }
+
   // Already past checkout — send them to the preview page to see the full book.
   // AWAITING_PAYMENT is deliberately allowed through: that is the resume case,
   // where the user closed the Razorpay modal and is coming back to finish.

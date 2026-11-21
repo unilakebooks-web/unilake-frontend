@@ -69,6 +69,10 @@ function changedLines(change: AddressChange) {
   ));
 }
 
+// Automatic data deletion empties both objects of an old change.
+const isRemoved = (change: AddressChange) =>
+  Object.keys(change.before ?? {}).length === 0 && Object.keys(change.after ?? {}).length === 0;
+
 export function AddressHistory({ order }: { order: AdminOrderDetail }) {
   const history = order.addressHistory ?? [];
   const { user } = useAuth();
@@ -167,7 +171,9 @@ export function AddressHistory({ order }: { order: AdminOrderDetail }) {
                 {STATUS_LABEL[change.syncStatus]}
               </span>
             </div>
-            <ul className="space-y-0.5 pl-1">{changedLines(change)}</ul>
+            <ul className="space-y-0.5 pl-1">
+              {isRemoved(change) ? <li className="text-neutral-500">Details removed</li> : changedLines(change)}
+            </ul>
             {change.syncError && <p className="text-red-700">{change.syncError}</p>}
             {change.syncNote && (
               <p className="text-neutral-600 break-words">

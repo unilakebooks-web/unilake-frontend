@@ -4,7 +4,8 @@ const STORAGE_KEY_PREFIX = "unilake_session_";
  * How long a stored session is kept before it is forgotten. Mirrors the
  * backend's session lifetime (`SESSION_LIFETIME_DAYS` in the backend's
  * session.service.ts) — two repos, so change both together, along with the
- * "Previews are kept for…" message on the preview page.
+ * "Previews are kept for…" message on the preview page. ⚠️ Also repeated in the backend's
+ * config/dataDeletion.ts (the deletion of unpaid previews).
  */
 const SESSION_TTL_MS = 7 * 24 * 60 * 60 * 1000;
 

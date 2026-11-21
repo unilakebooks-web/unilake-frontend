@@ -76,8 +76,14 @@ export interface AdminOrderRow {
   sentToPrinterAt: string | null;
   childName: string | null;
   comicTitle: string;
-  /** Null when page 1 has not generated yet — render a placeholder, not the template art. */
+  /** Null when page 1 has not generated yet or the files were deleted — render a placeholder, not the template art. */
   coverImageUrl: string | null;
+  /** Automatic data deletion; `undefined` (a backend that predates it) is read as false. */
+  photoDeleted?: boolean;
+  filesDeleted?: boolean;
+  pdfDeleted?: boolean;
+  /** Paid after the photo and files were deleted: no book can be made. */
+  paidAfterDeletion?: boolean;
 }
 
 export interface AdminOrdersPagination {
@@ -162,8 +168,18 @@ export interface AdminOrderDetail {
 
   pdf: {
     pdfUrl: string | null;
+    /** Null once the PDF was deleted. */
     pdfDownloadUrl: string | null;
     pdfDownloadExpiry: string | null;
+    pdfDeleted?: boolean;
+  };
+
+  /** Absent when the backend predates automatic data deletion. */
+  deletion?: {
+    photoDeleted: boolean;
+    filesDeleted: boolean;
+    pdfDeleted: boolean;
+    paidAfterDeletion: boolean;
   };
 
   shipment: {
@@ -344,6 +360,12 @@ export interface UserOrderRow {
   currency: string;
   publicStatus: PublicOrderStatus;
   createdAt: string;
+  /** Automatic data deletion; `undefined` (a backend that predates it) is read as false. */
+  photoDeleted?: boolean;
+  filesDeleted?: boolean;
+  pdfDeleted?: boolean;
+  /** Paid after the photo and files were deleted: no book can be made. */
+  paidAfterDeletion?: boolean;
 }
 
 export interface UserOrderDetail {
@@ -375,6 +397,12 @@ export interface UserOrderDetail {
   courierName: string | null;
   createdAt: string;
   updatedAt: string;
+  /** Automatic data deletion; `undefined` (a backend that predates it) is read as false. */
+  photoDeleted?: boolean;
+  filesDeleted?: boolean;
+  pdfDeleted?: boolean;
+  /** Paid after the photo and files were deleted: no book can be made. */
+  paidAfterDeletion?: boolean;
 }
 
 export interface UserOrderTracking {

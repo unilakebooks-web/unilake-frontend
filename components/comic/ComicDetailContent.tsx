@@ -37,6 +37,7 @@ export default function ComicDetailContent({ comic }: ComicDetailContentProps) {
         // generate. Expired sessions load fine over REST but their WebSocket is refused.
         const isResumable =
           !session.isExpired &&
+          !session.filesDeleted &&
           session.status !== "CREATED";
 
         if (isResumable) {
