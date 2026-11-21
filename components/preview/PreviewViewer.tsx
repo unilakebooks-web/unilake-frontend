@@ -55,6 +55,8 @@ interface PreviewViewerProps {
    * variants still works — that is local to this tab and saves nothing.
    */
   adminView?: boolean;
+  /** Something drawn under the heading, e.g. the "Share my child's book" button (feature 14). */
+  headerAction?: React.ReactNode;
 }
 
 export default function PreviewViewer({
@@ -69,6 +71,7 @@ export default function PreviewViewer({
   paidPagesReady = 0,
   totalPaidPages = 0,
   adminView = false,
+  headerAction,
 }: PreviewViewerProps) {
   const { data: comicDetail } = usePublicComic(snapshot.comicId);
 
@@ -324,6 +327,7 @@ export default function PreviewViewer({
               </span>
             </div>
           )}
+          {headerAction}
         </div>
 
         {/* Cover Page */}
