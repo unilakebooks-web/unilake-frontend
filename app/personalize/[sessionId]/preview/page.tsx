@@ -3,6 +3,7 @@
 import { use, useEffect, useMemo, useState, type ReactNode } from "react";
 import { useSessionPreview } from "@/hooks/useSessionPreview";
 import PreviewViewer from "@/components/preview/PreviewViewer";
+import SharePreviewControl from "@/components/share/SharePreviewControl";
 import ComicPreloader from "@/components/comic/ComicPreloader";
 import { usePublicComic } from "@/hooks/usePublicComics";
 import HomeHeaderSection from "@/components/home/HomeHeaderSection";
@@ -386,6 +387,12 @@ export default function PreviewPage({
           paidPagesReady={paidPagesReady}
           totalPaidPages={totalPaidPages}
           adminView={adminView}
+          // Feature 14: shown only when the backend says this book can be shared (not a sample or a gone book).
+          headerAction={
+            sessionId && !adminView && !isExpired ? (
+              <SharePreviewControl sessionId={sessionId} />
+            ) : undefined
+          }
         />
       </>
     );
