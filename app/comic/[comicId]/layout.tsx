@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { fetchPublicComic } from "@/app/actions/comic";
+import { toImageUrl } from "@/lib/imageUrl";
 import {
   absoluteUrl,
   clampDescription,
@@ -56,7 +57,7 @@ export async function generateMetadata({
 
     // The first thumbnail is the primary cover by contract, and is already a
     // full public R2 URL — so comic share cards need no extra upload.
-    const coverImage = comic.coverThumbnailUrls?.[0];
+    const coverImage = toImageUrl(comic.coverThumbnailUrls?.[0]);
 
     return {
       title,

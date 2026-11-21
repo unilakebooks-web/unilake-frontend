@@ -11,6 +11,7 @@ import { resolveMrp } from "@/lib/utils";
 import { formatAgeRange } from "@/lib/comicTags";
 import ComicQuickViewModal from "@/components/home/ComicQuickViewModal";
 import { toImageUrl } from "@/lib/imageUrl";
+import ShareButton from "@/components/share/ShareButton";
 
 /** Shared by the Personalise link and its disabled stand-in. */
 const PERSONALISE_CLASSES = `
@@ -216,6 +217,13 @@ export default function StoryCard({ comic }: StoryCardProps) {
             ★ Bestseller
           </span>
         )}
+
+        {/* Share button (feature 14) — over the cover's top-right corner, like the Bestseller tag, so it costs none
+            of the white body's vertical budget. Its clicks are stopped inside ShareButton, so the card's quick-view
+            popup does not open. */}
+        <div className="absolute top-[2.1cqw] right-[2.1cqw] z-10">
+          <ShareButton path={`/comic/${comic.id}`} title={comic.title} variant="overlay" />
+        </div>
       </div>
 
       {/* Duster + chalk box, re-drawn IN FRONT of the cover.
