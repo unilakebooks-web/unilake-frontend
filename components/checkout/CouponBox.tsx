@@ -1,10 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Loader2, Tag } from "lucide-react";
 import { previewCoupon } from "@/app/actions/session";
 import { AppliedCoupon, CouponOffer } from "@/app/types/coupon";
-import { formatMoney, getErrorMessage } from "@/lib/utils";
+import { formatMoney, getErrorCode, getErrorMessage } from "@/lib/utils";
 import { endsText, offersHeading, splitOffers } from "./couponOffers";
 
 // ⚠️ mirrors the backend COUPON_CODE_INPUT_MAX
@@ -36,6 +37,7 @@ export default function CouponBox({
   offers = [],
   onRefreshOffers,
 }: CouponBoxProps) {
+  const router = useRouter();
   const [code, setCode] = useState("");
   const [isChecking, setIsChecking] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -57,6 +59,10 @@ export default function CouponBox({
       onApplied(coupon);
       return null;
     } catch (err) {
+      // The preview was deleted (automatic data deletion): the preview page offers "Start Again".
+      if (getErrorCode(err) === "PREVIEW_DELETED") {
+        router.push(`/personalize/${sessionId}/preview`);
+      }
       // Backend messages are written for customers ("This code has expired.").
       return getErrorMessage(err, "We couldn't check this code. Please try again.");
     } finally {

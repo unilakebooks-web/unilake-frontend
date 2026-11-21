@@ -62,9 +62,13 @@ function PhotoRules({
   );
 }
 
-/** Shared with components/personalize/NewPhotoForm.tsx so every screen makes the same promise. */
+/**
+ * Shared with components/personalize/NewPhotoForm.tsx so every screen makes the same promise.
+ * ⚠️ The periods repeat the backend: PHOTO_DELETION_DAYS in config/dataDeletion.ts and the preview lifetime
+ * SESSION_LIFETIME_DAYS in services/session.service.ts. Two repos, change both.
+ */
 export const PHOTO_CONFIDENTIAL_TEXT =
-  "All photos are kept confidential and used only for creating your personalized book panels and deleted after 7 days.";
+  "All photos are kept confidential and used only for creating your personalized book panels. Photos for a free preview are deleted after 7 days (up to 3 days longer if you started to pay), and photos for a paid book 3 days after delivery.";
 
 function ConfidentialNote() {
   return <p className="text-[10px] text-[#777] mt-2">* {PHOTO_CONFIDENTIAL_TEXT}</p>;

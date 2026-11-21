@@ -14,10 +14,13 @@ import { toImageUrl } from "@/lib/imageUrl";
 export function OrderCoverImage({
   generatedCover,
   comic,
+  filesDeleted,
   longEdgePx,
 }: {
   generatedCover: UserGeneratedCover | null;
   comic: OrderComicSummary;
+  /** The book's files were deleted: show the icon, never the template thumbnail as if it were the book. */
+  filesDeleted?: boolean;
   longEdgePx: number;
 }) {
   // Portrait 3:4 — the box every order image used before this component.
@@ -32,7 +35,7 @@ export function OrderCoverImage({
         : { width: Math.round(longEdgePx * ratio), height: longEdgePx };
   }
 
-  const url = generatedCover?.imageUrl ?? comic.coverThumbnailUrls?.[0];
+  const url = filesDeleted ? undefined : (generatedCover?.imageUrl ?? comic.coverThumbnailUrls?.[0]);
 
   return (
     <div
@@ -46,6 +49,10 @@ export function OrderCoverImage({
           // The generated box already matches the page's ratio, so contain
           // shows the whole page. The fallback thumbnail keeps its old crop.
           className={`w-full h-full ${generatedCover ? "object-contain" : "object-cover"}`}
+          // A file deleted for the customer's privacy must never show as a broken image.
+          onError={(event) => {
+            event.currentTarget.style.display = "none";
+          }}
         />
       ) : (
         <div className="w-full h-full flex items-center justify-center">

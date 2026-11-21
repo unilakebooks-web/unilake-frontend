@@ -82,6 +82,11 @@ export function ComicListTable({ comics, onDeleteClick }: ComicListTableProps) {
                 </td>
                 <td className="px-6 py-3">
                   <ComicStatusBadge status={comic.status} />
+                  {comic.deleteEligibility?.kind === "retired" && (
+                    <span className="ml-1.5 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold border shadow-sm bg-neutral-800 text-white border-neutral-800">
+                      Retired
+                    </span>
+                  )}
                 </td>
                 <td className="px-6 py-3 hidden md:table-cell">
                   <div className="flex flex-wrap items-center gap-1.5">
@@ -134,6 +139,7 @@ export function ComicListTable({ comics, onDeleteClick }: ComicListTableProps) {
                     comicId={comic.id}
                     status={comic.status}
                     orderSessionsCount={comic._count.orderSessions}
+                    deleteEligibility={comic.deleteEligibility}
                     onDeleteClick={() => onDeleteClick(comic)}
                   />
                 </td>

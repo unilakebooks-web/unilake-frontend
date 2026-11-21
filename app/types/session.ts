@@ -87,6 +87,15 @@ export interface SessionSnapshot {
   updatedAt: string;
   expiresAt: string;
   isExpired: boolean;
+  /**
+   * Automatic data deletion. Optional because a frontend deployed ahead of the backend gets none of them:
+   * `undefined` is read as false. ⚠️ Also in the order types (app/types/order.ts).
+   */
+  photoDeleted?: boolean;
+  filesDeleted?: boolean;
+  pdfDeleted?: boolean;
+  /** Paid after the photo and files were deleted: no book can be made. */
+  paidAfterDeletion?: boolean;
   comic: {
     id: string;
     title: string;

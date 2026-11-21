@@ -61,6 +61,9 @@ export function OrderListTable({ orders }: { orders: AdminOrderRow[] }) {
                           // 20 rows × ~250KB is 5MB if every one loads eagerly.
                           loading="lazy"
                           className="w-full h-full object-contain pointer-events-none"
+                          onError={(e) => {
+                            e.currentTarget.style.display = "none";
+                          }}
                         />
                       ) : null}
                     </div>
@@ -85,6 +88,11 @@ export function OrderListTable({ orders }: { orders: AdminOrderRow[] }) {
                 </td>
                 <td className="px-6 py-3">
                   <OrderStatusBadge status={order.status} />
+                  {order.paidAfterDeletion && (
+                    <span className="mt-1 block text-xs font-semibold text-red-700">
+                      Paid after deletion
+                    </span>
+                  )}
                   {order.needsPaymentCheck && (
                     <span className="mt-1 block text-xs font-semibold text-red-700">
                       Check payment in Razorpay
