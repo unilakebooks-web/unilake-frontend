@@ -7,7 +7,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Button } from "@/components/ui/button";
 import ShareButton, { PILL_CLASSES } from "@/components/share/ShareButton";
 import { shareUrl } from "@/components/share/shareUrl";
-import { useCreateShare, useShareState, useStopSharing } from "@/hooks/useShare";
+import { useCreateShare, useShareState, useStopSharing, useUpdateShareName } from "@/hooks/useShare";
 
 interface SharePreviewControlProps {
   sessionId: string;
@@ -25,12 +25,20 @@ export default function SharePreviewControl({ sessionId }: SharePreviewControlPr
   const state = useShareState(sessionId);
   const create = useCreateShare(sessionId);
   const stop = useStopSharing(sessionId);
+  const rename = useUpdateShareName(sessionId);
 
   if (!state.data?.available) return null;
 
   const active = state.data.active && !!state.data.token;
-  const busy = create.isPending || stop.isPending;
-  const fail = () => toast.error("Could not update sharing. Please try again.");
+  const busy = create.isPending || stop.isPending || rename.isPending;
+  // A book that expired, was deleted or whose link was stopped elsewhere answers NOT_FOUND: say so, and the state
+  // that is re-read afterwards hides the button or shows the real link.
+  const fail = (error?: unknown) =>
+    toast.error(
+      (error as { code?: string } | null)?.code === "NOT_FOUND"
+        ? "Sharing is no longer available for this book."
+        : "Could not update sharing. Please try again."
+    );
 
   const handleOpenChange = (next: boolean) => {
     setOpen(next);
@@ -44,14 +52,12 @@ export default function SharePreviewControl({ sessionId }: SharePreviewControlPr
   const handleToggleName = (value: boolean) => {
     setShowName(value);
     if (!active) return;
-    // The link may have been stopped in another tab while this dialog stayed open: changing the name must never
-    // bring a stopped link back, so look at the live state first.
-    void state.refetch().then((result) => {
-      if (!result.data?.active) {
-        setShowName(false);
-        return;
-      }
-      create.mutate(value, { onError: () => { setShowName(!value); fail(); } });
+    // Changes only the name of a live link: if it was stopped in another tab the backend refuses and nothing is revived.
+    rename.mutate(value, {
+      onError: (error) => {
+        setShowName(!value);
+        fail(error);
+      },
     });
   };
   const handleStop = () => stop.mutate(undefined, { onError: fail });

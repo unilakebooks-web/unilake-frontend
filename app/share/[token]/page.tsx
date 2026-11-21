@@ -16,7 +16,8 @@ import { API_BASE } from "@/components/share/shareUrl";
  * - A SERVER component with no loading.tsx and no Suspense around the fetch: a streamed response has already sent
  *   its 200, so it could never become a 404. A dead link must be a real 404, an API failure a non-200 error page.
  * - One fetch per request (React cache) feeds the metadata and the body.
- * - `notFound()` is called in the page body too, not only in generateMetadata.
+ * - The 404 comes from `notFound()` in the page body. generateMetadata never calls it: any failure there falls back
+ *   to generic metadata, so a slow or failed fetch cannot break the response.
  * - Never indexed, never in the sitemap; the share token is private.
  */
 export const dynamic = "force-dynamic";

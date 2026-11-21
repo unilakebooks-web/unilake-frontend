@@ -14,6 +14,12 @@ export async function createShare(sessionId: string, showName?: boolean): Promis
   return data;
 }
 
+/** Changes only the name flag of a live link. A stopped link answers { code: "NOT_FOUND" } and is never revived. */
+export async function updateShareName(sessionId: string, showName: boolean): Promise<CreatedShare> {
+  const { data } = await api.patch<CreatedShare>(`/api/public/sessions/${sessionId}/share`, { showName });
+  return data;
+}
+
 export async function stopSharing(sessionId: string): Promise<void> {
   await api.delete(`/api/public/sessions/${sessionId}/share`);
 }

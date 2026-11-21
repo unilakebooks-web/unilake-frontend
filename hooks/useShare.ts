@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { createShare, getShareState, stopSharing } from "@/app/actions/share";
+import { createShare, getShareState, stopSharing, updateShareName } from "@/app/actions/share";
 
 const shareStateKey = (sessionId: string) => ["share-state", sessionId];
 
@@ -16,7 +16,16 @@ export function useCreateShare(sessionId: string) {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (showName?: boolean) => createShare(sessionId, showName),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: shareStateKey(sessionId) }),
+    // Success or failure, show what the backend now says (the book may have expired or been stopped elsewhere).
+    onSettled: () => queryClient.invalidateQueries({ queryKey: shareStateKey(sessionId) }),
+  });
+}
+
+export function useUpdateShareName(sessionId: string) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (showName: boolean) => updateShareName(sessionId, showName),
+    onSettled: () => queryClient.invalidateQueries({ queryKey: shareStateKey(sessionId) }),
   });
 }
 
@@ -24,6 +33,6 @@ export function useStopSharing(sessionId: string) {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: () => stopSharing(sessionId),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: shareStateKey(sessionId) }),
+    onSettled: () => queryClient.invalidateQueries({ queryKey: shareStateKey(sessionId) }),
   });
 }
