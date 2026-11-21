@@ -41,8 +41,13 @@ import {
   type AddressFormValues,
 } from "@/lib/addressSchema";
 import { AddressDeleteDialog } from "@/components/dashboard/address/AddressDeleteDialog";
+import { getErrorCode, getErrorMessage } from "@/lib/utils";
 import { usePincodeAutofill } from "@/hooks/usePincodeAutofill";
 import { PincodeNotFoundHint, PincodeSuggestions } from "@/components/shared/PincodeSuggestions";
+
+/** Once payment has started only an address in the order's country can be used (the price depends on the country). */
+const sameCountryOnlyMessage = (countryName: string | null) =>
+  `Payment has started for ${countryName}, so only an address there can be used.`;
 
 interface AddressPickerProps {
   sessionId: string;
@@ -114,7 +119,8 @@ export default function AddressPicker({ sessionId, snapshot, onAddressApplied }:
       await updateSession(sessionId, {
         shippingName: addr.name,
         shippingLine1: addr.line1,
-        shippingLine2: addr.line2 || undefined,
+        // An empty string, not undefined: undefined would leave the previous address's line 2 in place.
+        shippingLine2: addr.line2 || "",
         shippingCity: addr.city,
         shippingState: addr.state,
         shippingZip: addr.zip,
@@ -128,7 +134,10 @@ export default function AddressPicker({ sessionId, snapshot, onAddressApplied }:
       setEditingAddress(null);
     } catch (error) {
       console.error("Failed to apply address:", error);
-      toast.error("Failed to apply shipping address. Please try again.");
+      toast.error(getErrorMessage(error, "Failed to apply shipping address. Please try again."));
+      // The order may have changed since this page was loaded (for example it was paid in
+      // another tab): read it again so the screen shows what is true.
+      if (getErrorCode(error) === "CONFLICT") await onAddressApplied();
     } finally {
       setIsApplying(false);
     }
@@ -147,7 +156,14 @@ export default function AddressPicker({ sessionId, snapshot, onAddressApplied }:
 
   // Blank form every time — a previous, abandoned entry must not linger.
   const openAddForm = () => {
-    form.reset(emptyAddressForm(selectedCountry?.code));
+    // Once payment has started the country is the order's, not the one the store is browsed in.
+    form.reset(
+      emptyAddressForm(
+        paymentStarted
+          ? (snapshot.shippingCountry ?? undefined)
+          : selectedCountry?.code,
+      ),
+    );
     autofill.resetAutofill();
     setEditingAddress(null);
     setFormMode("add");
@@ -166,6 +182,11 @@ export default function AddressPicker({ sessionId, snapshot, onAddressApplied }:
   };
 
   const onSubmitAddress = async (values: AddressFormValues) => {
+    // Checked before anything is saved, so no address book entry is made for a change the order refuses.
+    if (paymentStarted && values.country !== snapshot.shippingCountry) {
+      toast.error(sameCountryOnlyMessage(appliedCountryName));
+      return;
+    }
     setIsApplying(true);
     try {
       // 1. Save to their address book — a new entry, or the one being edited.
@@ -228,10 +249,14 @@ export default function AddressPicker({ sessionId, snapshot, onAddressApplied }:
 
   const hasAddresses = !!addresses && addresses.length > 0;
 
-  // Once Pay Now has been pressed the session is AWAITING_PAYMENT and the
-  // backend freezes every shipping field (any PATCH to them 409s), so the
-  // address can be looked at but no longer changed.
-  const isLocked = snapshot.status === "AWAITING_PAYMENT";
+  // Once Pay Now has been pressed the session is AWAITING_PAYMENT. Until the
+  // payment goes through, the backend still lets the customer give another
+  // address in the SAME country (the price depends on the country); a paid
+  // order's address is frozen.
+  const paymentStarted = snapshot.status === "AWAITING_PAYMENT";
+  // Statuses the checkout page is open for (it redirects the others away, see checkout/page.tsx: keep the
+  // two in step): PREVIEW_READY, the payment-started one, and FAILED stay editable as before.
+  const isLocked = !["PREVIEW_READY", "AWAITING_PAYMENT", "FAILED"].includes(snapshot.status);
 
   // The session holds its OWN copy of the address, independent of the address
   // book — deleting a saved address does not remove it. This card shows that
@@ -282,6 +307,14 @@ export default function AddressPicker({ sessionId, snapshot, onAddressApplied }:
               <p className="pt-1 text-gray-500">📞 {snapshot.shippingPhone}</p>
             </div>
           </div>
+
+          {paymentStarted && (
+            <div className="rounded-xl bg-amber-50 border border-amber-200 px-4 py-3 text-sm text-amber-800">
+              Payment was started but not completed. You can change the delivery
+              address within {appliedCountryName}, or press Pay now to pay with
+              this address.
+            </div>
+          )}
 
           {isLocked ? (
             <div className="flex items-start gap-2 rounded-xl bg-gray-50 border border-gray-200 px-4 py-3 text-sm text-gray-600">
@@ -352,12 +385,15 @@ export default function AddressPicker({ sessionId, snapshot, onAddressApplied }:
               // header row has no room for them. Only one copy is ever
               // displayed; `hidden` also removes the other from the
               // accessibility tree.
+              // Once payment has started only addresses in the order's country can be used or edited.
+              const otherCountry = paymentStarted && addr.country !== snapshot.shippingCountry;
+
               const actions = (
                 <>
                   <button
                     type="button"
                     onClick={() => openEditForm(addr)}
-                    disabled={isApplying}
+                    disabled={isApplying || otherCountry}
                     className="flex items-center gap-1 text-xs font-semibold text-[#3F3C95] hover:bg-[#3F3C95]/10 px-2 py-1 rounded-md transition-colors disabled:opacity-50"
                     aria-label={`Edit address for ${addr.name}`}
                   >
@@ -416,7 +452,7 @@ export default function AddressPicker({ sessionId, snapshot, onAddressApplied }:
                     <Button
                       type="button"
                       onClick={() => handleUseAddress(addr)}
-                      disabled={isApplying}
+                      disabled={isApplying || otherCountry}
                       className="ml-auto h-9 px-4 rounded-full bg-[#3F3C95] hover:bg-[#3F3C95]/90 text-white text-sm font-bold"
                     >
                       {isThisApplying ? (
@@ -425,6 +461,11 @@ export default function AddressPicker({ sessionId, snapshot, onAddressApplied }:
                         "Use this address"
                       )}
                     </Button>
+                    {otherCountry && (
+                      <p className="basis-full text-right text-xs text-gray-500">
+                        {sameCountryOnlyMessage(appliedCountryName)}
+                      </p>
+                    )}
                   </div>
                 </div>
               );
@@ -553,7 +594,7 @@ export default function AddressPicker({ sessionId, snapshot, onAddressApplied }:
                           autofill.handleCountryChange(value ?? "");
                         }}
                         value={field.value}
-                        disabled={isCountriesLoading}
+                        disabled={isCountriesLoading || paymentStarted}
                       >
                         <FormControl>
                           {/* w-full overrides SelectTrigger's base w-fit, which

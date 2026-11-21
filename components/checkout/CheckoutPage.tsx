@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { LogIn } from "lucide-react";
 import { SessionSnapshot } from "@/app/types/session";
 import { AppliedCoupon } from "@/app/types/coupon";
-import { attachUser, getSession } from "@/app/actions/session";
+import { attachUser, confirmPayment, getSession } from "@/app/actions/session";
 import { useAuth } from "@/app/hooks/useAuth";
 import { useCouponOffers } from "@/hooks/useCoupons";
 import OrderSummary from "./OrderSummary";
@@ -20,6 +20,9 @@ const OTHER_ACCOUNT_MESSAGE =
   "This book is linked to a different account. Please log in with the account you used before.";
 import HomeHeaderSection from "@/components/home/HomeHeaderSection";
 import Footer from "@/components/home/Footer";
+
+/** Delays, after the payment window was closed without a confirmed payment, of the follow-up checks. */
+const RECHECK_DELAYS_MS = [6_000, 18_000, 45_000, 90_000];
 
 interface CheckoutPageProps {
   sessionId: string;
@@ -86,6 +89,25 @@ export default function CheckoutPage({ sessionId, initialSnapshot }: CheckoutPag
   // One link attempt per page visit — StrictMode runs effects twice in dev,
   // and a second PATCH while the first is in flight is pointless.
   const attachRequestedRef = useRef(false);
+
+  // A payment can go through while this page was not open (a UPI payment that finished after the
+  // window was closed). When the page opens with payment already started, ask our server whether it
+  // was received; if so, show the verifying step, which opens the preview once the order is paid.
+  const confirmRequestedRef = useRef(false);
+  // Asks our server; a paid order opens the verifying step. A failed check only means "not confirmed yet":
+  // the page works as before and a later check may succeed.
+  const checkPaymentConfirmed = () =>
+    confirmPayment(sessionId)
+      .then((result) => {
+        if (result.confirmed) setIsVerifying(true);
+      })
+      .catch(() => undefined);
+  useEffect(() => {
+    if (confirmRequestedRef.current || initialSnapshot.status !== "AWAITING_PAYMENT") return;
+    confirmRequestedRef.current = true;
+    void checkPaymentConfirmed();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sessionId, initialSnapshot.status]);
 
   // Make sure the session belongs to the logged-in customer before they fill
   // in an address. The preview page's login popup sends a logged-out customer
@@ -167,8 +189,24 @@ export default function CheckoutPage({ sessionId, initialSnapshot }: CheckoutPag
     refreshOffers();
   };
 
+  // A payment still in flight when the window was closed (a bank app finishing a UPI payment) can land
+  // seconds, even a minute or more, later: ask our server again at these delays before leaving it to a reload.
+  useEffect(() => {
+    if (paymentStatus !== "AWAITING_PAYMENT") return;
+    const timers = RECHECK_DELAYS_MS.map((delay) =>
+      setTimeout(() => void checkPaymentConfirmed(), delay)
+    );
+    return () => timers.forEach(clearTimeout);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [paymentStatus, sessionId]);
+
   const handlePaymentDismissed = (status: string) => {
     setPaymentStatus(status);
+    // Pay now moved the session on the server; read it again so this page (the address list in
+    // particular) knows payment has started without a reload.
+    getSession(sessionId)
+      .then(setSnapshot)
+      .catch(() => undefined);
     if (status !== "AWAITING_PAYMENT" && status !== "PREVIEW_READY") {
       setIsVerifying(true);
     }
@@ -244,7 +282,7 @@ export default function CheckoutPage({ sessionId, initialSnapshot }: CheckoutPag
             {paymentStatus === "AWAITING_PAYMENT" && (
               <div className="p-4 bg-amber-50 border border-amber-200 text-amber-800 rounded-xl text-sm font-medium">
                 Payment was not completed. You can try again when you&apos;re
-                ready.
+                ready. If you already paid, this page will notice in a moment.
               </div>
             )}
           </div>

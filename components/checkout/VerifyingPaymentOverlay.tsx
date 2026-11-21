@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
 import api from "@/app/lib/axios";
+import { confirmPayment } from "@/app/actions/session";
 import { SessionSnapshot } from "@/app/types/session";
 import { useRouter } from "next/navigation";
 import { chauPhilomeneOne } from "@/app/fonts";
@@ -18,6 +19,10 @@ const POLL_INTERVAL_MS = 2_000;
 const SLOW_AFTER_POLLS = 10;
 /** ~90s — stop polling and hand the user an explicit next step. */
 const MAX_POLLS = 45;
+/** Ask our server to confirm the payment with the payment provider on every Nth check (about every 6 s). */
+const CONFIRM_EVERY_POLLS = 3;
+/** The help address our emails give (SUPPORT_EMAIL in the backend's notification.service.ts): keep the two in step. */
+const SUPPORT_EMAIL = "support@unilakekids.com";
 
 export default function VerifyingPaymentOverlay({ sessionId }: VerifyingPaymentOverlayProps) {
   const router = useRouter();
@@ -42,6 +47,15 @@ export default function VerifyingPaymentOverlay({ sessionId }: VerifyingPaymentO
       if (!isActive) return;
 
       try {
+        // On the first check and then every CONFIRM_EVERY_POLLS checks, ask our server to confirm the
+        // payment with the payment provider itself, so a webhook that never arrives cannot leave
+        // the customer waiting. A failure here only means "ask again next time".
+        // Not awaited: a slow answer must not hold back the status checks (and so the time budget); the next
+        // status check sees the order paid.
+        if (polls % CONFIRM_EVERY_POLLS === 0) {
+          void confirmPayment(sessionId).catch(() => undefined);
+        }
+
         const { data: snapshot } = await api.get<SessionSnapshot>(
           `/api/public/sessions/${sessionId}`
         );
@@ -118,7 +132,7 @@ export default function VerifyingPaymentOverlay({ sessionId }: VerifyingPaymentO
           <p className="text-gray-600 mb-8">
             There was an issue processing your order. If your account was charged, please contact support and we'll fix it right away.
           </p>
-          <Button onClick={() => window.location.href = "mailto:support@unilake.com"} className="bg-[#3F3C95] text-white hover:bg-[#3F3C95]/90 rounded-full px-8 h-12">
+          <Button onClick={() => window.location.href = `mailto:${SUPPORT_EMAIL}`} className="bg-[#3F3C95] text-white hover:bg-[#3F3C95]/90 rounded-full px-8 h-12">
             Contact Support
           </Button>
         </div>
@@ -129,7 +143,7 @@ export default function VerifyingPaymentOverlay({ sessionId }: VerifyingPaymentO
             Still confirming...
           </h2>
           <p className="text-gray-600 mb-8">
-            We're still waiting for the payment provider to confirm your order. You'll receive an email as soon as your personalized comic starts generating.
+            We're still waiting for the payment provider to confirm your order. If money was taken, your order is not lost: you'll receive an email as soon as your personalized comic starts generating, and you can write to {SUPPORT_EMAIL} at any time.
           </p>
           <div className="flex gap-4">
             <Button onClick={handleRestartPoll} variant="outline" className="rounded-full border-2 border-[#3F3C95] text-[#3F3C95] h-12 px-6">
