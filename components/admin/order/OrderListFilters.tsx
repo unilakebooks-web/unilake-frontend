@@ -20,6 +20,7 @@ interface OrderListFiltersProps {
     sortBy: OrderSortBy;
     sortOrder: SortOrder;
     sentToPrinter?: "sent" | "not_sent";
+    awaitingCustomerPrint?: "true";
   }) => void;
   /**
    * Seeds the status dropdown on first render, so a link like
@@ -59,6 +60,7 @@ export function OrderListFilters({
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState<string>(initialStatus ?? "ALL");
   const [sentToPrinter, setSentToPrinter] = useState<string>("ALL");
+  const [awaitingPrint, setAwaitingPrint] = useState(false);
   const [sortBy, setSortBy] = useState<OrderSortBy>("createdAt");
   const [sortOrder, setSortOrder] = useState<SortOrder>("desc");
 
@@ -70,14 +72,15 @@ export function OrderListFilters({
         search: search.trim() || undefined,
         status: status === "ALL" ? undefined : (status as OrderStatus),
         sentToPrinter: sentToPrinter === "ALL" ? undefined : (sentToPrinter as "sent" | "not_sent"),
+        awaitingCustomerPrint: awaitingPrint ? "true" : undefined,
         sortBy,
         sortOrder,
       });
     }, 400);
     return () => clearTimeout(handler);
-  }, [search, status, sentToPrinter, sortBy, sortOrder, onFiltersChange]);
+  }, [search, status, sentToPrinter, awaitingPrint, sortBy, sortOrder, onFiltersChange]);
 
-  const hasActiveFilters = search !== "" || status !== "ALL" || sentToPrinter !== "ALL";
+  const hasActiveFilters = search !== "" || status !== "ALL" || sentToPrinter !== "ALL" || awaitingPrint;
 
   return (
     <div className="flex flex-col sm:flex-row sm:flex-wrap gap-3 items-center bg-white/60 backdrop-blur-sm p-3 rounded-2xl border border-[#914A8C]/15 shadow-sm">
@@ -125,6 +128,16 @@ export function OrderListFilters({
         </SelectContent>
       </Select>
 
+      <Button
+        variant="outline"
+        aria-pressed={awaitingPrint}
+        onClick={() => setAwaitingPrint((on) => !on)}
+        title="Paid books that are ready and waiting for the customer to press Send to Print"
+        className={`h-10 px-3 rounded-xl border-neutral-200 shrink-0 ${awaitingPrint ? "bg-[#914A8C] text-white hover:bg-[#7d3f79] hover:text-white" : "bg-white"}`}
+      >
+        Awaiting customer
+      </Button>
+
       <Select value={sortBy} onValueChange={(val) => setSortBy((val as OrderSortBy) || "createdAt")}>
         <SelectTrigger className="w-full sm:w-[150px] h-10 rounded-xl bg-white border-neutral-200">
           <SelectValue placeholder="Sort by">{sortBy === "updatedAt" ? "Last updated" : "Created"}</SelectValue>
@@ -155,6 +168,7 @@ export function OrderListFilters({
             setSearch("");
             setStatus("ALL");
             setSentToPrinter("ALL");
+            setAwaitingPrint(false);
           }}
           className="h-10 px-3 text-neutral-500 hover:text-neutral-900 rounded-xl shrink-0"
         >

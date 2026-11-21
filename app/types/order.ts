@@ -32,6 +32,8 @@ export interface AdminOrdersFilters {
   sortBy?: OrderSortBy;
   sortOrder?: SortOrder;
   sentToPrinter?: "sent" | "not_sent";
+  /** "true": paid and ready, waiting for the customer to press Send to Print. */
+  awaitingCustomerPrint?: "true";
 }
 
 /**
