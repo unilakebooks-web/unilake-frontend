@@ -13,6 +13,7 @@ import OrderSummary from "./OrderSummary";
 import AddressPicker from "./AddressPicker";
 import PaymentButton from "./PaymentButton";
 import CouponBox from "./CouponBox";
+import MarketingOptIn from "./MarketingOptIn";
 import VerifyingPaymentOverlay from "./VerifyingPaymentOverlay";
 import LoginModal from "./LoginModal";
 
@@ -231,6 +232,7 @@ export default function CheckoutPage({ sessionId, initialSnapshot }: CheckoutPag
               offers={offers}
               onRefreshOffers={refreshOffers}
             />
+            <MarketingOptIn userId={userId} />
             <PaymentButton 
               sessionId={sessionId} 
               snapshot={snapshot} 
