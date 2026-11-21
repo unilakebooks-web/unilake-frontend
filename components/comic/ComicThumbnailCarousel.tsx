@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import { ChevronLeft, ChevronRight, Volume2, VolumeX } from "lucide-react";
 import { toImageUrl } from "@/lib/imageUrl";
+import { VideoSeekBar } from "@/components/shared/VideoSeekBar";
 
 interface ComicThumbnailCarouselProps {
   images: string[];
@@ -239,6 +240,9 @@ export default function ComicThumbnailCarousel({
                   loop
                   preload="metadata"
                 />
+
+                {/* bottom-14: the seek bar sits above the mute button in the corner. */}
+                {isVideoActive && <VideoSeekBar videoRef={videoRef} position="bottom-14" />}
 
                 {isVideoActive && (
                   <button

@@ -6,6 +6,7 @@ import { chauPhilomeneOne } from "@/app/fonts";
 import { BANNER_HEADING_SIZE } from "@/components/home/bannerHeading";
 
 import { CustomerReview } from "@/app/types/customerReview";
+import { VideoSeekBar } from "@/components/shared/VideoSeekBar";
 
 const ITEMS_PER_PAGE = 3;
 
@@ -263,6 +264,8 @@ function VideoCard({
             preload="metadata"
             className="w-full h-full object-cover"
           />
+
+          <VideoSeekBar videoRef={videoRef} />
 
           {/* Interactive Mute Overlay (only active when playing) */}
           {isPlaying && (

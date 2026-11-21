@@ -252,7 +252,7 @@ export default function HowItWorksAdminPage() {
           {/* Video Column */}
           <div className="space-y-3">
             <label className="block text-sm font-bold text-gray-700">Explainer Video</label>
-            <p className="text-xs text-gray-500 mb-2">Max 50MB. MP4 or WebM.</p>
+            <p className="text-xs text-gray-500 mb-2">Max 50MB. MP4 or WebM. Best: vertical 9:16 (1080 × 1920); the frame on the site is 9:16.</p>
             
             {videoUrl ? (
               <div className="relative rounded-2xl overflow-hidden border border-gray-200 bg-black aspect-[9/16] max-h-[400px] w-full flex items-center justify-center">
