@@ -21,13 +21,14 @@ export function ComicDeleteDialog({ open, onOpenChange, comic }: ComicDeleteDial
   if (!comic) return null;
 
   const isMatch = confirmText === comic.title;
+  const isRetire = comic.deleteEligibility?.kind === "retire";
 
   const handleConfirm = async () => {
     if (!isMatch) return;
     setErrorMessage(null);
     try {
       await deleteComic(comic.id);
-      toast.success("Comic has been permanently deleted.");
+      toast.success(isRetire ? "Comic has been retired." : "Comic has been permanently deleted.");
       onOpenChange(false);
       setConfirmText("");
     } catch (err: any) {
@@ -45,7 +46,7 @@ export function ComicDeleteDialog({ open, onOpenChange, comic }: ComicDeleteDial
             </div>
             <div>
               <DialogTitle className="text-xl font-bold text-neutral-900">
-                Delete Comic?
+                {isRetire ? "Retire Comic?" : "Delete Comic?"}
               </DialogTitle>
               <DialogDescription className="text-xs text-neutral-500 font-medium">
                 This action is permanent and cannot be undone.
@@ -70,7 +71,14 @@ export function ComicDeleteDialog({ open, onOpenChange, comic }: ComicDeleteDial
           </div>
         </div>
 
-        {comic._count.orderSessions > 0 && (
+        {isRetire && (
+          <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-xl text-red-800 text-xs font-semibold">
+            This comic has orders, so it will be retired: nothing can change it any more and its files are deleted
+            automatically. This cannot be undone.
+          </div>
+        )}
+
+        {!isRetire && comic._count.orderSessions > 0 && (
           <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-xl text-red-800 text-xs font-semibold">
             Warning: {comic._count.orderSessions} active order sessions reference this comic.
           </div>
@@ -112,9 +120,9 @@ export function ComicDeleteDialog({ open, onOpenChange, comic }: ComicDeleteDial
             className="rounded-xl bg-red-600 hover:bg-red-700 text-white font-semibold h-10 px-5 shadow-sm"
           >
             {isPending ? (
-              <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Deleting...</>
+              <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> {isRetire ? "Retiring..." : "Deleting..."}</>
             ) : (
-              <><Trash2 className="w-4 h-4 mr-2" /> Delete Permanently</>
+              <><Trash2 className="w-4 h-4 mr-2" /> {isRetire ? "Retire Comic" : "Delete Permanently"}</>
             )}
           </Button>
         </DialogFooter>

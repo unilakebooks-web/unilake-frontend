@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { SessionSnapshot } from "@/app/types/session";
 import { initiateCheckout } from "@/app/actions/session";
 import { loadRazorpayScript } from "@/app/lib/razorpay";
@@ -35,6 +36,7 @@ export default function PaymentButton({
   onCheckoutStarted,
   onCouponRejected,
 }: PaymentButtonProps) {
+  const router = useRouter();
   const [isProcessing, setIsProcessing] = useState(false);
   const { data: comicDetail } = usePublicComic(snapshot.comicId);
 
@@ -116,6 +118,10 @@ export default function PaymentButton({
       }
       toast.error(error.message || "Failed to start payment. Please try again.");
       setIsProcessing(false);
+      // The preview was deleted (automatic data deletion): the preview page offers "Start Again".
+      if (error?.code === "PREVIEW_DELETED") {
+        router.push(`/personalize/${sessionId}/preview`);
+      }
     }
   };
 

@@ -11,6 +11,7 @@ import { getSession as fetchSession } from "@/app/actions/session";
 import { useRouter } from "next/navigation";
 import { Play } from "lucide-react";
 import { OrdersPausedBanner } from "@/components/shared/OrdersPausedBanner";
+import ShareButton from "@/components/share/ShareButton";
 
 interface ComicDetailContentProps {
   comic: PublicComicDetail;
@@ -37,6 +38,7 @@ export default function ComicDetailContent({ comic }: ComicDetailContentProps) {
         // generate. Expired sessions load fine over REST but their WebSocket is refused.
         const isResumable =
           !session.isExpired &&
+          !session.filesDeleted &&
           session.status !== "CREATED";
 
         if (isResumable) {
@@ -96,6 +98,10 @@ export default function ComicDetailContent({ comic }: ComicDetailContentProps) {
                   images={comic.coverThumbnailUrls}
                   videoUrl={comic.previewVideoUrl}
                 />
+                {/* Feature 14: share this book's page. */}
+                <div className="mt-4">
+                  <ShareButton path={`/comic/${comic.id}`} title={comic.title} variant="pill" />
+                </div>
                 <div className="hidden lg:block w-full">
                   <ComicInfoCards />
                   <PhotoGuidelines />
