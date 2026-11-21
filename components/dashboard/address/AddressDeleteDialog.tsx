@@ -61,7 +61,7 @@ export function AddressDeleteDialog({
               onConfirm(address.id);
               onOpenChange(false);
             }}
-            className="flex-1 rounded-xl font-bold bg-red-600 hover:bg-red-700 h-11"
+            className="flex-1 rounded-xl font-bold bg-red-600 hover:bg-red-700 text-white h-11"
           >
             Delete
           </Button>
