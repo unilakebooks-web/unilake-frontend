@@ -88,9 +88,9 @@ export function OrderDetailCards({ order }: { order: UserOrderDetail }) {
             longEdgePx={107}
           />
           <div className="flex-1 min-w-0 space-y-3">
-            <div className="flex items-start justify-between gap-3">
-              <h3 className="font-bold text-gray-900 text-lg leading-tight">{comic.title}</h3>
-              <OrderStatusPill status={order.publicStatus} />
+            <div className="flex flex-wrap items-start justify-between gap-x-3 gap-y-2">
+              <h3 className="min-w-0 break-words font-bold text-gray-900 text-lg leading-tight">{comic.title}</h3>
+              <OrderStatusPill status={order.publicStatus} className="max-w-full whitespace-normal" />
             </div>
             <dl className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
               <div>
