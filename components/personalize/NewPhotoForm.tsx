@@ -305,10 +305,10 @@ export default function NewPhotoForm({ previousSession }: NewPhotoFormProps) {
               Photo guidelines:
             </h2>
             <ul className="list-disc list-inside space-y-0.5 text-[11px] lg:text-xs text-[#333]">
-              <li>Upload clear photo with closed mouth.</li>
+              <li className="font-semibold text-[#C7483F]">Upload clear photo with closed mouth.</li>
               <li>Make sure the child’s full face is clearly visible.</li>
               <li>No hats, sunglasses, hands or objects should obstruct the face</li>
-              <li>Avoid funny/distorted expressions and blurry photos.</li>
+              <li className="font-semibold text-[#C7483F]">Avoid funny/distorted expressions and blurry photos.</li>
               <li>No group photos or distant shots.</li>
             </ul>
           </div>
