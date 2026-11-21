@@ -80,8 +80,9 @@ export default function VerifyingPaymentOverlay({ sessionId }: VerifyingPaymentO
         // Still pending — fall through to the retry budget below.
       } catch {
         if (!isActive) return;
-        // A network blip spends a poll and keeps trying. The webhook is the only
-        // thing that can move this session, so there is nothing else to do.
+        // A network blip spends a poll and keeps trying. Only the server moves this
+        // session (the webhook, or its own check with the payment provider), so
+        // there is nothing else to do here.
       }
 
       polls += 1;
