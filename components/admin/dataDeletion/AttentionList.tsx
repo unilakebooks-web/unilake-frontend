@@ -56,7 +56,7 @@ export function AttentionList({ items }: { items: DeletionAttentionItem[] }) {
       } else {
         const result = await undo.mutateAsync({ itemId: pending.item.id });
         if (result.undone > 0) toast.success("Ghost undone");
-        else toast.error(`Not undone: ${result.refused.join(", ") || "refused"}`);
+        else toast.error(`Not undone: ${result.refused[0]?.reason ?? "refused"}`);
       }
       setPending(null);
     } catch (err: unknown) {

@@ -18,10 +18,24 @@ export default function DataDeletionAdminPage() {
         <h1 className="text-2xl font-bold text-neutral-900">Data deletion</h1>
         <p className="text-sm text-neutral-500 mt-1">
           Photos, previews and books are deleted automatically after a set time.
-          Each group starts Off: read its report in Report only mode before
+          Each group starts in Report only mode: read its report before
           switching it on.
         </p>
       </div>
+
+      {overview.isError && overview.data ? (
+        <div
+          role="alert"
+          className="bg-amber-50 border border-amber-200 rounded-2xl px-4 py-3 text-sm text-amber-900 flex items-center justify-between gap-3"
+        >
+          <span>
+            Could not refresh just now ({getErrorMessage(overview.error, "Unknown error")}). The figures below may be out of date.
+          </span>
+          <Button size="sm" variant="outline" onClick={() => overview.refetch()}>
+            Try again
+          </Button>
+        </div>
+      ) : null}
 
       {overview.isError && !overview.data ? (
         <div className="bg-red-50 border border-red-200 rounded-3xl p-8 text-center text-red-800 flex flex-col items-center">

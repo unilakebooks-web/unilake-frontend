@@ -197,7 +197,7 @@ export function GroupCard({ group }: { group: DeletionGroup }) {
           Changed {when(group.modeChangedAt)}
           {group.modeChangedByEmail ? ` by ${group.modeChangedByEmail}` : ""}.
         </p>
-        {group.dueNotApproved !== null ? (
+        {group.dueNotApproved !== null && group.dueNotApproved > 0 ? (
           <p className="text-xs text-amber-800 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">
             {group.dueNotApproved} more are due now but were not in the report
             you approved. They wait until the approved ones are finished (or 14
@@ -264,8 +264,8 @@ export function GroupCard({ group }: { group: DeletionGroup }) {
           </>
         ) : (
           <p className="text-sm text-neutral-500">
-            No report yet. Switch to Report only: the first report appears
-            within a few hours.
+            No report yet. The first one appears within a few hours of the group
+            being in Report only mode.
           </p>
         )}
       </div>

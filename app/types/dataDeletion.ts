@@ -93,7 +93,9 @@ export type DeletionRetryPayload = { itemId: string } | { group: DeletionGroupNa
 
 export interface UndoGhostResult {
   undone: number;
-  refused: string[];
+  refused: { id: string; reason: string }[];
+  /** More ghosts matched the time range than one request handles. */
+  truncated: boolean;
 }
 
 export type UndoGhostPayload = { itemId: string } | { from: string; to: string };
