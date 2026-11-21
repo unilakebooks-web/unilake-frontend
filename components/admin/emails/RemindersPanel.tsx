@@ -288,17 +288,6 @@ export function RemindersPanel() {
                     placeholder="e.g. WELCOME-10"
                   />
                 </Field>
-                <Field
-                  label="Days until a preview is deleted (leave empty)"
-                  hint="Fill this only once previews really are deleted after that many days. Empty means the reminder promises no deletion."
-                >
-                  <Input
-                    inputMode="numeric"
-                    value={values.previewDeletionDays}
-                    onChange={(e) => set("previewDeletionDays", e.target.value)}
-                    className={inputClass}
-                  />
-                </Field>
               </div>
             ) : null}
 

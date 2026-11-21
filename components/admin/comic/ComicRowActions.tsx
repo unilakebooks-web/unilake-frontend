@@ -9,7 +9,7 @@ import {
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { ComicStatus } from "@/app/types/comic";
+import { ComicListItem, ComicStatus } from "@/app/types/comic";
 import { useUpdateComicStatus } from "@/hooks/useComics";
 import { toast } from "sonner";
 
@@ -17,6 +17,8 @@ interface ComicRowActionsProps {
   comicId: string;
   status: ComicStatus;
   orderSessionsCount: number;
+  /** The server's verdict; absent on a backend that predates automatic data deletion. */
+  deleteEligibility?: ComicListItem["deleteEligibility"];
   onDeleteClick: () => void;
 }
 
@@ -29,9 +31,11 @@ interface ComicRowActionsProps {
 const DELETE_BLOCKED_REASON =
   "This comic can't be deleted because customers have already personalised it (previews or orders). Unpublish it or revert it to Draft to hide it instead.";
 
-export function ComicRowActions({ comicId, status, orderSessionsCount, onDeleteClick }: ComicRowActionsProps) {
+export function ComicRowActions({ comicId, status, orderSessionsCount, deleteEligibility, onDeleteClick }: ComicRowActionsProps) {
   const router = useRouter();
-  const deleteBlocked = orderSessionsCount > 0;
+  const retired = deleteEligibility?.kind === "retired";
+  const deleteBlocked = deleteEligibility ? !deleteEligibility.canDelete : orderSessionsCount > 0;
+  const blockedReason = deleteEligibility?.reason ?? DELETE_BLOCKED_REASON;
   const { mutateAsync: updateStatus } = useUpdateComicStatus();
 
   const handleStatusChange = async (newStatus: ComicStatus) => {
@@ -59,7 +63,7 @@ export function ComicRowActions({ comicId, status, orderSessionsCount, onDeleteC
 
         <DropdownMenuSeparator className="bg-neutral-100 my-1" />
 
-        {(status === ComicStatus.DRAFT || status === ComicStatus.UNPUBLISHED) && (
+        {!retired && (status === ComicStatus.DRAFT || status === ComicStatus.UNPUBLISHED) && (
           <DropdownMenuItem 
             onClick={() => handleStatusChange(ComicStatus.PUBLISHED)}
             className="rounded-lg cursor-pointer font-medium p-2.5 text-emerald-700 hover:bg-emerald-50 hover:text-emerald-800"
@@ -69,7 +73,7 @@ export function ComicRowActions({ comicId, status, orderSessionsCount, onDeleteC
           </DropdownMenuItem>
         )}
 
-        {status === ComicStatus.PUBLISHED && (
+        {!retired && status === ComicStatus.PUBLISHED && (
           <DropdownMenuItem 
             onClick={() => handleStatusChange(ComicStatus.UNPUBLISHED)}
             className="rounded-lg cursor-pointer font-medium p-2.5 text-amber-700 hover:bg-amber-50 hover:text-amber-800"
@@ -79,7 +83,7 @@ export function ComicRowActions({ comicId, status, orderSessionsCount, onDeleteC
           </DropdownMenuItem>
         )}
 
-        {status === ComicStatus.UNPUBLISHED && (
+        {!retired && status === ComicStatus.UNPUBLISHED && (
           <DropdownMenuItem 
             onClick={() => handleStatusChange(ComicStatus.DRAFT)}
             className="rounded-lg cursor-pointer font-medium p-2.5 text-neutral-600 hover:bg-neutral-100"
@@ -89,7 +93,7 @@ export function ComicRowActions({ comicId, status, orderSessionsCount, onDeleteC
           </DropdownMenuItem>
         )}
 
-        {status !== ComicStatus.PUBLISHED && (
+        {!retired && status !== ComicStatus.PUBLISHED && (
           <>
             <DropdownMenuSeparator className="bg-neutral-100 my-1" />
             {deleteBlocked ? (
@@ -109,13 +113,13 @@ export function ComicRowActions({ comicId, status, orderSessionsCount, onDeleteC
                     </DropdownMenuItem>
                   </TooltipTrigger>
                   <TooltipContent side="left" className="max-w-[260px] leading-snug">
-                    {DELETE_BLOCKED_REASON}
+                    {blockedReason}
                   </TooltipContent>
                 </Tooltip>
                 {/* The same reason in short, always visible — touch screens
                     have no hover, so the tooltip alone would never show. */}
                 <p className="px-2.5 pb-2 -mt-1 text-[11px] leading-snug text-neutral-500">
-                  Can&apos;t delete — customers have already personalised this comic.
+                  {deleteEligibility ? blockedReason : "Can't delete — customers have already personalised this comic."}
                 </p>
               </>
             ) : (
@@ -124,7 +128,7 @@ export function ComicRowActions({ comicId, status, orderSessionsCount, onDeleteC
                 className="rounded-lg cursor-pointer font-medium p-2.5 text-red-600 focus:bg-red-50 focus:text-red-700"
               >
                 <Trash2 className="w-4 h-4 mr-2" />
-                Delete Permanently
+                {deleteEligibility?.kind === "retire" ? "Retire Comic" : "Delete Permanently"}
               </DropdownMenuItem>
             )}
           </>

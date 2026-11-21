@@ -7,6 +7,7 @@ import type { LucideIcon } from "lucide-react";
 import type { PublicOrderStatusCode, UserOrderRow } from "@/app/types/order";
 import { OrderStatusPill } from "./OrderStatusPill";
 import { OrderCoverImage } from "./OrderCoverImage";
+import { OrderDeletedNote, getOrderDeletion } from "./OrderDeletedNote";
 
 /**
  * What the card offers for each stage. Every action goes to the preview page,
@@ -52,7 +53,9 @@ const PREVIEW_ACTIONS: Partial<
 export function OrderCard({ order }: { order: UserOrderRow }) {
   const awaitingPayment = order.publicStatus.code === "AWAITING_PAYMENT";
   const awaitingSelection = order.publicStatus.code === "AWAITING_SELECTION";
-  const action = PREVIEW_ACTIONS[order.publicStatus.code];
+  // Automatic data deletion: a deleted order has no book to open and an expired one cannot be paid.
+  const deletion = getOrderDeletion(order);
+  const action = deletion ? undefined : PREVIEW_ACTIONS[order.publicStatus.code];
   return (
     <div
       className={`flex flex-col p-5 bg-white rounded-2xl border-2 shadow-sm transition-all ${
@@ -68,6 +71,7 @@ export function OrderCard({ order }: { order: UserOrderRow }) {
         <OrderCoverImage
           generatedCover={order.generatedCover}
           comic={order.comic}
+          filesDeleted={order.filesDeleted}
           longEdgePx={85}
         />
 
@@ -94,6 +98,12 @@ export function OrderCard({ order }: { order: UserOrderRow }) {
       </div>
 
       <div className="mt-5 pt-4 border-t border-gray-100 space-y-3">
+        {deletion && (
+          <p className="text-sm font-medium text-gray-600">
+            <OrderDeletedNote kind={deletion} />
+          </p>
+        )}
+
         {action?.message && (
           <p className={`text-sm font-medium ${action.messageClass ?? "text-gray-600"}`}>
             {action.message}

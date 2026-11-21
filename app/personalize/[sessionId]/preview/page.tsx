@@ -1,6 +1,6 @@
 "use client";
 
-import { use, useEffect, useMemo, useState } from "react";
+import { use, useEffect, useMemo, useState, type ReactNode } from "react";
 import { useSessionPreview } from "@/hooks/useSessionPreview";
 import PreviewViewer from "@/components/preview/PreviewViewer";
 import ComicPreloader from "@/components/comic/ComicPreloader";
@@ -13,15 +13,19 @@ import { toast } from "sonner";
 import { clearSession, isValidSessionId, consumeShowPreloader, getSessionBySessionId } from "@/app/lib/session-storage";
 import { useAuth } from "@/app/hooks/useAuth";
 import { isStaff } from "@/app/types/auth";
+import { SUPPORT_EMAIL } from "@/lib/dataDeletion";
+import { PrivacyPolicyLink } from "@/components/shared/PrivacyPolicyLink";
 
 function PreviewErrorState({
   title,
   message,
+  note,
   actionLabel,
   onAction,
 }: {
   title: string;
   message: string;
+  note?: ReactNode;
   actionLabel: string;
   onAction: () => void;
 }) {
@@ -29,6 +33,7 @@ function PreviewErrorState({
     <div className="flex flex-col items-center justify-center p-12 text-center max-w-md mx-auto">
       <h2 className="text-2xl font-bold text-[#3F3C95] mb-4">{title}</h2>
       <p className="text-gray-600 mb-8">{message}</p>
+      {note && <p className="text-sm text-gray-500 mb-8 -mt-4">{note}</p>}
       <button
         onClick={onAction}
         className="px-8 py-3 bg-[#3F3C95] text-white rounded-full font-medium hover:bg-[#3F3C95]/90 transition-colors"
@@ -127,6 +132,8 @@ export default function PreviewPage({
   const preloaderInterrupted =
     !sessionIdIsValid ||
     isExpired ||
+    !!snapshot?.filesDeleted ||
+    !!snapshot?.paidAfterDeletion ||
     hasNoPreviewPages ||
     status === "FAILED" ||
     (!isLoading && !snapshot);
@@ -227,11 +234,58 @@ export default function PreviewPage({
     // Not for the admin view: an admin looking into an order (a paid book that
     // failed and later aged past its window, say) needs to see its pages, and the
     // read-only view uses none of what expiry breaks.
-    if (isExpired && !adminView) {
+    //
+    // Automatic data deletion: the snapshot's flags tell the three deleted cases apart, and none of them can show
+    // the viewer (its files are gone), the admin view included. Delivered or not is not in the snapshot: a paid
+    // book's files are only deleted after delivery, except one paid after the deletion (`paidAfterDeletion`).
+    // An unpaid deleted session is already `isExpired`. A flag from an older backend is undefined: false.
+    const adminNote = adminView ? " Admin view: the customer sees this same message." : "";
+    if (snapshot.paidAfterDeletion && (snapshot.photoDeleted || snapshot.filesDeleted)) {
+      return (
+        <PreviewErrorState
+          title="We could not make your book"
+          message="Your order is paid. We could not make the book because your photo was removed. Please contact us."
+          note={`Write to ${SUPPORT_EMAIL}.${adminNote}`}
+          actionLabel="Contact Us"
+          onAction={() => {
+            window.location.href = `mailto:${SUPPORT_EMAIL}`;
+          }}
+        />
+      );
+    }
+    if (snapshot.filesDeleted && !isExpired) {
+      return (
+        <PreviewErrorState
+          title="This book has been deleted"
+          message="For your privacy we delete photos and books after delivery, as described in our Privacy Policy."
+          note={
+            <>
+              Read our <PrivacyPolicyLink /> or write to{" "}
+              <a href={`mailto:${SUPPORT_EMAIL}`} className="underline hover:text-[#914A8C]">
+                {SUPPORT_EMAIL}
+              </a>
+              .{adminNote}
+            </>
+          }
+          actionLabel="Browse Comics"
+          onAction={() => router.push("/")}
+        />
+      );
+    }
+
+    if (isExpired && (!adminView || snapshot.photoDeleted || snapshot.filesDeleted)) {
       return (
         <PreviewErrorState
           title="This preview has expired"
+          // ⚠️ "7 days" repeats the backend preview lifetime (SESSION_LIFETIME_DAYS in services/session.service.ts)
+          // and config/dataDeletion.ts, and PHOTO_CONFIDENTIAL_TEXT (components/comic/PhotoGuidelines.tsx). Two repos, change both.
           message="Previews are kept for 7 days. Please personalize your comic again — it only takes a moment."
+          note={
+            <>
+              Photos and previews are deleted after a few days, as described in our <PrivacyPolicyLink />.
+              {adminNote}
+            </>
+          }
           actionLabel="Start Again"
           onAction={handleStartAgain}
         />

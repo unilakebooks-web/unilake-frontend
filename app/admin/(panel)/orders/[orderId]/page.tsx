@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { useAdminOrder } from "@/hooks/useOrders";
 import { OrderDetailHeader } from "@/components/admin/order/OrderDetailHeader";
 import { SupersededPaymentNotice } from "@/components/admin/order/SupersededPaymentNotice";
+import { PaidAfterDeletionNotice } from "@/components/admin/order/PaidAfterDeletionNotice";
 import { OrderInfoCards } from "@/components/admin/order/OrderInfoCards";
 import { ShipmentSection } from "@/components/admin/order/ShipmentSection";
 import { OrderPagesSection } from "@/components/admin/order/OrderPagesSection";
@@ -74,6 +75,7 @@ export default function OrderDetailPage({
     <div className="max-w-6xl mx-auto py-2 space-y-6">
       <OrderDetailHeader order={order} />
       <SupersededPaymentNotice order={order} />
+      <PaidAfterDeletionNotice order={order} />
       <ShipmentSection order={order} />
       <OrderPagesSection order={order} />
       <OrderInfoCards order={order} />

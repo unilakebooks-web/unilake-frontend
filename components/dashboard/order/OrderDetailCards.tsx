@@ -6,6 +6,7 @@ import { BookOpen, MapPin, Sparkles } from "lucide-react";
 import type { UserOrderDetail } from "@/app/types/order";
 import { OrderStatusPill } from "./OrderStatusPill";
 import { OrderCoverImage } from "./OrderCoverImage";
+import { OrderDeletedNote, getOrderDeletion } from "./OrderDeletedNote";
 
 function Card({
   title,
@@ -38,6 +39,8 @@ export function OrderDetailCards({ order }: { order: UserOrderDetail }) {
   ].filter(Boolean);
 
   const statusCode = order.publicStatus.code;
+  // Automatic data deletion: no book to open for a deleted order (the note says why).
+  const deletion = getOrderDeletion(order);
 
   // The "Your book" card — the customer's way back to their pages. Every link
   // goes to the preview page, which renders the right mode for the session on
@@ -85,6 +88,7 @@ export function OrderDetailCards({ order }: { order: UserOrderDetail }) {
           <OrderCoverImage
             generatedCover={order.generatedCover}
             comic={comic}
+            filesDeleted={order.filesDeleted}
             longEdgePx={107}
           />
           <div className="flex-1 min-w-0 space-y-3">
@@ -143,7 +147,15 @@ export function OrderDetailCards({ order }: { order: UserOrderDetail }) {
         )}
       </Card>
 
-      {bookCard && (
+      {deletion && (
+        <Card title="Your book" icon={<BookOpen className="w-4 h-4" />}>
+          <p className="text-sm text-gray-600">
+            <OrderDeletedNote kind={deletion} />
+          </p>
+        </Card>
+      )}
+
+      {bookCard && !deletion && (
         <Card title="Your book" icon={<BookOpen className="w-4 h-4" />}>
           <div className="space-y-3">
             <p className="text-sm text-gray-600">{bookCard.message}</p>

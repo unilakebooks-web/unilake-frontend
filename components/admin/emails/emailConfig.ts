@@ -10,7 +10,6 @@ import type {
 export const MAX_REMINDER_OFFSETS = 3;
 const MAX_DAILY_BUDGET = 1000;
 const MAX_PER_RUN_LIMIT = 50;
-const MAX_PREVIEW_DELETION_DAYS = 7;
 const WINDOW_START_MAX_HOUR = 23;
 const WINDOW_END_MAX_HOUR = 24;
 export const BROADCAST_SUBJECT_MAX = 150;
@@ -156,18 +155,6 @@ export function validateReminderForm(v: ReminderFormValues): string[] {
     problems.push("Reserve must be a whole number, 0 or more.");
   else if (n(v.reminderReserve) > n(v.dailyBudget))
     problems.push("The reserve cannot be more than the daily budget.");
-  // The deletion date in the last reminder must still be ahead when that reminder arrives.
-  const deletionDays = n(v.previewDeletionDays);
-  const lastPreviewSend = Math.max(...v.previewOffsetsHours.map(Number));
-  if (
-    v.previewDeletionDays.trim() !== "" &&
-    Number.isFinite(lastPreviewSend) &&
-    deletionDays * 24 <= lastPreviewSend
-  ) {
-    problems.push(
-      "The deletion days must be longer than the last unfinished-preview send time.",
-    );
-  }
   if (!(n(v.perRunLimit) >= 1 && n(v.perRunLimit) <= MAX_PER_RUN_LIMIT)) {
     problems.push(
       `Per-run limit must be a whole number from 1 to ${MAX_PER_RUN_LIMIT}.`,
@@ -184,17 +171,6 @@ export function validateReminderForm(v: ReminderFormValues): string[] {
     );
   } else if (n(v.windowStartHour) >= n(v.windowEndHour)) {
     problems.push("The sending window must start before it ends.");
-  }
-  if (
-    v.previewDeletionDays.trim() !== "" &&
-    !(
-      n(v.previewDeletionDays) >= 1 &&
-      n(v.previewDeletionDays) <= MAX_PREVIEW_DELETION_DAYS
-    )
-  ) {
-    problems.push(
-      `Deletion days must be a whole number from 1 to ${MAX_PREVIEW_DELETION_DAYS}, or empty.`,
-    );
   }
   if (v.reviewEnabled && v.googleReviewUrl.trim() === "") {
     problems.push(
@@ -218,6 +194,8 @@ export function toReminderPayload(
       v.googleReviewUrl.trim() === "" ? null : v.googleReviewUrl.trim(),
     reminderCouponCode:
       v.reminderCouponCode.trim() === "" ? null : v.reminderCouponCode.trim(),
+    // No longer shown or checked (feature 6: a reminder names the preview's real expiry date). The stored value is sent
+    // back unchanged so saving the other settings never changes it; the server ignores it.
     previewDeletionDays:
       v.previewDeletionDays.trim() === ""
         ? null

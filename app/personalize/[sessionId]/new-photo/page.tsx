@@ -45,6 +45,11 @@ export default async function NewPhotoRoute({
 
   const snapshot = result.snapshot;
 
+  // Automatic data deletion: an unpaid preview whose files were deleted is expired, and the preview page says so.
+  if (snapshot.isExpired && (snapshot.photoDeleted || snapshot.filesDeleted)) {
+    redirect(`/personalize/${sessionId}/preview`);
+  }
+
   // PREVIEW_READY only. Before that there is nothing to be dissatisfied with
   // yet, and from AWAITING_PAYMENT onward the customer has committed — letting
   // a hand-typed URL start a fresh unpaid session from there would strand the
