@@ -45,7 +45,12 @@ export default function MarketingOptIn({ userId }: { userId: string | null }) {
       <span className="text-xs text-[#555] leading-relaxed">
         Send me offers and news from Unilake by email. You can unsubscribe at
         any time.{" "}
-        <Link href="/privacy" className="text-[#914A8C] underline">
+        <Link
+          href="/privacy"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-[#914A8C] underline"
+        >
           Privacy policy
         </Link>
         {isError ? (
