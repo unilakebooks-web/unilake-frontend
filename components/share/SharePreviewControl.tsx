@@ -43,7 +43,16 @@ export default function SharePreviewControl({ sessionId }: SharePreviewControlPr
   const handleCreate = () => create.mutate(showName, { onError: fail });
   const handleToggleName = (value: boolean) => {
     setShowName(value);
-    if (active) create.mutate(value, { onError: () => { setShowName(!value); fail(); } });
+    if (!active) return;
+    // The link may have been stopped in another tab while this dialog stayed open: changing the name must never
+    // bring a stopped link back, so look at the live state first.
+    void state.refetch().then((result) => {
+      if (!result.data?.active) {
+        setShowName(false);
+        return;
+      }
+      create.mutate(value, { onError: () => { setShowName(!value); fail(); } });
+    });
   };
   const handleStop = () => stop.mutate(undefined, { onError: fail });
 
@@ -81,8 +90,8 @@ export default function SharePreviewControl({ sessionId }: SharePreviewControlPr
               className="mt-1 size-4 accent-[#3F3C95]"
             />
             <span>
-              Show my child&apos;s name in the page title and link preview. The pictures can still show the name
-              and your child&apos;s face.
+              Show my child&apos;s first name in the page title, on the page and in the link preview. The pictures
+              can still show the name and your child&apos;s face.
             </span>
           </label>
 

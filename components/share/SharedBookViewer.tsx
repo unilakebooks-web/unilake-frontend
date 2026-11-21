@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import type { SharedBook } from "@/app/types/share";
 import { API_BASE } from "@/components/share/shareUrl";
+import { firstName } from "@/lib/shareTitle";
 
 // The view-only viewer of a shared book (feature 14). Makes no request of its own except the page images: no
 // auth, no polling, no hooks that call the API. Plain <img> on purpose: next/image would let Vercel cache the
@@ -76,7 +77,9 @@ export default function SharedBookViewer({ token, book }: { token: string; book:
       <main className="flex-1 w-full max-w-[720px] mx-auto px-4 py-6 sm:py-10 flex flex-col gap-6">
         <div className="text-center">
           <h1 className="text-2xl sm:text-3xl font-bold text-neutral-900 break-words">{comic.title}</h1>
-          {childName && <p className="text-base text-neutral-600 mt-1 break-words">for {childName}</p>}
+          {firstName(childName) && (
+            <p className="text-base text-neutral-600 mt-1 break-words">for {firstName(childName)}</p>
+          )}
         </div>
 
         {showPages ? (
