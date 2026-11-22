@@ -1,9 +1,26 @@
 "use client";
 
 import { useState, useRef } from "react";
+import { getImageProps } from "next/image";
+import { toImageUrl } from "@/lib/imageUrl";
 import { VideoSeekBar } from "@/components/shared/VideoSeekBar";
 import { useVideoPlayback } from "@/hooks/useVideoPlayback";
 import { playOrFallBackToMuted } from "@/lib/videoPlay";
+
+// The preview picture is the first thing the page paints. The stored file is several hundred kilobytes, so it is
+// requested through the image optimiser (and the site's cached image domain) instead of as the original.
+// Anything that is not a plain picture file keeps its own address. A <video> poster is a plain address, so
+// getImageProps is used only to build that optimiser address; 414 is the box width, and the address it returns is
+// the 2x one (828 wide), which is sharp on a normal phone.
+const OPTIMISABLE_POSTER = /\.(png|jpe?g|webp)(\?|$)/i;
+const POSTER_WIDTH = 414;
+
+function optimisedPoster(url?: string): string | undefined {
+  if (!url) return undefined;
+  const source = toImageUrl(url);
+  if (!OPTIMISABLE_POSTER.test(source)) return source;
+  return getImageProps({ src: source, alt: "", width: POSTER_WIDTH, height: POSTER_WIDTH }).props.src;
+}
 
 export function HowItWorksVideo({ videoUrl, posterUrl, posterAlt }: { videoUrl?: string | null; posterUrl?: string; posterAlt?: string | null }) {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -53,7 +70,7 @@ export function HowItWorksVideo({ videoUrl, posterUrl, posterAlt }: { videoUrl?:
           <video
             ref={videoRef}
             src={videoUrl}
-            poster={posterUrl}
+            poster={optimisedPoster(posterUrl)}
             aria-label={posterAlt || undefined}
             muted={isMuted}
             playsInline
