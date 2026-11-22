@@ -2,21 +2,28 @@
 
 import { useState, useRef } from "react";
 import { VideoSeekBar } from "@/components/shared/VideoSeekBar";
+import { useVideoPlayback } from "@/hooks/useVideoPlayback";
+import { playOrFallBackToMuted } from "@/lib/videoPlay";
 
 export function HowItWorksVideo({ videoUrl, posterUrl }: { videoUrl?: string | null; posterUrl?: string }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [isMuted, setIsMuted] = useState(true);
+  // Sound is on: the visitor's click on play is what starts the video.
+  const [isMuted, setIsMuted] = useState(false);
+
+  useVideoPlayback(videoRef, videoUrl);
 
   if (!videoUrl) return null;
 
   const onTogglePlay = () => {
-    if (isPlaying) {
-      videoRef.current?.pause();
-      setIsPlaying(false);
+    // isPlaying (what the buttons show) follows the video's own events (below); what a click does
+    // follows the video itself, so a stale isPlaying can never leave it unable to start.
+    const video = videoRef.current;
+    if (!video) return;
+    if (video.paused) {
+      void playOrFallBackToMuted(video, () => setIsMuted(true));
     } else {
-      videoRef.current?.play().catch(console.error);
-      setIsPlaying(true);
+      video.pause();
     }
   };
 
@@ -47,13 +54,15 @@ export function HowItWorksVideo({ videoUrl, posterUrl }: { videoUrl?: string | n
             ref={videoRef}
             src={videoUrl}
             poster={posterUrl}
-            loop
             muted={isMuted}
             playsInline
             preload="metadata"
             className="w-full h-full object-cover"
             onPlay={() => setIsPlaying(true)}
             onPause={() => setIsPlaying(false)}
+            onEnded={() => setIsPlaying(false)}
+            // A new file is loading: the browser pauses the old one without a pause event.
+            onLoadStart={() => setIsPlaying(false)}
           />
 
           <VideoSeekBar videoRef={videoRef} />
