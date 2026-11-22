@@ -43,8 +43,8 @@ const STEPS = [
 
 /**
  * The About Us page layout: hero, the admin's ABOUT text as the story, values, a short how it works, the
- * team and a closing call to action. It has no hooks of its own; the admin text is passed through the same renderer as
- * the legal pages, which sanitises it.
+ * team and a closing call to action. It has no hooks of its own; the admin text is passed through the same
+ * renderer as the legal pages, which sanitises it.
  */
 export default function AboutView({ page, members }: { page: SitePage; members: TeamMember[] }) {
   return (
