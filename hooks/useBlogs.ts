@@ -7,6 +7,7 @@ import {
   toggleBlogStatus,
   deleteBlog,
 } from "@/app/actions/blog";
+import type { BlogSharePayload } from "@/app/types/blog";
 
 export function useBlogs(isActive?: boolean) {
   return useQuery({
@@ -49,7 +50,7 @@ export function useUpdateBlog() {
         excerpt: string;
         coverImageKey: string | null;
         tags: string[];
-      }>;
+      }> & BlogSharePayload;
     }) => updateBlog(id, payload),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ["admin-blogs"] });

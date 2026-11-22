@@ -14,15 +14,15 @@ import ExploreMoreBooks from "@/components/comic/ExploreMoreBooks";
 
 interface ComicPageProps {
   params: Promise<{
-    comicId: string;
+    slug: string;
   }>;
 }
 
 export default function ComicPage({ params }: ComicPageProps) {
   // Unwrap params using React.use() for Next.js App Router
-  const { comicId } = use(params);
+  const { slug } = use(params);
   
-  const { data: comic, isLoading, isError, error } = usePublicComic(comicId);
+  const { data: comic, isLoading, isError, error } = usePublicComic(slug);
   const { data: faqs } = usePublicFaqs("COMIC");
 
   return (
@@ -64,7 +64,7 @@ export default function ComicPage({ params }: ComicPageProps) {
           <>
             <ComicDetailContent comic={comic} />
             <ComicPageFaqSection faqs={faqs || []} />
-            <ExploreMoreBooks comicId={comicId} />
+            <ExploreMoreBooks comicId={comic.id} />
           </>
         )}
 

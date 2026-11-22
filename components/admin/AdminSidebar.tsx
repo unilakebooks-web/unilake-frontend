@@ -27,6 +27,7 @@ import {
   FlaskConical,
   Send,
   ShieldCheck,
+  Search,
 } from "lucide-react";
 import { useAuth } from "@/app/hooks/useAuth";
 import { UserRole } from "@/app/types/auth";
@@ -66,6 +67,7 @@ const NAV_ITEMS = [
   { label: "FAQ", icon: HelpCircle, href: "/admin/faqs" },
   { label: "Blog", icon: FileText, href: "/admin/blogs" },
   { label: "Pages", icon: ScrollText, href: "/admin/pages" },
+  { label: "SEO", icon: Search, href: "/admin/seo" },
   { label: "Settings", icon: Settings, href: "/admin/settings" },
 ];
 

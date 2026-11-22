@@ -75,6 +75,14 @@ export interface Comic {
    */
   metaTitle: string | null;
   metaDescription: string | null;
+  /** Readable address /comic/<slug>. Null only before the migration backfill ran. */
+  slug: string | null;
+  /** Share preview. Null falls back to the SEO fields, then to the first cover. */
+  ogTitle: string | null;
+  ogDescription: string | null;
+  ogImageUrl: string | null;
+  /** Alt text for coverThumbnailUrls, same positions; a missing or empty entry falls back to the title. */
+  coverThumbnailAlts: string[];
   loraFileUrl: string | null;
   loraStrength: number;
   status: ComicStatus;
@@ -280,6 +288,16 @@ export interface ThumbnailUploadResponse {
   uploads: UploadUrlResponse[];
 }
 
+// Admin save payload for the address and share preview of a comic. A null or empty string clears
+// a text field (the slug cannot be cleared: the API answers 400); `ogImageKey` is the key from the upload-url call.
+export interface UpdateComicSeoPayload {
+  slug?: string;
+  ogTitle?: string | null;
+  ogDescription?: string | null;
+  ogImageKey?: string | null;
+  coverThumbnailAlts?: string[];
+}
+
 // Create comic payload
 export interface CreateComicPayload {
   title: string;
@@ -313,6 +331,10 @@ export interface PublicPricingRule {
 
 export interface PublicComicListItem {
   id: string;
+  /** Readable address segment; build links with comicHref(), which falls back to the id. */
+  slug: string | null;
+  updatedAt: string;
+  coverThumbnailAlts: string[];
   title: string;
   description: string | null;
   genderTags: GenderTag[];
@@ -359,6 +381,13 @@ export interface PublicComicDetailPage {
 
 export interface PublicComicDetail {
   id: string;
+  /** The comic's current slug, also when it was looked up by id or by an old slug. */
+  slug: string | null;
+  updatedAt: string;
+  ogTitle: string | null;
+  ogDescription: string | null;
+  ogImageUrl: string | null;
+  coverThumbnailAlts: string[];
   title: string;
   description: string | null;
   genderTags: GenderTag[];

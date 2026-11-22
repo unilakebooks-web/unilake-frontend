@@ -84,7 +84,7 @@ export default function ChooseStory({ howItWorks }: ChooseStoryProps) {
           <div className="relative shrink-0 w-[140px] sm:w-[290px] md:w-[380px] lg:w-[460px] xl:w-[520px]">
             <Image
               src="/assets/home_page/DragonImg.png"
-              alt="Dragon"
+              alt=""
               width={669}
               height={374}
               priority
@@ -212,7 +212,7 @@ export default function ChooseStory({ howItWorks }: ChooseStoryProps) {
             >
               <Image
                 src="/assets/home_page/kidWithRobo.png"
-                alt="Kid with Robot"
+                alt=""
                 width={460}
                 height={392}
                 priority
@@ -239,6 +239,7 @@ export default function ChooseStory({ howItWorks }: ChooseStoryProps) {
                   <HowItWorksVideo
                     videoUrl={howItWorks.videoUrl}
                     posterUrl={howItWorks.posterUrl ?? undefined}
+                    posterAlt={howItWorks.posterAlt}
                   />
                 </div>
 
@@ -253,9 +254,9 @@ export default function ChooseStory({ howItWorks }: ChooseStoryProps) {
 
                       {/* Text Content */}
                       <div className="flex flex-col gap-1.5">
-                        <h4 className="text-[#1A1A1A] font-extrabold text-xl md:text-2xl transition-colors duration-300 group-hover:text-[#914B8C]">
+                        <h3 className="text-[#1A1A1A] font-extrabold text-xl md:text-2xl transition-colors duration-300 group-hover:text-[#914B8C]">
                           {step.heading}
-                        </h4>
+                        </h3>
                         <p className="text-[#555555] font-medium text-sm md:text-base leading-relaxed max-w-lg">
                           {step.description}
                         </p>

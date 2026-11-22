@@ -1,7 +1,8 @@
 import type { MetadataRoute } from "next";
 import { fetchPublicComics } from "@/app/actions/comic";
 import { fetchPublicBlogs } from "@/app/actions/public";
-import { absoluteUrl } from "@/lib/seo";
+import { absoluteUrl, laterDate } from "@/lib/seo";
+import { comicHref } from "@/lib/comicUrl";
 
 /**
  * The list of pages handed to Google at /sitemap.xml.
@@ -27,19 +28,15 @@ const STATIC_ROUTES: {
   { path: "/comic", changeFrequency: "weekly", priority: 0.9 },
   { path: "/blog", changeFrequency: "weekly", priority: 0.7 },
   { path: "/how_it_work", changeFrequency: "monthly", priority: 0.6 },
-  { path: "/team", changeFrequency: "monthly", priority: 0.4 },
-  { path: "/contact", changeFrequency: "monthly", priority: 0.4 },
-  { path: "/privacy", changeFrequency: "yearly", priority: 0.2 },
-  { path: "/terms", changeFrequency: "yearly", priority: 0.2 },
-  { path: "/refund", changeFrequency: "yearly", priority: 0.2 },
+  { path: "/about", changeFrequency: "monthly", priority: 0.5 },
+  { path: "/reviews", changeFrequency: "weekly", priority: 0.5 },
 ];
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const now = new Date();
-
+  // No lastModified on the fixed pages: there is no real date to give, and Google only trusts a date that is
+  // accurate, so a "now" that changes every hour would teach it to ignore all of them.
   const staticEntries: MetadataRoute.Sitemap = STATIC_ROUTES.map((route) => ({
     url: absoluteUrl(route.path),
-    lastModified: now,
     changeFrequency: route.changeFrequency,
     priority: route.priority,
   }));
@@ -55,8 +52,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const comicEntries: MetadataRoute.Sitemap =
     comicsResult.status === "fulfilled"
       ? comicsResult.value.map((comic) => ({
-          url: absoluteUrl(`/comic/${comic.id}`),
-          lastModified: now,
+          url: absoluteUrl(comicHref(comic)),
+          lastModified: comic.updatedAt ? new Date(comic.updatedAt) : undefined,
           changeFrequency: "weekly" as const,
           priority: 0.8,
         }))
@@ -68,7 +65,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
           // Blog URLs are keyed by slug, not id - the slug is frozen at create
           // precisely so these links stay stable.
           url: absoluteUrl(`/blog/${blog.slug}`),
-          lastModified: blog.updatedAt ? new Date(blog.updatedAt) : now,
+          // The date of the last real content change; updatedAt also moves on the publish switch.
+          lastModified: new Date(laterDate(blog.contentUpdatedAt, blog.publishedAt ?? blog.createdAt)),
           changeFrequency: "monthly" as const,
           priority: 0.6,
         }))

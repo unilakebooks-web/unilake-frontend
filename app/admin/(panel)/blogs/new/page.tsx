@@ -11,6 +11,8 @@ import { requestBlogUploadUrl } from "@/app/actions/blog";
 import { uploadToR2 } from "@/app/lib/r2-upload";
 import { BlogEditor } from "@/components/admin/blog/BlogEditor";
 import { BlogTagInput } from "@/components/admin/blog/BlogTagInput";
+import { BlogShareFields } from "@/components/admin/blog/BlogShareFields";
+import { FeaturedComicsPicker } from "@/components/admin/blog/FeaturedComicsPicker";
 import {
   CharCounter,
   SEO_TITLE_LIMIT,
@@ -30,6 +32,14 @@ export default function CreateBlogPage() {
   const [metaDescription, setMetaDescription] = useState("");
   const [body, setBody] = useState("");
   const [tags, setTags] = useState<string[]>([]);
+  const [ogTitle, setOgTitle] = useState("");
+  const [ogDescription, setOgDescription] = useState("");
+  const [coverImageAlt, setCoverImageAlt] = useState("");
+  const [featuredComicIds, setFeaturedComicIds] = useState<string[]>([]);
+
+  // Share image: a local preview and the key to save; undefined means none chosen.
+  const [ogImageUrl, setOgImageUrl] = useState<string | null>(null);
+  const [ogImageKey, setOgImageKey] = useState<string | undefined>(undefined);
   
   // Cover Image State
   const [coverUrl, setCoverUrl] = useState<string | null>(null);
@@ -105,6 +115,11 @@ export default function CreateBlogPage() {
         // the post falls back to its own title/excerpt in search results.
         metaTitle: metaTitle.trim() || undefined,
         metaDescription: metaDescription.trim() || undefined,
+        ogTitle: ogTitle.trim() || undefined,
+        ogDescription: ogDescription.trim() || undefined,
+        ogImageKey,
+        coverImageAlt: coverImageAlt.trim() || undefined,
+        featuredComicIds: featuredComicIds.length > 0 ? featuredComicIds : undefined,
       });
 
       toast.success("Blog post created successfully! (Saved as draft)");
@@ -213,6 +228,25 @@ export default function CreateBlogPage() {
               </div>
             </div>
           </div>
+
+          <BlogShareFields
+            ogTitle={ogTitle}
+            onOgTitleChange={setOgTitle}
+            ogDescription={ogDescription}
+            onOgDescriptionChange={setOgDescription}
+            ogImageUrl={ogImageUrl}
+            onOgImageUploaded={(key, previewUrl) => {
+              setOgImageKey(key);
+              setOgImageUrl(previewUrl);
+            }}
+            onOgImageRemove={() => {
+              setOgImageKey(undefined);
+              setOgImageUrl(null);
+            }}
+            fallbackTitle={metaTitle || title}
+            fallbackDescription={metaDescription || excerpt}
+            disabled={isSaving}
+          />
         </div>
 
         {/* Cover Image & Tags */}
@@ -279,6 +313,23 @@ export default function CreateBlogPage() {
               onChange={handleImageUpload}
               disabled={isSaving || isUploading}
             />
+
+            <div className="space-y-2">
+              <label className="text-sm font-bold text-gray-700 block">Cover Description (alt text)</label>
+              <input
+                type="text"
+                value={coverImageAlt}
+                onChange={(e) => setCoverImageAlt(e.target.value)}
+                disabled={isSaving}
+                placeholder={title || "Describe the cover for people who cannot see it"}
+                maxLength={200}
+                className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-600 outline-none focus:border-[#914A8C] focus:ring-2 focus:ring-[#914A8C]/20 focus:bg-white transition-all disabled:opacity-50"
+              />
+              <div className="flex justify-between text-xs text-gray-400 font-medium">
+                <span>Blank uses the post title.</span>
+                <span>{coverImageAlt.length}/200</span>
+              </div>
+            </div>
           </div>
 
           <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-200 space-y-4">
@@ -286,6 +337,15 @@ export default function CreateBlogPage() {
             <p className="text-xs text-gray-500 mb-4">Add tags to help users find this post.</p>
             <BlogTagInput tags={tags} onChange={setTags} />
           </div>
+        </div>
+
+        {/* Featured books */}
+        <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-200">
+          <FeaturedComicsPicker
+            value={featuredComicIds}
+            onChange={setFeaturedComicIds}
+            disabled={isSaving}
+          />
         </div>
 
         {/* Editor */}

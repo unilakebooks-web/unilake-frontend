@@ -3,15 +3,16 @@
  * schema. CONTACT is deliberately not here - contact details are structured
  * fields on SiteSetting and live under admin Settings, not Pages.
  */
-export type SitePageSlug = "PRIVACY" | "TERMS" | "REFUND";
+export type SitePageSlug = "PRIVACY" | "TERMS" | "REFUND" | "ABOUT";
 
-export const SITE_PAGE_SLUGS: SitePageSlug[] = ["PRIVACY", "TERMS", "REFUND"];
+export const SITE_PAGE_SLUGS: SitePageSlug[] = ["PRIVACY", "TERMS", "REFUND", "ABOUT"];
 
 /** Human labels for the admin UI and public page headings. */
 export const SITE_PAGE_LABELS: Record<SitePageSlug, string> = {
   PRIVACY: "Privacy Policy",
   TERMS: "Terms and Conditions",
   REFUND: "Refund Policy",
+  ABOUT: "About Us",
 };
 
 /** The public route each slug is served at. */
@@ -19,6 +20,7 @@ export const SITE_PAGE_ROUTES: Record<SitePageSlug, string> = {
   PRIVACY: "/privacy",
   TERMS: "/terms",
   REFUND: "/refund",
+  ABOUT: "/about",
 };
 
 /**

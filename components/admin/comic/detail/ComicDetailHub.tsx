@@ -9,6 +9,8 @@ import { ComicInfoEditor } from "./ComicInfoEditor";
 import { ThumbnailManager } from "./ThumbnailManager";
 import { VideoManager } from "./VideoManager";
 import { ComicSeoEditor } from "./ComicSeoEditor";
+import { ComicSlugEditor } from "./ComicSlugEditor";
+import { ComicShareEditor } from "./ComicShareEditor";
 // Placeholder imports for next phases
 import { PricingEditor } from "@/components/admin/comic/pricing/PricingEditor";
 import { FontList } from "@/components/admin/comic/fonts/FontList";
@@ -47,7 +49,9 @@ export function ComicDetailHub({ comic }: ComicDetailHubProps) {
             <ComicInfoEditor comic={comic} />
             <ThumbnailManager comic={comic} />
             <VideoManager comic={comic} />
+            <ComicSlugEditor comic={comic} />
             <ComicSeoEditor comic={comic} />
+            <ComicShareEditor comic={comic} />
           </div>
         )}
         

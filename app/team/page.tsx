@@ -6,21 +6,19 @@ import Footer from "@/components/home/Footer";
 import TeamMemberCard from "@/components/team/TeamMemberCard";
 import { fetchPublicTeamMembersOrThrow } from "@/app/actions/public";
 import type { Metadata } from "next";
-import { absoluteUrl } from "@/lib/seo";
+import { buildPageMetadata } from "@/lib/seo";
 
 const TEAM_DESCRIPTION =
   "Meet the people behind UniLake: the team creating personalized comic books for children.";
 
-export const metadata: Metadata = {
-  title: "Our Team",
-  description: TEAM_DESCRIPTION,
-  alternates: { canonical: absoluteUrl("/team") },
-  openGraph: {
+export async function generateMetadata(): Promise<Metadata> {
+  return buildPageMetadata({
+    slug: "TEAM",
+    path: "/team",
     title: "Our Team",
     description: TEAM_DESCRIPTION,
-    url: absoluteUrl("/team"),
-  },
-};
+  });
+}
 
 // The page is built once and refreshed in the background at most every 60 seconds,
 // so a team change or reorder shows within about a minute. Without this it only
@@ -57,7 +55,7 @@ export default async function TeamPage() {
         {members && members.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-16 gap-x-10 lg:gap-x-12 pb-24">
             {members.map((member) => (
-              <TeamMemberCard key={member.id} member={member} />
+              <TeamMemberCard key={member.id} member={member} titleTag="h2" />
             ))}
           </div>
         ) : (

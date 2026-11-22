@@ -2,7 +2,7 @@ import api from "@/app/lib/axios";
 import type { SitePage, SitePageSlug } from "@/app/types/sitePage";
 
 /**
- * Always returns exactly three entries - one per slug - whether or not the
+ * Always returns exactly one entry per slug (four with ABOUT) - whether or not the
  * admin has saved them. Unsaved pages come back as placeholders with id: null.
  */
 export async function fetchSitePages(): Promise<SitePage[]> {

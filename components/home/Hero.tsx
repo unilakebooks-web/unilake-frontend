@@ -34,7 +34,7 @@ export default async function Hero({ heroImages: preloaded }: { heroImages?: Her
 
                 <Image
                   src="/assets/home_page/crownImg.png"
-                  alt="Crown"
+                  alt=""
                   width={60}
                   height={60}
                   className="
@@ -60,13 +60,13 @@ export default async function Hero({ heroImages: preloaded }: { heroImages?: Her
 
             </h2>
 
-            <h1 className={`${chauPhilomeneOne.className} text-[clamp(1.75rem,5.5vw+0.5rem,3.1875rem)] leading-[1.05] sm:leading-[1.02] font-black text-[#37308D] uppercase`}>
+            <h2 className={`${chauPhilomeneOne.className} text-[clamp(1.75rem,5.5vw+0.5rem,3.1875rem)] leading-[1.05] sm:leading-[1.02] font-black text-[#37308D] uppercase`}>
 
               Inside A
               <br />
               Real Storybook
 
-            </h1>
+            </h2>
 
             <p className={`${hankenGrotesk.className} mt-5 sm:mt-7 lg:mt-8 text-gray-700 font-bold text-base sm:text-lg lg:text-xl max-w-lg leading-7 sm:leading-8`}>
 

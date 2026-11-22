@@ -5,7 +5,7 @@ import { VideoSeekBar } from "@/components/shared/VideoSeekBar";
 import { useVideoPlayback } from "@/hooks/useVideoPlayback";
 import { playOrFallBackToMuted } from "@/lib/videoPlay";
 
-export function HowItWorksVideo({ videoUrl, posterUrl }: { videoUrl?: string | null; posterUrl?: string }) {
+export function HowItWorksVideo({ videoUrl, posterUrl, posterAlt }: { videoUrl?: string | null; posterUrl?: string; posterAlt?: string | null }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   // Sound is on: the visitor's click on play is what starts the video.
@@ -54,6 +54,7 @@ export function HowItWorksVideo({ videoUrl, posterUrl }: { videoUrl?: string | n
             ref={videoRef}
             src={videoUrl}
             poster={posterUrl}
+            aria-label={posterAlt || undefined}
             muted={isMuted}
             playsInline
             preload="metadata"

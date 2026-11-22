@@ -42,7 +42,7 @@ export default function TeamMemberModal({
             {member.imageUrl ? (
               <Image
                 src={member.imageUrl}
-                alt={member.name}
+                alt={member.imageAlt || member.name}
                 fill
                 sizes="140px"
                 className="object-cover"

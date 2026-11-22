@@ -6,6 +6,8 @@ export type GoogleReview = {
   reviewText: string;
   /** Always present - the column is NOT NULL, so cards need no fallback. */
   imageUrl: string;
+  /** Description of the photo for screen readers and search; null until the admin writes one. */
+  imageAlt: string | null;
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
@@ -17,6 +19,8 @@ export type CreateGoogleReviewPayload = {
   reviewText: string;
   /** R2 key from the upload-url step, resolved to a public URL server-side. */
   imageKey: string;
+  /** Optional description of the photo, up to 200 characters. */
+  imageAlt?: string | null;
 };
 
 /**

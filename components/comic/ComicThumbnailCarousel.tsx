@@ -12,10 +12,14 @@ interface ComicThumbnailCarouselProps {
   images: string[];
   /** Optional promo video. Null/undefined for most comics. */
   videoUrl?: string | null;
+  /** Alt text of `images`, same positions; a missing or empty entry falls back to the title. */
+  alts?: string[];
+  /** The comic's title, for the alt text of covers without their own. */
+  title?: string;
 }
 
 type Slide =
-  | { kind: "image"; url: string }
+  | { kind: "image"; url: string; alt?: string }
   | { kind: "video"; url: string };
 
 const FALLBACK_IMAGE = "/assets/home_page/bookCover1.png";
@@ -38,13 +42,12 @@ const SKIPPED_LEADING_IMAGES = 2;
  * 2 at index 2 (3rd, i.e. last), with 1 at index 1 (2nd). No stored position
  * is needed.
  */
-function buildSlides(allImages: string[], videoUrl?: string | null): Slide[] {
-  const images =
-    allImages.length > SKIPPED_LEADING_IMAGES
-      ? allImages.slice(SKIPPED_LEADING_IMAGES)
-      : allImages;
+function buildSlides(allImages: string[], videoUrl?: string | null, alts?: string[]): Slide[] {
+  const skipped = allImages.length > SKIPPED_LEADING_IMAGES ? SKIPPED_LEADING_IMAGES : 0;
+  const images = allImages.slice(skipped);
 
-  const slides: Slide[] = images.map((url) => ({ kind: "image", url }));
+  // The alt texts are saved against the full list, so they shift by however many leading images were dropped.
+  const slides: Slide[] = images.map((url, i) => ({ kind: "image", url, alt: alts?.[skipped + i] }));
 
   if (videoUrl) {
     slides.splice(Math.min(2, slides.length), 0, { kind: "video", url: videoUrl });
@@ -63,6 +66,8 @@ function buildSlides(allImages: string[], videoUrl?: string | null): Slide[] {
 export default function ComicThumbnailCarousel({
   images,
   videoUrl,
+  alts,
+  title,
 }: ComicThumbnailCarouselProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   // Only meaningful once the browser has refused sound. Until then the video is
@@ -87,8 +92,8 @@ export default function ComicThumbnailCarousel({
   const visitorStoppedRef = useRef(false);
 
   const slides = useMemo(
-    () => buildSlides(images, videoUrl),
-    [images, videoUrl]
+    () => buildSlides(images, videoUrl, alts),
+    [images, videoUrl, alts]
   );
 
   // The admin can remove the video (or a thumbnail) while this page is open;
@@ -236,7 +241,7 @@ export default function ComicThumbnailCarousel({
             {activeSlide?.kind === "image" && (
               <Image
                 src={toImageUrl(activeSlide.url)}
-                alt={`Cover ${safeIndex + 1}`}
+                alt={activeSlide.alt || (title ? `${title} - cover ${safeIndex + 1}` : `Cover ${safeIndex + 1}`)}
                 fill
                 className="object-contain"
                 sizes="(max-width: 768px) 100vw, 400px"

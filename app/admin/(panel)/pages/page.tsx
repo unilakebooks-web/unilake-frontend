@@ -39,14 +39,14 @@ export default function SitePagesAdminPage() {
       <div>
         <h1 className="text-2xl font-bold text-neutral-900">Pages</h1>
         <p className="text-sm text-neutral-500 mt-1">
-          The legal pages linked from the site footer. Contact details are
-          edited under Settings.
+          The legal pages linked from the site footer, and the About Us page.
+          Contact details are edited under Settings.
         </p>
       </div>
 
       {isLoading ? (
         <div className="space-y-4">
-          {[1, 2, 3].map((i) => (
+          {[1, 2, 3, 4].map((i) => (
             <div
               key={i}
               className="flex items-center justify-between gap-4 p-5 bg-white/70 backdrop-blur-sm rounded-2xl border border-[#914A8C]/15"

@@ -1,12 +1,21 @@
 import { useQuery } from "@tanstack/react-query";
 import { fetchPublicComics, fetchPublicComic } from "@/app/actions/comic";
 import { fetchThemes } from "@/app/actions/theme";
+import { ALL_BOOKS_QUERY_KEY } from "@/components/home/allBooksQuery";
 import { normalizeComicFilters, type ComicTagFilters } from "@/lib/comicTags";
 
 export function usePublicComics(filters?: ComicTagFilters) {
   return useQuery({
     queryKey: ["public-comics", normalizeComicFilters(filters)],
     queryFn: () => fetchPublicComics(filters),
+  });
+}
+
+/** Every published book, under the key SeedAllBooks fills on the server. */
+export function useAllBooks() {
+  return useQuery({
+    queryKey: ALL_BOOKS_QUERY_KEY,
+    queryFn: () => fetchPublicComics(),
   });
 }
 

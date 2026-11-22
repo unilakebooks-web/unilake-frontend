@@ -7,7 +7,10 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
-        disallow: ["/admin", "/dashboard", "/personalize", "/login"],
+        // Only the staff and account areas. /personalize, /share, /unsubscribe and /login are NOT blocked here:
+        // they carry an X-Robots-Tag noindex header (next.config.ts), which a crawler can only read if it may
+        // fetch the page.
+        disallow: ["/admin", "/dashboard"],
       },
     ],
     sitemap: absoluteUrl("/sitemap.xml"),

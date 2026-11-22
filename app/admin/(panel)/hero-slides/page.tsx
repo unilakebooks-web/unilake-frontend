@@ -129,6 +129,11 @@ export default function HeroSlidesAdminPage() {
           togglingId={togglingId}
           onToggleStatus={handleToggleStatus}
           onDelete={(target) => setDeleteTarget(target)}
+          onAltSaved={(updated) =>
+            setHeroImages((prev) =>
+              prev.map((item) => (item.id === updated.id ? updated : item))
+            )
+          }
           onAddFirst={() => setIsUploadOpen(true)}
         />
       )}

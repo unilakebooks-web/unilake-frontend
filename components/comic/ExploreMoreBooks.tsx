@@ -87,7 +87,7 @@ export default function ExploreMoreBooks({ comicId }: ExploreMoreBooksProps) {
           <div className="relative min-w-0 w-[156px] sm:w-[324px] md:w-[424px] lg:w-[514px] xl:w-[582px]">
             <Image
               src="/assets/home_page/Explore-boy.png"
-              alt="Explorer Boy"
+              alt=""
               width={1080}
               height={540}
               priority

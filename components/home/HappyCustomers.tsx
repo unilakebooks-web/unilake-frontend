@@ -104,7 +104,7 @@ export default function HappyCustomers({ reviews }: HappyCustomersProps) {
         >
           <Image
             src="/assets/home_page/dinoImg.png"
-            alt="Kid riding dinosaur"
+            alt=""
             width={480}
             height={480}
             priority

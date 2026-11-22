@@ -16,6 +16,7 @@ import { useAuth } from "@/app/hooks/useAuth";
 import { isStaff } from "@/app/types/auth";
 import { SUPPORT_EMAIL } from "@/lib/dataDeletion";
 import { PrivacyPolicyLink } from "@/components/shared/PrivacyPolicyLink";
+import { comicHref } from "@/lib/comicUrl";
 
 function PreviewErrorState({
   title,
@@ -177,7 +178,7 @@ export default function PreviewPage({
   const handleStartAgain = () => {
     if (snapshot?.comicId) {
       clearSession(snapshot.comicId);
-      router.push(`/comic/${snapshot.comicId}`);
+      router.push(comicHref({ id: snapshot.comicId }));
     } else {
       router.push("/");
     }

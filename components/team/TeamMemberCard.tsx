@@ -9,6 +9,8 @@ import type { TeamMember } from "@/app/types/teamMember";
 
 interface TeamMemberCardProps {
   member: TeamMember;
+  /** The name's heading level: h3 under a section heading (homepage), h2 straight under the page's h1 (/team). */
+  titleTag?: "h2" | "h3";
 }
 
 /**
@@ -22,7 +24,7 @@ interface TeamMemberCardProps {
  * here. /team is a server component and this is a client one - that is fine,
  * TeamMember is plain JSON and crosses the boundary without trouble.
  */
-export default function TeamMemberCard({ member }: TeamMemberCardProps) {
+export default function TeamMemberCard({ member, titleTag: Title = "h3" }: TeamMemberCardProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   // "Read more" is only honest when the clamp actually cut something off, so
@@ -72,7 +74,7 @@ export default function TeamMemberCard({ member }: TeamMemberCardProps) {
         {/* Card Background Frame PNG */}
         <Image
           src="/assets/home_page/teamCardFrame.png"
-          alt="Card Background"
+          alt=""
           fill
           className="pointer-events-none select-none z-0 object-contain"
           priority
@@ -93,7 +95,7 @@ export default function TeamMemberCard({ member }: TeamMemberCardProps) {
             {member.imageUrl ? (
               <Image
                 src={member.imageUrl}
-                alt={member.name}
+                alt={member.imageAlt || member.name}
                 fill
                 sizes="155px"
                 className="object-cover"
@@ -109,11 +111,11 @@ export default function TeamMemberCard({ member }: TeamMemberCardProps) {
           </div>
 
           {/* Name */}
-          <h4
+          <Title
             className={`${hankenGrotesk.className} text-[#914B8C] font-extrabold text-xl sm:text-2xl mb-1`}
           >
             {member.name}
-          </h4>
+          </Title>
 
           {/* Role */}
           <span

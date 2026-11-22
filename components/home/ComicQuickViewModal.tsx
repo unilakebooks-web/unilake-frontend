@@ -15,6 +15,7 @@ import { PublicComicListItem } from "@/app/types/comic";
 import { hankenGrotesk, poppins, protestStrike } from "@/app/fonts";
 import { formatAgeGroup, formatGender } from "@/lib/comicTags";
 import { toImageUrl } from "@/lib/imageUrl";
+import { comicHref } from "@/lib/comicUrl";
 
 /** Price as StoryCard already resolved it - null when not sold in the country. */
 export interface QuickViewPrice {
@@ -73,10 +74,13 @@ function formatAmount(value: number): string {
  */
 function CoverSlider({
   images,
+  alts,
   title,
   isBestseller,
 }: {
   images: string[];
+  /** The admin's cover descriptions, same positions as `images`; an empty or missing entry falls back to the title. */
+  alts?: string[];
   title: string;
   isBestseller: boolean;
 }) {
@@ -95,7 +99,7 @@ function CoverSlider({
           <Image
             key={`${i}-${src}`}
             src={toImageUrl(src)}
-            alt={hasMany ? `${title} - cover ${i + 1} of ${images.length}` : title}
+            alt={alts?.[i]?.trim() || (hasMany ? `${title} - cover ${i + 1} of ${images.length}` : title)}
             fill
             sizes="(max-width: 768px) 92vw, 340px"
             aria-hidden={i !== index}
@@ -180,7 +184,7 @@ export default function ComicQuickViewModal({
 }: ComicQuickViewModalProps) {
   const router = useRouter();
 
-  const personalise = () => router.push(`/comic/${comic.id}`);
+  const personalise = () => router.push(comicHref(comic));
   const buttonState = !pricing
     ? "opacity-50 cursor-not-allowed"
     : "hover:brightness-110 active:translate-y-[2px] active:border-b-[2px] cursor-pointer";
@@ -220,6 +224,7 @@ export default function ComicQuickViewModal({
             <div className="w-full md:w-[45%] shrink-0 min-w-0">
               <CoverSlider
                 images={coverImages}
+                alts={comic.coverThumbnailAlts}
                 title={comic.title}
                 isBestseller={comic.isBestseller}
               />

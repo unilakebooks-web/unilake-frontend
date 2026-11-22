@@ -12,6 +12,7 @@ import { useRouter } from "next/navigation";
 import { Play } from "lucide-react";
 import { OrdersPausedBanner } from "@/components/shared/OrdersPausedBanner";
 import ShareButton from "@/components/share/ShareButton";
+import { comicHref } from "@/lib/comicUrl";
 
 interface ComicDetailContentProps {
   comic: PublicComicDetail;
@@ -97,10 +98,12 @@ export default function ComicDetailContent({ comic }: ComicDetailContentProps) {
                 <ComicThumbnailCarousel
                   images={comic.coverThumbnailUrls}
                   videoUrl={comic.previewVideoUrl}
+                  alts={comic.coverThumbnailAlts}
+                  title={comic.title}
                 />
                 {/* Feature 14: share this book's page. */}
                 <div className="mt-4">
-                  <ShareButton path={`/comic/${comic.id}`} title={comic.title} variant="pill" />
+                  <ShareButton path={comicHref(comic)} title={comic.title} variant="pill" />
                 </div>
                 <div className="hidden lg:block w-full">
                   <ComicInfoCards />
