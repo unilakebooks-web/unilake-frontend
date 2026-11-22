@@ -91,7 +91,7 @@ export default function BlogCard({
           {blog.coverImageUrl ? (
             <Image
               src={blog.coverImageUrl}
-              alt={blog.title}
+              alt={blog.coverImageAlt || blog.title}
               fill
               className="object-contain transition-transform duration-500 group-hover:scale-105"
               sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"

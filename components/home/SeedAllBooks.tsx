@@ -3,6 +3,12 @@ import { fetchPublicComics } from "@/app/actions/comic";
 import { ALL_BOOKS_QUERY_KEY } from "@/components/home/allBooksQuery";
 
 /**
+ * How long the server waits for the list. A slow or sleeping API must not hold the whole page back for the full
+ * request timeout (20 s): after this the page is sent without the seed and the browser loads the list itself.
+ */
+const SEED_WAIT_MS = 4000;
+
+/**
  * Server wrapper that loads the published comics once and hands them to AllBooksList, so the list of links is
  * in the first HTML instead of appearing after a browser fetch.
  *
@@ -10,12 +16,6 @@ import { ALL_BOOKS_QUERY_KEY } from "@/components/home/allBooksQuery";
  * otherwise unaffected. A caller that already started the request can pass its promise as `comics`; without it
  * this fetches for itself. Callers must render per request (`dynamic = "force-dynamic"`), as the data is live.
  */
-/**
- * How long the server waits for the list. A slow or sleeping API must not hold the whole page back for the full
- * request timeout (20 s): after this the page is sent without the seed and the browser loads the list itself.
- */
-const SEED_WAIT_MS = 4000;
-
 export default async function SeedAllBooks({
   children,
   comics,

@@ -12,6 +12,8 @@ export type BlogListItem = {
   contentUpdatedAt: string | null;
   /** The first time the post went live; null on a draft. */
   publishedAt: string | null;
+  /** Description of the cover picture for the list cards; empty or missing falls back to the title. */
+  coverImageAlt?: string | null;
 };
 
 export type Blog = BlogListItem & {
