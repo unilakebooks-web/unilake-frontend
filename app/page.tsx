@@ -35,6 +35,11 @@ export async function generateMetadata(): Promise<Metadata> {
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
+  // Started first, before anything is awaited, so the comics load alongside the settings and the batch below.
+  const comicsPromise = fetchPublicComics();
+  // A rejection before SeedAllBooks awaits it must not surface as unhandled; SeedAllBooks still sees it.
+  comicsPromise.catch(() => {});
+
   const setting = await getSiteSetting();
   // Only addresses the admin actually saved: the footer's built-in fallback links are not the brand's pages.
   const sameAs = [setting?.instagramUrl, setting?.facebookUrl, setting?.twitterUrl, setting?.youtubeUrl, setting?.linkedinUrl]
@@ -43,11 +48,6 @@ export default async function Home() {
   // Only what the admin saved in the site settings, never the footer's built-in fallback contact details.
   const contactEmail = setting?.email?.trim();
   const contactPhone = setting?.phone?.trim();
-
-  // Started now so the comics load alongside the batch below instead of after it.
-  const comicsPromise = fetchPublicComics();
-  // A rejection before SeedAllBooks awaits it must not surface as unhandled; SeedAllBooks still sees it.
-  comicsPromise.catch(() => {});
 
   const [reviewsResult, teamResult, howItWorksResult, faqsResult, blogsResult, heroResult, announcementsResult] = await Promise.allSettled([
     fetchPublicCustomerReviews(),

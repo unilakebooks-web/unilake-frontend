@@ -26,7 +26,7 @@ export default function ReviewVideo({
       preload="none"
       playsInline
       aria-label={label}
-      className="w-full aspect-video bg-black object-cover"
+      className="w-full aspect-video bg-black object-contain"
     />
   );
 }

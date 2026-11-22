@@ -10,6 +10,12 @@ import { ALL_BOOKS_QUERY_KEY } from "@/components/home/allBooksQuery";
  * otherwise unaffected. A caller that already started the request can pass its promise as `comics`; without it
  * this fetches for itself. Callers must render per request (`dynamic = "force-dynamic"`), as the data is live.
  */
+/**
+ * How long the server waits for the list. A slow or sleeping API must not hold the whole page back for the full
+ * request timeout (20 s): after this the page is sent without the seed and the browser loads the list itself.
+ */
+const SEED_WAIT_MS = 4000;
+
 export default async function SeedAllBooks({
   children,
   comics,
@@ -19,10 +25,16 @@ export default async function SeedAllBooks({
 }) {
   const queryClient = new QueryClient();
 
+  let timer: ReturnType<typeof setTimeout> | undefined;
   try {
-    queryClient.setQueryData(ALL_BOOKS_QUERY_KEY, await (comics ?? fetchPublicComics()));
+    const tooSlow = new Promise<never>((_, reject) => {
+      timer = setTimeout(() => reject(new Error("books list too slow")), SEED_WAIT_MS);
+    });
+    queryClient.setQueryData(ALL_BOOKS_QUERY_KEY, await Promise.race([comics ?? fetchPublicComics(), tooSlow]));
   } catch {
     // Left unseeded on purpose, see above.
+  } finally {
+    clearTimeout(timer);
   }
 
   return <HydrationBoundary state={dehydrate(queryClient)}>{children}</HydrationBoundary>;

@@ -74,10 +74,13 @@ function formatAmount(value: number): string {
  */
 function CoverSlider({
   images,
+  alts,
   title,
   isBestseller,
 }: {
   images: string[];
+  /** The admin's cover descriptions, same positions as `images`; an empty or missing entry falls back to the title. */
+  alts?: string[];
   title: string;
   isBestseller: boolean;
 }) {
@@ -96,7 +99,7 @@ function CoverSlider({
           <Image
             key={`${i}-${src}`}
             src={toImageUrl(src)}
-            alt={hasMany ? `${title} - cover ${i + 1} of ${images.length}` : title}
+            alt={alts?.[i]?.trim() || (hasMany ? `${title} - cover ${i + 1} of ${images.length}` : title)}
             fill
             sizes="(max-width: 768px) 92vw, 340px"
             aria-hidden={i !== index}
@@ -221,6 +224,7 @@ export default function ComicQuickViewModal({
             <div className="w-full md:w-[45%] shrink-0 min-w-0">
               <CoverSlider
                 images={coverImages}
+                alts={comic.coverThumbnailAlts}
                 title={comic.title}
                 isBestseller={comic.isBestseller}
               />
