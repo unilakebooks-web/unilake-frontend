@@ -37,7 +37,7 @@ export function ContactEnquiryDeleteDialog({
 
   return (
     <Dialog open={open} onOpenChange={isDeleting ? undefined : onOpenChange}>
-      <DialogContent className="sm:max-w-md bg-white border border-red-200 shadow-xl rounded-2xl p-6">
+      <DialogContent className="sm:max-w-md bg-white border border-red-200 shadow-xl rounded-2xl p-6 grid-cols-[minmax(0,1fr)]">
         <DialogHeader className="space-y-3">
           <div className="flex items-center gap-3">
             <div className="w-11 h-11 rounded-full bg-red-100 text-red-600 flex items-center justify-center shrink-0">
@@ -57,16 +57,16 @@ export function ContactEnquiryDeleteDialog({
         {/* Email is shown alongside the name: two enquiries from the same
             person are common, and the address is what tells them apart. */}
         <div className="my-4 p-3.5 bg-neutral-50 rounded-xl border border-neutral-200 flex flex-col gap-1.5">
-          <span className="text-xs font-bold text-neutral-800">From: {enquiry.name}</span>
+          <span className="text-xs font-bold text-neutral-800 wrap-anywhere">From: {enquiry.name}</span>
           <span className="text-xs text-neutral-500 font-medium break-all">{enquiry.email}</span>
-          <p className="text-neutral-600 text-sm font-medium italic line-clamp-3 relative">
+          <p className="text-neutral-600 text-sm font-medium italic line-clamp-3 relative wrap-anywhere">
             <span className="text-neutral-400 select-none mr-1">&ldquo;</span>
             {enquiry.message}
             <span className="text-neutral-400 select-none ml-1">&rdquo;</span>
           </p>
         </div>
 
-        <DialogFooter className="gap-2 pt-3 border-t border-neutral-100">
+        <DialogFooter className="gap-2 pt-3 border-t border-neutral-100 -mx-6 -mb-6 px-6">
           <Button
             type="button"
             variant="outline"

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import LegalPageView from "@/components/legal/LegalPageView";
-import { fetchPublicSitePage } from "@/app/actions/public";
+import AboutView from "@/components/about/AboutView";
+import { fetchPublicSitePage, fetchPublicTeamMembers } from "@/app/actions/public";
 import { buildPageMetadata, getSiteSetting, DEFAULT_DESCRIPTION } from "@/lib/seo";
 import type { SitePage } from "@/app/types/sitePage";
 
@@ -27,15 +27,18 @@ function escapeHtml(text: string): string {
 }
 
 /**
- * The About Us page: the admin's ABOUT page (same editor and renderer as the privacy page).
+ * The About Us page: a designed brand page whose story section is the admin's ABOUT page (same editor and
+ * renderer as the privacy page), followed by the team.
  *
- * Until the client has written one, the page shows the brand description from the site settings and a link
- * to the team, instead of a 404: the header and footer link to it from day one. Any failure (no such page,
+ * Until the client has written one, the page shows the brand description from the site settings instead of a
+ * 404: the footer links to it from day one. Any failure (no such page,
  * or the backend being down) shows that same fallback, so this page never answers with a 404 or a 500. The
  * page is rendered per request, so the fallback is never cached.
  */
 export default async function AboutPage() {
   let page: SitePage;
+  // Started now so the team request runs alongside the page request, not after it.
+  const membersRequest = fetchPublicTeamMembers();
 
   try {
     page = await fetchPublicSitePage("ABOUT");
@@ -47,12 +50,14 @@ export default async function AboutPage() {
       id: null,
       slug: "ABOUT",
       title: "About Us",
-      body: `<p>${escapeHtml(description)}</p><p><a href="/team">Meet the team behind UniLake</a></p>`,
+      body: `<p>${escapeHtml(description)}</p>`,
       isActive: true,
       createdAt: null,
       updatedAt: null,
     };
   }
 
-  return <LegalPageView page={page} />;
+  const members = await membersRequest;
+
+  return <AboutView page={page} members={members} />;
 }

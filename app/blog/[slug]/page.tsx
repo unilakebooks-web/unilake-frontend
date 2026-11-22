@@ -133,6 +133,14 @@ export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
     });
   const url = absoluteUrl(`/blog/${blog.slug}`);
   const authorName = setting?.blogAuthorName?.trim();
+  const authorProfiles = [setting?.blogAuthorInstagramUrl?.trim(), setting?.blogAuthorLinkedinUrl?.trim()].filter(
+    (profile): profile is string => !!profile,
+  );
+  const author = authorName && {
+    "@type": "Person",
+    name: authorName,
+    ...(authorProfiles.length > 0 && { sameAs: authorProfiles }),
+  };
   const { description: seoDescription, shareImage } = blogSeoParts(blog);
 
   return (
@@ -150,7 +158,7 @@ export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
               datePublished: publishedDate,
               dateModified: updatedDate,
               ...(shareImage && { image: [shareImage] }),
-              ...(authorName && { author: { "@type": "Person", name: authorName } }),
+              ...(author && { author }),
               publisher: { "@type": "Organization", name: BRAND_NAME },
             },
             {
