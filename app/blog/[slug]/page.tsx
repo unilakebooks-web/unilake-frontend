@@ -32,6 +32,21 @@ interface BlogDetailPageProps {
 }
 
 /**
+ * The search description and the share image of a post, in one place so the page's meta tags and its
+ * BlogPosting markup can never disagree.
+ */
+function blogSeoParts(blog: Awaited<ReturnType<typeof fetchPublicBlogBySlug>>) {
+  const description =
+    firstNonEmpty(
+      blog.metaDescription,
+      blog.excerpt,
+      blog.body ? htmlToPlainText(blog.body) : null
+    ) ?? DEFAULT_DESCRIPTION;
+  const shareImage = toImageUrl(firstNonEmpty(blog.ogImageUrl, blog.coverImageUrl));
+  return { description, shareImage };
+}
+
+/**
  * Per-post title, description and share card.
  *
  * Fallback chain: the admin's SEO override, then the post's excerpt, then the
@@ -52,18 +67,12 @@ export async function generateMetadata({
     const blog = await fetchPublicBlogBySlug(slug);
 
     const title = firstNonEmpty(blog.metaTitle, blog.title) ?? "Blog";
-    const description =
-      firstNonEmpty(
-        blog.metaDescription,
-        blog.excerpt,
-        blog.body ? htmlToPlainText(blog.body) : null
-      ) ?? DEFAULT_DESCRIPTION;
+    const { description, shareImage } = blogSeoParts(blog);
     // Share card (feature 13): its own title, description and image when the admin set them, else the SEO
     // text above and the cover. The cover goes through toImageUrl like the comic covers do.
     const shareTitle = firstNonEmpty(blog.ogTitle, title) ?? title;
     const ogDescription = firstNonEmpty(blog.ogDescription);
     const shareDescription = ogDescription ? clampDescription(ogDescription) : clampDescription(description);
-    const shareImage = toImageUrl(firstNonEmpty(blog.ogImageUrl, blog.coverImageUrl));
     const shareImageAlt = blog.ogImageUrl ? blog.title : firstNonEmpty(blog.coverImageAlt, blog.title) ?? blog.title;
 
     return {
@@ -123,7 +132,7 @@ export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
     });
   const url = absoluteUrl(`/blog/${blog.slug}`);
   const authorName = setting?.blogAuthorName?.trim();
-  const shareImage = toImageUrl(firstNonEmpty(blog.ogImageUrl, blog.coverImageUrl));
+  const { description: seoDescription, shareImage } = blogSeoParts(blog);
 
   return (
     <main className="min-h-screen bg-[#F9E7D3] flex flex-col">
@@ -134,9 +143,7 @@ export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
             {
               "@type": "BlogPosting",
               headline: blog.title,
-              description: clampDescription(
-                firstNonEmpty(blog.metaDescription, blog.excerpt, htmlToPlainText(blog.body)) ?? DEFAULT_DESCRIPTION
-              ),
+              description: clampDescription(seoDescription),
               url,
               mainEntityOfPage: url,
               datePublished: publishedDate,

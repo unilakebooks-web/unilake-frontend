@@ -1,9 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useQuery } from "@tanstack/react-query";
-import { fetchPublicComics } from "@/app/actions/comic";
-import { ALL_BOOKS_QUERY_KEY } from "@/components/home/allBooksQuery";
+import { useAllBooks } from "@/hooks/usePublicComics";
 import { chauPhilomeneOne, hankenGrotesk } from "@/app/fonts";
 import { comicHref } from "@/lib/comicUrl";
 
@@ -16,10 +14,7 @@ import { comicHref } from "@/lib/comicUrl";
  * wraps it in SeedAllBooks. It shows nothing until there is data, and nothing when there are no books.
  */
 export default function AllBooksList() {
-  const { data: comics } = useQuery({
-    queryKey: ALL_BOOKS_QUERY_KEY,
-    queryFn: () => fetchPublicComics(),
-  });
+  const { data: comics } = useAllBooks();
 
   if (!comics || comics.length === 0) return null;
 

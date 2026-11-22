@@ -100,6 +100,7 @@ export function HeroSlideCard({
           onClick={handleSaveAlt}
           disabled={!altDirty || updateAlt.isPending}
           title="Save description"
+          aria-label="Save description"
           className="w-9 h-9 rounded-xl bg-[#914A8C] text-white hover:bg-[#7a3e75] transition-colors flex items-center justify-center shrink-0 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
         >
           {updateAlt.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}

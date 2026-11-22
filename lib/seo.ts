@@ -159,10 +159,18 @@ const getPageSeoListCached = unstable_cache(
   { revalidate: REVALIDATE_SECONDS, tags: ["page-seo"] }
 );
 
+// When the last fetch failed (ms), 0 for none. While the API is down, every page's metadata would otherwise
+// repeat the request and wait out the server timeout; like getSiteSetting caching null, a failure is
+// remembered for 60 seconds so those pages answer with their fixed text at once.
+const FAILURE_MEMO_MS = 60_000;
+let pageSeoFailedAt = 0;
+
 const getPageSeoList = cache(async (): Promise<PageSeoPublic[]> => {
+  if (pageSeoFailedAt && Date.now() - pageSeoFailedAt < FAILURE_MEMO_MS) return [];
   try {
     return await getPageSeoListCached();
   } catch {
+    pageSeoFailedAt = Date.now();
     return [];
   }
 });

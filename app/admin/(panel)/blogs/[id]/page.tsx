@@ -43,7 +43,7 @@ export default function EditBlogPage({ params }: { params: Promise<{ id: string 
   const [ogDescription, setOgDescription] = useState("");
   const [coverImageAlt, setCoverImageAlt] = useState("");
   const [featuredComicIds, setFeaturedComicIds] = useState<string[]>([]);
-  
+
   // Share image: the saved URL or a local preview. Key: undefined = unchanged, null = remove, string = new upload.
   const [ogImageUrl, setOgImageUrl] = useState<string | null>(null);
   const [ogImageKey, setOgImageKey] = useState<string | null | undefined>(undefined);

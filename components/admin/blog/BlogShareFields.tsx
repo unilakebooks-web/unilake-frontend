@@ -51,8 +51,9 @@ export function BlogShareFields({
       </div>
 
       <div className="space-y-2">
-        <label className="text-sm font-bold text-gray-700">Share Title</label>
+        <label htmlFor="blog-share-title" className="text-sm font-bold text-gray-700">Share Title</label>
         <input
+          id="blog-share-title"
           type="text"
           value={ogTitle}
           onChange={(e) => onOgTitleChange(e.target.value)}
@@ -67,8 +68,9 @@ export function BlogShareFields({
       </div>
 
       <div className="space-y-2">
-        <label className="text-sm font-bold text-gray-700">Share Description</label>
+        <label htmlFor="blog-share-description" className="text-sm font-bold text-gray-700">Share Description</label>
         <textarea
+          id="blog-share-description"
           value={ogDescription}
           onChange={(e) => onOgDescriptionChange(e.target.value)}
           disabled={disabled}

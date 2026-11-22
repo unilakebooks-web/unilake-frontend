@@ -2,7 +2,7 @@
 //
 // Not lib/seo's absoluteUrl: that file imports next/cache and the server actions, and no client component imports
 // it. Same site address and the same joining rule; keep the two in step.
-const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://www.unilakekids.com").replace(/\/$/, "");
+export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://www.unilakekids.com").replace(/\/$/, "");
 
 export function shareUrl(path: string): string {
   return `${SITE_URL}/${path.replace(/^\//, "")}`;

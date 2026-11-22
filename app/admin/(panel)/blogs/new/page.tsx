@@ -36,7 +36,7 @@ export default function CreateBlogPage() {
   const [ogDescription, setOgDescription] = useState("");
   const [coverImageAlt, setCoverImageAlt] = useState("");
   const [featuredComicIds, setFeaturedComicIds] = useState<string[]>([]);
-  
+
   // Share image: a local preview and the key to save; undefined means none chosen.
   const [ogImageUrl, setOgImageUrl] = useState<string | null>(null);
   const [ogImageKey, setOgImageKey] = useState<string | undefined>(undefined);

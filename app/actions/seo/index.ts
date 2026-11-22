@@ -17,15 +17,20 @@ export async function updateComicSeo(
   return data;
 }
 
-export async function requestComicOgImageUploadUrl(
+async function requestUploadUrl(
+  path: string,
   fileName: string,
   contentType: string
 ): Promise<BlogUploadUrlResponse> {
-  const { data } = await api.post<BlogUploadUrlResponse>(
-    "/api/admin/comics/og-image/upload-url",
-    { fileName, contentType }
-  );
+  const { data } = await api.post<BlogUploadUrlResponse>(path, { fileName, contentType });
   return data;
+}
+
+export function requestComicOgImageUploadUrl(
+  fileName: string,
+  contentType: string
+): Promise<BlogUploadUrlResponse> {
+  return requestUploadUrl("/api/admin/comics/og-image/upload-url", fileName, contentType);
 }
 
 /** Edits the alt text of an existing hero banner. Null or an empty string clears it. */
@@ -54,13 +59,9 @@ export async function savePageSeo(
   return data;
 }
 
-export async function requestPageSeoUploadUrl(
+export function requestPageSeoUploadUrl(
   fileName: string,
   contentType: string
 ): Promise<BlogUploadUrlResponse> {
-  const { data } = await api.post<BlogUploadUrlResponse>(
-    "/api/admin/page-seo/upload-url",
-    { fileName, contentType }
-  );
-  return data;
+  return requestUploadUrl("/api/admin/page-seo/upload-url", fileName, contentType);
 }

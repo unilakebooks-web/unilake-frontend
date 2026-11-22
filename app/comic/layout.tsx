@@ -30,7 +30,7 @@ export async function generateMetadata(): Promise<Metadata> {
     // `default` is itself run through the ROOT template, so it must NOT repeat
     // the suffix or /comic renders "All Comics | UniLake | UniLake".
     title: {
-      default: meta.title as string,
+      default: typeof meta.title === "string" ? meta.title : "All Comics",
       template: `%s | ${SITE_NAME}`,
     },
   };

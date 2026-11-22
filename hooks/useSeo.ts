@@ -22,14 +22,10 @@ export function useUpdateComicSeo() {
 }
 
 export function useUpdateHeroImageAlt() {
-  const queryClient = useQueryClient();
   return useMutation({
+    // No invalidation: the hero screen keeps its list in local state and swaps in the returned row.
     mutationFn: ({ id, imageAlt }: { id: string; imageAlt: string | null }) =>
       updateHeroImageAlt(id, imageAlt),
-    // The hero screen keeps its list in local state and swaps in the returned row; this covers any cached reader.
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin-hero-images"] });
-    },
   });
 }
 

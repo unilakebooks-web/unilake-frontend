@@ -8,12 +8,8 @@ import { Input } from "@/components/ui/input";
 import { ComicDetail } from "@/app/types/comic";
 import { useUpdateComicSeo } from "@/hooks/useSeo";
 import { normalizeSlug, validateSlug, SLUG_MAX_LENGTH } from "@/lib/comicSlug";
+import { SITE_URL } from "@/components/share/shareUrl";
 import { getErrorCode, getErrorMessage } from "@/lib/utils";
-
-// The public address the preview is built on (not the API); same fallback as the storefront's SITE_URL.
-const SITE_URL = (
-  process.env.NEXT_PUBLIC_SITE_URL || "https://www.unilakekids.com"
-).replace(/\/$/, "");
 
 interface ComicSlugEditorProps {
   comic: ComicDetail;

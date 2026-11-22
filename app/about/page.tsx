@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import LegalPageView from "@/components/legal/LegalPageView";
 import { fetchPublicSitePage } from "@/app/actions/public";
 import { buildPageMetadata, getSiteSetting, DEFAULT_DESCRIPTION } from "@/lib/seo";
-import { getErrorCode } from "@/lib/utils";
 import type { SitePage } from "@/app/types/sitePage";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -31,18 +30,16 @@ function escapeHtml(text: string): string {
  * The About Us page: the admin's ABOUT page (same editor and renderer as the privacy page).
  *
  * Until the client has written one, the page shows the brand description from the site settings and a link
- * to the team, instead of a 404: the header and footer link to it from day one. Only a genuine "no such
- * page" falls back; any other error is rethrown like on the other site pages, so a backend outage is not
- * published as if it were the About text.
+ * to the team, instead of a 404: the header and footer link to it from day one. Any failure (no such page,
+ * or the backend being down) shows that same fallback, so this page never answers with a 404 or a 500. The
+ * page is rendered per request, so the fallback is never cached.
  */
 export default async function AboutPage() {
   let page: SitePage;
 
   try {
     page = await fetchPublicSitePage("ABOUT");
-  } catch (error: unknown) {
-    if (getErrorCode(error) !== "NOT_FOUND") throw error;
-
+  } catch {
     const setting = await getSiteSetting();
     const description = setting?.brandDescription?.trim() || DEFAULT_DESCRIPTION;
 

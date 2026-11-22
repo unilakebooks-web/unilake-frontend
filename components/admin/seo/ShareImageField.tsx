@@ -82,6 +82,7 @@ export function ShareImageField({
               disabled={isBusy}
               className="p-3 bg-white text-gray-700 rounded-xl shadow-lg hover:scale-105 transition-transform"
               title="Replace image"
+              aria-label="Replace image"
             >
               <ImageIcon className="w-5 h-5" />
             </button>
@@ -91,14 +92,17 @@ export function ShareImageField({
               disabled={isBusy}
               className="p-3 bg-red-500 text-white rounded-xl shadow-lg hover:scale-105 transition-transform"
               title="Remove image"
+              aria-label="Remove image"
             >
               <Trash2 className="w-5 h-5" />
             </button>
           </div>
         </div>
       ) : (
-        <div
+        <button
+          type="button"
           onClick={() => !isBusy && fileInputRef.current?.click()}
+          disabled={isBusy}
           className={`border-2 border-dashed border-gray-300 rounded-2xl aspect-[1200/630] w-full max-w-md flex flex-col items-center justify-center gap-2 text-gray-400 bg-gray-50 ${
             !isBusy
               ? "cursor-pointer hover:bg-gray-100 hover:border-[#914A8C]/50 hover:text-[#914A8C] transition-colors"
@@ -116,7 +120,7 @@ export function ShareImageField({
               <span className="text-sm font-semibold">Click to upload share image</span>
             </>
           )}
-        </div>
+        </button>
       )}
       <input
         type="file"

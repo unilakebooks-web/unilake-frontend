@@ -110,10 +110,11 @@ export function ComicShareEditor({ comic }: ComicShareEditorProps) {
 
       <div className="space-y-5">
         <div className="space-y-1.5">
-          <label className="text-sm font-semibold text-neutral-900">
+          <label htmlFor="comic-share-title" className="text-sm font-semibold text-neutral-900">
             Share title
           </label>
           <Input
+            id="comic-share-title"
             value={ogTitle}
             onChange={(e) => setOgTitle(e.target.value)}
             disabled={isPending}
@@ -130,10 +131,11 @@ export function ComicShareEditor({ comic }: ComicShareEditorProps) {
         </div>
 
         <div className="space-y-1.5">
-          <label className="text-sm font-semibold text-neutral-900">
+          <label htmlFor="comic-share-description" className="text-sm font-semibold text-neutral-900">
             Share description
           </label>
           <Textarea
+            id="comic-share-description"
             value={ogDescription}
             onChange={(e) => setOgDescription(e.target.value)}
             disabled={isPending}
