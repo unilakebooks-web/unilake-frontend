@@ -2,9 +2,11 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
-import { ChevronLeft, ChevronRight, Volume2, VolumeX } from "lucide-react";
+import { ChevronLeft, ChevronRight, Play, Volume2, VolumeX } from "lucide-react";
 import { toImageUrl } from "@/lib/imageUrl";
 import { VideoSeekBar } from "@/components/shared/VideoSeekBar";
+import { useVideoPlayback } from "@/hooks/useVideoPlayback";
+import { isSoundRefused, playOrFallBackToMuted } from "@/lib/videoPlay";
 
 interface ComicThumbnailCarouselProps {
   images: string[];
@@ -68,12 +70,21 @@ export default function ComicThumbnailCarousel({
   const [isMuted, setIsMuted] = useState(false);
 
   const videoRef = useRef<HTMLVideoElement | null>(null);
+  // Follows the video's own play and pause events: the video also stops by itself (it ended, another
+  // video started, or the visitor scrolled past it), and the play button must show then.
+  const [isPlaying, setIsPlaying] = useState(false);
+
+  useVideoPlayback(videoRef, videoUrl);
 
   // null = the visitor has not touched the mute button, so autoplay negotiation
   // decides. Once they have, their choice wins on every subsequent return to the
   // slide - otherwise someone who deliberately muted gets sound thrown at them
   // the moment they navigate back.
   const userMutePreferenceRef = useRef<boolean | null>(null);
+
+  // True once the visitor paused the video or it played to the end: coming back to the slide then
+  // does not start it again (they press play). Leaving it half-way still resumes it on return.
+  const visitorStoppedRef = useRef(false);
 
   const slides = useMemo(
     () => buildSlides(images, videoUrl),
@@ -110,8 +121,12 @@ export default function ComicThumbnailCarousel({
       return;
     }
 
+    if (visitorStoppedRef.current) return;
+
     let cancelled = false;
 
+    // Not playOrFallBackToMuted (used by the click handler below): this one also honours the visitor's
+    // earlier mute choice and stops if the slide changed while play() was pending.
     const attemptPlay = async () => {
       const preference = userMutePreferenceRef.current;
 
@@ -122,10 +137,11 @@ export default function ComicThumbnailCarousel({
 
         try {
           await video.play();
-        } catch {
+        } catch (error) {
           // They asked for sound but the browser still refuses (e.g. they never
-          // actually interacted). Degrade to muted rather than not playing.
-          if (cancelled || preference) return;
+          // actually interacted). Degrade to muted rather than not playing. Any other failure
+          // (an AbortError: the video was paused while play() was pending) must not restart it.
+          if (cancelled || preference || !isSoundRefused(error)) return;
           video.muted = true;
           setIsMuted(true);
           try {
@@ -142,9 +158,10 @@ export default function ComicThumbnailCarousel({
       try {
         await video.play();
         if (!cancelled) setIsMuted(false);
-      } catch {
-        // Blocked with sound - fall back to muted autoplay.
-        if (cancelled) return;
+      } catch (error) {
+        // Blocked with sound - fall back to muted autoplay. Any other failure (an AbortError: the
+        // visitor paused it, or it was scrolled past, while play() was pending) must not restart it.
+        if (cancelled || !isSoundRefused(error)) return;
 
         video.muted = true;
         setIsMuted(true);
@@ -185,8 +202,21 @@ export default function ComicThumbnailCarousel({
     video.muted = nextMuted;
     setIsMuted(nextMuted);
     userMutePreferenceRef.current = nextMuted;
+  };
 
-    if (!nextMuted) void video.play().catch(() => {});
+  // A click on the video plays or pauses it, as on the other video players of the site; it is how a
+  // visitor plays it again once it has ended.
+  const handleTogglePlay = () => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    if (video.paused) {
+      visitorStoppedRef.current = false;
+      void playOrFallBackToMuted(video, () => setIsMuted(true));
+    } else {
+      visitorStoppedRef.current = true;
+      video.pause();
+    }
   };
 
   const activeSlide = slides[safeIndex];
@@ -228,6 +258,7 @@ export default function ComicThumbnailCarousel({
                     : "opacity-0 pointer-events-none"
                 }`}
                 aria-hidden={!isVideoActive}
+                onClick={handleTogglePlay}
               >
                 <video
                   ref={videoRef}
@@ -237,16 +268,38 @@ export default function ComicThumbnailCarousel({
                   // bands from the wrapper's bg-black fill the rest).
                   className="w-full h-full object-contain"
                   playsInline
-                  loop
                   preload="metadata"
+                  onPlay={() => setIsPlaying(true)}
+                  onPause={() => setIsPlaying(false)}
+                  // A new file is loading (the admin replaced or re-added the video while this page is open):
+                  // the browser pauses the old one without a pause event, so start from a clean state.
+                  onLoadStart={() => {
+                    visitorStoppedRef.current = false;
+                    setIsPlaying(false);
+                  }}
+                  onEnded={() => {
+                    visitorStoppedRef.current = true;
+                    setIsPlaying(false);
+                  }}
                 />
 
                 {/* bottom-14: the seek bar sits above the mute button in the corner. */}
                 {isVideoActive && <VideoSeekBar videoRef={videoRef} position="bottom-14" />}
 
+                {isVideoActive && !isPlaying && (
+                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                    <div className="w-16 h-16 rounded-full bg-white/30 backdrop-blur-[2px] flex items-center justify-center shadow-lg text-white">
+                      <Play size={32} fill="currentColor" className="ml-1" />
+                    </div>
+                  </div>
+                )}
+
                 {isVideoActive && (
                   <button
-                    onClick={handleToggleMute}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleToggleMute();
+                    }}
                     className="absolute bottom-3 right-3 w-9 h-9 bg-black/60 hover:bg-black/80 text-white rounded-full flex items-center justify-center transition-colors z-10"
                     aria-label={isMuted ? "Unmute video" : "Mute video"}
                   >

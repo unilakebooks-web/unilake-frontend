@@ -7,6 +7,8 @@ import { BANNER_HEADING_SIZE } from "@/components/home/bannerHeading";
 
 import { CustomerReview } from "@/app/types/customerReview";
 import { VideoSeekBar } from "@/components/shared/VideoSeekBar";
+import { useVideoPlayback } from "@/hooks/useVideoPlayback";
+import { playOrFallBackToMuted } from "@/lib/videoPlay";
 
 const ITEMS_PER_PAGE = 3;
 
@@ -17,7 +19,8 @@ interface HappyCustomersProps {
 export default function HappyCustomers({ reviews }: HappyCustomersProps) {
   const [currentPage, setCurrentPage] = useState(0);
   const [playingVideoId, setPlayingVideoId] = useState<string | null>(null);
-  const [isMuted, setIsMuted] = useState(true);
+  // Sound is on: the visitor's click on play is what starts a video.
+  const [isMuted, setIsMuted] = useState(false);
 
   const totalPages = Math.ceil(reviews.length / ITEMS_PER_PAGE);
   const startIdx = currentPage * ITEMS_PER_PAGE;
@@ -134,6 +137,12 @@ export default function HappyCustomers({ reviews }: HappyCustomersProps) {
                   setPlayingVideoId(playingVideoId === review.id ? null : review.id);
                 }}
                 onToggleMute={() => setIsMuted(!isMuted)}
+                // Keeps the card in step with the video itself: it ended, another video started or it
+                // was scrolled past (paused), or it started some other way (played).
+                onPaused={() => setPlayingVideoId((id) => (id === review.id ? null : id))}
+                onPlayed={() => setPlayingVideoId(review.id)}
+                // The browser refused sound, so the video plays muted.
+                onSoundRefused={() => setIsMuted(true)}
               />
             ))}
           </div>
@@ -202,67 +211,73 @@ function VideoCard({
   isMuted,
   onTogglePlay,
   onToggleMute,
+  onPaused,
+  onPlayed,
+  onSoundRefused,
 }: {
   review: CustomerReview;
   isPlaying: boolean;
   isMuted: boolean;
   onTogglePlay: () => void;
   onToggleMute: () => void;
+  onPaused: () => void;
+  onPlayed: () => void;
+  onSoundRefused: () => void;
 }) {
   const videoRef = useRef<HTMLVideoElement>(null);
 
+  useVideoPlayback(videoRef, review.videoUrl);
+
   useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
     if (isPlaying) {
-      videoRef.current?.play().catch((err) => console.log("Play interrupted", err));
+      // If it cannot play at all, the card goes back to showing the play button.
+      void playOrFallBackToMuted(video, onSoundRefused).then((played) => {
+        if (!played) onPaused();
+      });
     } else {
-      videoRef.current?.pause();
+      video.pause();
     }
+    // Only a change of isPlaying starts or stops the video; the callbacks are new on every render.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isPlaying]);
 
   return (
     <div className="flex justify-center">
-      {/* Scrapbook SVG Frame Container */}
+      {/* The look of the How It Works video (rounded video, purple shape offset behind it), with a
+          smaller corner radius to suit the smaller card. */}
       <div
         className="
           relative
           w-full
-          max-w-[290px]
-          aspect-[414/724]
+          max-w-[250px]
+          aspect-[9/16]
           transition-transform
           duration-300
           hover:scale-[1.03]
         "
       >
-        {/* Background SVG frame */}
-        <Image
-          src="/assets/image_video_player.svg"
-          alt="Video frame background"
-          fill
-          sizes="290px"
-          className="pointer-events-none select-none z-0"
-          priority
-        />
+        {/* Purple offset shadow */}
+        <div className="absolute top-4 left-4 w-full h-full bg-[#914B8C] rounded-[24px] z-0" />
 
         {/* Video Content Container */}
         <div
-          className="absolute overflow-hidden cursor-pointer z-10"
-          style={{
-            left: "9.9%",
-            top: "10.8%",
-            width: "79.9%",
-            height: "78.3%",
-            borderRadius: "12%",
-          }}
+          className="absolute top-0 left-0 w-full h-full overflow-hidden cursor-pointer z-10 rounded-[24px]"
           onClick={onTogglePlay}
         >
           <video
             ref={videoRef}
             src={review.videoUrl}
-            loop
             muted={isMuted}
             playsInline
             preload="metadata"
             className="w-full h-full object-cover"
+            onPause={onPaused}
+            onEnded={onPaused}
+            // A new file is loading: the browser pauses the old one without a pause event.
+            onLoadStart={onPaused}
+            onPlay={onPlayed}
           />
 
           <VideoSeekBar videoRef={videoRef} />
