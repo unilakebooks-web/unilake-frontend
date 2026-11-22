@@ -165,7 +165,7 @@ export default async function ComicDetailLayout({ children, params }: ComicLayou
               "@type": "BreadcrumbList",
               itemListElement: [
                 { "@type": "ListItem", position: 1, name: "Home", item: absoluteUrl("/") },
-                { "@type": "ListItem", position: 2, name: "Our Books", item: absoluteUrl("/comic") },
+                { "@type": "ListItem", position: 2, name: "Explore Comics", item: absoluteUrl("/comic") },
                 { "@type": "ListItem", position: 3, name: comic.title, item: url },
               ],
             },

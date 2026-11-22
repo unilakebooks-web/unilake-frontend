@@ -25,7 +25,7 @@ export default function NotFound() {
             href="/comic"
             className={`${hankenGrotesk.className} inline-block bg-gradient-to-b from-[#3F3C95] to-[#2B2882] text-white font-extrabold text-sm md:text-base uppercase tracking-wider px-8 py-3 rounded-full border-b-[4px] border-[#C8942A] shadow-[0_4px_10px_rgba(63,60,149,0.3)] transition-all hover:brightness-110`}
           >
-            Our Books
+            Explore Comics
           </Link>
           <Link
             href="/"

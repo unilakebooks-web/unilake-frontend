@@ -21,7 +21,7 @@ export function ComicArrangeHeader({ isOrderDirty, isSavingOrder, onSaveOrder }:
         </Link>
         <h1 className="text-2xl font-black text-[#914A8C] mb-1">Arrange Books</h1>
         <p className="text-gray-500 font-medium text-sm">
-          This is the order customers see on the home page, Our Books and Explore more books.
+          This is the order customers see on the home page, Explore Comics and Explore more books.
           Bestseller badges do not change the order.
         </p>
       </div>

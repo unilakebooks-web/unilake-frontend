@@ -27,7 +27,7 @@ export const PAGE_SEO_SLUGS: PageSeoSlug[] = [
 /** Human labels for the admin screen. */
 export const PAGE_SEO_LABELS: Record<PageSeoSlug, string> = {
   HOME: "Home",
-  COMICS: "Our Books",
+  COMICS: "Explore Comics",
   HOW_IT_WORKS: "How It Works",
   BLOGS: "Blogs",
   CONTACT: "Contact",

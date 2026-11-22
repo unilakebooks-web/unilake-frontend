@@ -194,7 +194,7 @@ export default function Footer() {
                   </li>
                   <li>
                     <Link href="/comic" className="hover:text-white transition-colors duration-200">
-                      BOOKS
+                      EXPLORE COMICS
                     </Link>
                   </li>
                   <li>

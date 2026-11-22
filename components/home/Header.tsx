@@ -17,7 +17,7 @@ import { useCountryHydration } from "@/hooks/useCountryHydration";
  */
 const NAV_LINKS = [
   { name: "Home", href: "/" },
-  { name: "Our Books", href: "/comic" },
+  { name: "Explore Comics", href: "/comic" },
   { name: "How it works", href: "/how_it_work" },
   { name: "FAQ", href: "/#faq" },
   { name: "Blogs", href: "/blog" },

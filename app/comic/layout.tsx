@@ -14,7 +14,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const meta = await buildPageMetadata({
     slug: "COMICS",
     path: "/comic",
-    title: "All Comics",
+    title: "Explore Comics",
     description:
       "Browse every personalized comic book. Pick a story, upload a photo, and see your child become the hero.",
   });
@@ -28,9 +28,9 @@ export async function generateMetadata(): Promise<Metadata> {
     // was added.
     //
     // `default` is itself run through the ROOT template, so it must NOT repeat
-    // the suffix or /comic renders "All Comics | UniLake | UniLake".
+    // the suffix or /comic renders "Explore Comics | UniLake | UniLake".
     title: {
-      default: typeof meta.title === "string" ? meta.title : "All Comics",
+      default: typeof meta.title === "string" ? meta.title : "Explore Comics",
       template: `%s | ${SITE_NAME}`,
     },
   };
