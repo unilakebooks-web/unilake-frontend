@@ -37,7 +37,7 @@ function escapeHtml(text: string): string {
  */
 export default async function AboutPage() {
   let page: SitePage;
-  // Started now so the team request runs alongside the page request, not after it.
+  // Started now so the team request runs alongside the page request instead of after it.
   const membersRequest = fetchPublicTeamMembers();
 
   try {
