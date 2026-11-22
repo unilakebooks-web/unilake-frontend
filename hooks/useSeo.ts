@@ -4,6 +4,7 @@ import {
   fetchPageSeos,
   savePageSeo,
   updateHeroImageAlt,
+  updateGoogleReviewAlt,
 } from "@/app/actions/seo";
 import type { UpdateComicSeoPayload } from "@/app/types/comic";
 import type { PageSeoPayload, PageSeoSlug } from "@/app/types/seo";
@@ -43,6 +44,19 @@ export function useSavePageSeo() {
       savePageSeo(slug, payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-page-seo"] });
+    },
+  });
+}
+
+export function useUpdateGoogleReviewAlt() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, imageAlt }: { id: string; imageAlt: string | null }) =>
+      updateGoogleReviewAlt(id, imageAlt),
+    // Same keys as useGoogleReviews: the admin list and the public sections show the alt text.
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-google-reviews"] });
+      queryClient.invalidateQueries({ queryKey: ["public-google-reviews"] });
     },
   });
 }

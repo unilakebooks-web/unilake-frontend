@@ -2,6 +2,7 @@
 
 import { Loader2, Pencil, Star, Trash2 } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
+import { GoogleReviewAltEdit } from "./GoogleReviewAltEdit";
 import { MAX_RATING, type GoogleReview } from "@/app/types/googleReview";
 
 interface GoogleReviewTableProps {
@@ -69,7 +70,7 @@ export function GoogleReviewTable({
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={review.imageUrl}
-                  alt={review.customerName}
+                  alt={review.imageAlt || review.customerName}
                   className="w-full h-full object-cover"
                 />
               </div>
@@ -84,6 +85,7 @@ export function GoogleReviewTable({
                 <p className="text-sm text-neutral-600 mt-1 line-clamp-2">
                   {review.reviewText}
                 </p>
+                <GoogleReviewAltEdit review={review} />
               </div>
             </div>
 

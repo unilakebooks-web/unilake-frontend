@@ -145,7 +145,7 @@ export default function GoogleReviews() {
                   >
                     <Image
                       src={review.imageUrl}
-                      alt={review.customerName}
+                      alt={review.imageAlt || review.customerName}
                       fill
                       sizes="64px"
                       className="object-cover"

@@ -5,7 +5,7 @@ import type { SiteSetting } from "@/app/types/siteSetting";
 /**
  * The author line at the top of a blog post: the one site-wide author from the settings, with small links to
  * their Instagram and LinkedIn when saved. Renders nothing at all until the admin has typed a name, so a post
- * never shows an empty "By" line or an unnamed link row.
+ * never shows an empty "Author:" line or an unnamed link row.
  */
 export default function BlogAuthor({ setting }: { setting: SiteSetting | null }) {
   const name = setting?.blogAuthorName?.trim();
@@ -19,7 +19,7 @@ export default function BlogAuthor({ setting }: { setting: SiteSetting | null })
   return (
     <div className={`${hankenGrotesk.className} flex items-center justify-center gap-3 mb-4 text-[#555555] font-medium`}>
       <span>
-        By <span className="font-bold text-[#222222]">{name}</span>
+        Author: <span className="font-bold text-[#222222]">{name}</span>
       </span>
       {links.map(({ url, Icon, label }) => (
         <a

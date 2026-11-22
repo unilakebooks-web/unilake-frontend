@@ -133,7 +133,7 @@ export default async function ReviewsPage() {
                       <div className="flex items-center gap-3 mb-4">
                         <Image
                           src={review.imageUrl}
-                          alt={review.customerName}
+                          alt={review.imageAlt || review.customerName}
                           width={48}
                           height={48}
                           sizes="48px"

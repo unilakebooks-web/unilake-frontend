@@ -61,6 +61,7 @@ export function GoogleReviewModal({
   const [customerName, setCustomerName] = useState(review?.customerName ?? "");
   const [rating, setRating] = useState(review?.rating ?? DEFAULT_RATING);
   const [reviewText, setReviewText] = useState(review?.reviewText ?? "");
+  const [imageAlt, setImageAlt] = useState(review?.imageAlt ?? "");
 
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   // Starts as the existing R2 URL when editing. Swapped for a local blob: URL
@@ -160,6 +161,7 @@ export function GoogleReviewModal({
           rating,
           reviewText: trimmedText,
           imageKey: imageKey as string, // guarded above
+          ...(imageAlt.trim() ? { imageAlt: imageAlt.trim() } : {}),
         });
         toast.success("Review added");
       }
@@ -261,6 +263,27 @@ export function GoogleReviewModal({
               </div>
             )}
           </div>
+
+          {/* Image description (alt text). Edited for existing reviews from the list. */}
+          {!isEditMode && (
+            <div className="space-y-2">
+              <label
+                htmlFor="review-image-alt"
+                className="text-sm font-semibold text-neutral-900"
+              >
+                Image description
+              </label>
+              <Input
+                id="review-image-alt"
+                value={imageAlt}
+                onChange={(e) => setImageAlt(e.target.value)}
+                maxLength={200}
+                placeholder="Image description (alt text), optional"
+                disabled={isBusy}
+                className="h-11 rounded-xl bg-white"
+              />
+            </div>
+          )}
 
           {/* Rating */}
           <div className="space-y-2">

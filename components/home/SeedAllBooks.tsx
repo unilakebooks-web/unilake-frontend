@@ -7,13 +7,20 @@ import { ALL_BOOKS_QUERY_KEY } from "@/components/home/allBooksQuery";
  * in the first HTML instead of appearing after a browser fetch.
  *
  * A failed fetch seeds nothing: AllBooksList then loads the list itself in the browser, and the page is
- * otherwise unaffected. Callers must render per request (`dynamic = "force-dynamic"`), as the data is live.
+ * otherwise unaffected. A caller that already started the request can pass its promise as `comics`; without it
+ * this fetches for itself. Callers must render per request (`dynamic = "force-dynamic"`), as the data is live.
  */
-export default async function SeedAllBooks({ children }: { children: React.ReactNode }) {
+export default async function SeedAllBooks({
+  children,
+  comics,
+}: {
+  children: React.ReactNode;
+  comics?: ReturnType<typeof fetchPublicComics>;
+}) {
   const queryClient = new QueryClient();
 
   try {
-    queryClient.setQueryData(ALL_BOOKS_QUERY_KEY, await fetchPublicComics());
+    queryClient.setQueryData(ALL_BOOKS_QUERY_KEY, await (comics ?? fetchPublicComics()));
   } catch {
     // Left unseeded on purpose, see above.
   }
