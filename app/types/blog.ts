@@ -8,7 +8,7 @@ export type BlogListItem = {
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
-  /** Set only when title, excerpt, body or cover change (feature 13); null on posts never edited since. */
+  /** Set only when title, excerpt, body or cover change; null on posts never edited since. */
   contentUpdatedAt: string | null;
   /** The first time the post went live; null on a draft. */
   publishedAt: string | null;
@@ -24,7 +24,7 @@ export type Blog = BlogListItem & {
    */
   metaTitle: string | null;
   metaDescription: string | null;
-  /** Share preview (feature 13). Null falls back to the SEO fields, then the cover. */
+  /** Share preview. Null falls back to the SEO fields, then the cover. */
   ogTitle: string | null;
   ogDescription: string | null;
   ogImageUrl: string | null;
@@ -56,7 +56,7 @@ export type BlogUploadUrlResponse = {
   publicUrl: string;
 };
 
-/** Admin save fields added by feature 13, sent on create and update. A null clears; `ogImageKey` is an R2 key. */
+/** Admin save fields added for SEO, sent on create and update. A null clears; `ogImageKey` is an R2 key. */
 export type BlogSharePayload = {
   ogTitle?: string | null;
   ogDescription?: string | null;

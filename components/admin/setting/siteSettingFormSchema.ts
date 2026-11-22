@@ -84,7 +84,7 @@ export const siteSettingFormSchema = z.object({
   youtubeUrl: optionalUrl("YouTube URL"),
   linkedinUrl: optionalUrl("LinkedIn URL"),
 
-  // Blog author, shown on every post (feature 13)
+  // Blog author, shown on every post
   blogAuthorName: z.string().trim().max(100, "Author name is too long"),
   blogAuthorInstagramUrl: optionalUrl("Author Instagram URL"),
   blogAuthorLinkedinUrl: optionalUrl("Author LinkedIn URL"),

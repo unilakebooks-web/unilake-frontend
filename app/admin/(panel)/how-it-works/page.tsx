@@ -174,7 +174,7 @@ export default function HowItWorksAdminPage() {
       const payload: Record<string, unknown> = {
         steps,
         isActive,
-        // null, not "": the API treats null as "clear it" (feature 13).
+        // null, not "": the API treats null as "clear it".
         posterAlt: posterAlt.trim() || null,
       };
 

@@ -153,9 +153,9 @@ export function ComicShareEditor({ comic }: ComicShareEditorProps) {
         </div>
 
         <div className="space-y-1.5">
-          <label className="text-sm font-semibold text-neutral-900">
+          <span className="block text-sm font-semibold text-neutral-900">
             Share image
-          </label>
+          </span>
           <ShareImageField
             imageUrl={ogImage}
             disabled={isPending}

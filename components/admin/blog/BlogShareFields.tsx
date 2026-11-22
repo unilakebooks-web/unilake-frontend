@@ -24,7 +24,7 @@ interface BlogShareFieldsProps {
 }
 
 /**
- * Share preview fields of a blog post (feature 13), used by the create and the edit page (two near-duplicate
+ * Share preview fields of a blog post, used by the create and the edit page (two near-duplicate
  * forms, so the new markup lives here once). Styling follows the SEO block of those pages.
  */
 export function BlogShareFields({
@@ -85,7 +85,7 @@ export function BlogShareFields({
       </div>
 
       <div className="space-y-2">
-        <label className="text-sm font-bold text-gray-700">Share Image</label>
+        <span className="block text-sm font-bold text-gray-700">Share Image</span>
         <ShareImageField
           imageUrl={ogImageUrl}
           disabled={disabled}

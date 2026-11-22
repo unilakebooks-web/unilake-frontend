@@ -1,4 +1,4 @@
-/** SEO text of the fixed public pages (feature 13). Mirrors the PageSeoSlug enum in the backend schema. */
+/** SEO text of the fixed public pages. Mirrors the PageSeoSlug enum in the backend schema. */
 export type PageSeoSlug =
   | "HOME"
   | "COMICS"

@@ -12,7 +12,7 @@ interface ComicThumbnailCarouselProps {
   images: string[];
   /** Optional promo video. Null/undefined for most comics. */
   videoUrl?: string | null;
-  /** Alt text of `images`, same positions (feature 13); a missing or empty entry falls back to the title. */
+  /** Alt text of `images`, same positions; a missing or empty entry falls back to the title. */
   alts?: string[];
   /** The comic's title, for the alt text of covers without their own. */
   title?: string;

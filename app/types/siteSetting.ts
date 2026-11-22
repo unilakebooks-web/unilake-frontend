@@ -58,7 +58,7 @@ export type SiteSetting = {
   youtubeUrl: string | null;
   linkedinUrl: string | null;
 
-  // The one author shown on every blog post (feature 13)
+  // The one author shown on every blog post
   blogAuthorName: string | null;
   blogAuthorInstagramUrl: string | null;
   blogAuthorLinkedinUrl: string | null;

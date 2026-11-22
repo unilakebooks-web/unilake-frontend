@@ -1,6 +1,6 @@
 import type { NextConfig } from "next";
 
-// Feature 13: pages that must never appear in search results. A header rather than robots.txt: Google can only
+// Pages that must never appear in search results. A header rather than robots.txt: Google can only
 // obey a noindex it is allowed to fetch, and a path blocked in robots.txt can still be listed by its URL alone.
 // `/share` stays crawlable on purpose (link previews fetch it), so it gets the header but no robots.txt rule.
 // app/robots.ts blocks only /admin and /dashboard; keep the two lists in step.

@@ -68,7 +68,7 @@ export async function generateMetadata({
 
     const title = firstNonEmpty(blog.metaTitle, blog.title) ?? "Blog";
     const { description, shareImage } = blogSeoParts(blog);
-    // Share card (feature 13): its own title, description and image when the admin set them, else the SEO
+    // Share card: its own title, description and image when the admin set them, else the SEO
     // text above and the cover. The cover goes through toImageUrl like the comic covers do.
     const shareTitle = firstNonEmpty(blog.ogTitle, title) ?? title;
     const ogDescription = firstNonEmpty(blog.ogDescription);

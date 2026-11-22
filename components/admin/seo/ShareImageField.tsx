@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { Image as ImageIcon, Loader2, Trash2 } from "lucide-react";
 import { uploadToR2 } from "@/app/lib/r2-upload";
@@ -41,6 +41,21 @@ export function ShareImageField({
 }: ShareImageFieldProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isUploading, setIsUploading] = useState(false);
+  // The blob URL of the last upload; revoked once the preview is replaced or removed, and on unmount.
+  const previewUrlRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    if (previewUrlRef.current && imageUrl !== previewUrlRef.current) {
+      URL.revokeObjectURL(previewUrlRef.current);
+      previewUrlRef.current = null;
+    }
+  }, [imageUrl]);
+
+  useEffect(() => {
+    return () => {
+      if (previewUrlRef.current) URL.revokeObjectURL(previewUrlRef.current);
+    };
+  }, []);
 
   const handleFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -56,7 +71,10 @@ export function ShareImageField({
       setIsUploading(true);
       const { uploadUrl, key } = await requestUploadUrl(file.name, file.type);
       await uploadToR2({ uploadUrl, file, contentType: file.type });
-      onUploaded(key, URL.createObjectURL(file));
+      const previewUrl = URL.createObjectURL(file);
+      if (previewUrlRef.current) URL.revokeObjectURL(previewUrlRef.current);
+      previewUrlRef.current = previewUrl;
+      onUploaded(key, previewUrl);
       toast.success("Share image uploaded (pending save)");
     } catch (err: unknown) {
       toast.error(getErrorMessage(err, "Failed to upload share image"));
