@@ -32,12 +32,12 @@ export interface Variant {
   variantIndex: number;
   status: PageVersionStatus;
   /**
-   * 🔴 Print master — a lossless PNG at print resolution, ~5 MB per page.
+   * 🔴 Print master - a lossless PNG at print resolution, ~5 MB per page.
    * Do NOT render this. It exists for the PDF / printing pipeline.
    */
   finalImageUrl: string | null;
   /**
-   * Web derivative — WebP, ~400 KB. This is what the UI should display.
+   * Web derivative - WebP, ~400 KB. This is what the UI should display.
    * Null on variants generated before this field existed, or where building it
    * failed, so always read it as `displayImageUrl ?? finalImageUrl`.
    */
@@ -52,7 +52,7 @@ export interface SessionPage {
   isPreviewPage: boolean;
   hasFace: boolean;
   /**
-   * The admin's uploaded page artwork — blank speech bubbles, no face swap.
+   * The admin's uploaded page artwork - blank speech bubbles, no face swap.
    * Rendered blurred behind the paywall on locked pages. Null until the admin
    * attaches artwork to the page.
    */
@@ -73,7 +73,7 @@ export interface SessionSnapshot {
   notificationEmail: string | null;
   coverType: "HARDCOVER" | "SOFTCOVER" | null;
   status: SessionStatus;
-  bestPhotoUrl: string | null;      // private key — NOT renderable
+  bestPhotoUrl: string | null;      // private key - NOT renderable
   shippingName: string | null;
   shippingLine1: string | null;
   shippingLine2: string | null;
@@ -164,16 +164,16 @@ export interface PhotoConfirmResponse {
 }
 
 // WebSocket event types
-// Shapes are locked by the backend — see PREVIEW_GENERATION_API.md §8.1 and
+// Shapes are locked by the backend - see PREVIEW_GENERATION_API.md §8.1 and
 // backend/src/websocket/event.ts. Note the field is `imageUrl`, NOT `finalImageUrl`
 // (`finalImageUrl` is the name it takes on the Variant once stored in the snapshot).
 export interface PageReadyEvent {
   type: "page:ready";
   pageNumber: number;
   variantIndex: number;
-  /** Print master (~5 MB PNG) — maps onto `Variant.finalImageUrl`. Not for display. */
+  /** Print master (~5 MB PNG) - maps onto `Variant.finalImageUrl`. Not for display. */
   imageUrl: string;
-  /** Web derivative (~400 KB WebP) — what the UI renders. Null if it couldn't be built. */
+  /** Web derivative (~400 KB WebP) - what the UI renders. Null if it couldn't be built. */
   displayImageUrl: string | null;
   pageVersionId: string;
 }
@@ -185,7 +185,7 @@ export interface PageErrorEvent {
   // Raw backend text, truncated to 500 chars. Log it, never show it to a parent (§8.1).
   errorMessage: string;
   /**
-   * False means the backend still has retries queued for this page — it is NOT
+   * False means the backend still has retries queued for this page - it is NOT
    * terminal, and the UI must keep showing "generating". Only `true` means every
    * attempt is spent.
    *

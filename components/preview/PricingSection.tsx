@@ -19,11 +19,11 @@ import type { CoverFormat } from "@/hooks/useCheckoutFlow";
  */
 /**
  * The close-up shown in each option's picture box: the book's corner, where
- * the spine (hardcover) or the thin page edge (softcover) is visible — the
+ * the spine (hardcover) or the thin page edge (softcover) is visible - the
  * detail that tells the two apart at a glance.
  *
  * Both are purpose-shot close-ups at 2:1, the same shape as the picture box
- * (`aspect-[2/1]` below), so each image is shown whole — nothing cropped and
+ * (`aspect-[2/1]` below), so each image is shown whole - nothing cropped and
  * no empty bands.
  *
  * ⚠️ new_softcover.png is actually a JPEG despite its extension. Browsers and
@@ -47,7 +47,7 @@ const COVER_OPTIONS = {
  * Every size in the section, in two sets: the full section below the last page,
  * and the compact copy that floats at the bottom of the screen (CheckoutBar).
  *
- * Only sizes differ — same structure, same text, same colours — so the floating
+ * Only sizes differ - same structure, same text, same colours - so the floating
  * bar is the same design, just smaller. One notable difference: the full
  * section stacks its cards below md; the compact one keeps them side by side
  * at every width, shrunk to fit a phone, so it stays short enough to float.
@@ -115,7 +115,7 @@ interface PricingSectionProps {
   /**
    * Preview pages that exhausted every retry and have no finished variant.
    * Non-empty blocks checkout: a customer must not be able to pay for a book
-   * with a page that does not exist, and the fix is free — regenerate it.
+   * with a page that does not exist, and the fix is free - regenerate it.
    */
   failedPageNumbers: number[];
   selectedFormat: CoverFormat | null;
@@ -181,7 +181,7 @@ export default function PricingSection({
    *
    * The selected card is marked three ways: the purple border, a light purple
    * tint and a ✓ badge on its corner. The border alone did not read as a
-   * selection — it is the same #914BBC as the section's own outline, so the
+   * selection - it is the same #914BBC as the section's own outline, so the
    * chosen card blended into its frame.
    */
   const renderOption = (format: CoverFormat, rule: typeof softcoverRule) => {
@@ -250,7 +250,7 @@ export default function PricingSection({
     // Full: max-w-[640px] fits two ~280px option cards plus "Choose" in one row
     // from md up; below md the cards stack. Compact: see SIZES.
     //
-    // Frutiger is set ONCE here and inherited by everything inside — heading,
+    // Frutiger is set ONCE here and inherited by everything inside - heading,
     // cards, prices and warning. Only its two real weights are used:
     // font-bold for the heading, cover names, prices and "Choose"; regular for
     // taglines, MRP and helper text (see app/fonts.ts). The button is the one
@@ -295,7 +295,7 @@ export default function PricingSection({
         // Solid #3E419B rather than the old two-stop gradient: a single
         // specified colour cannot be expressed as a gradient without inventing
         // a second shade. Hover uses brightness rather than a hand-picked hex
-        // for the same reason — and matches how the personalize form's button
+        // for the same reason - and matches how the personalize form's button
         // handles its hover. Bottom edge and drop shadow are #BF8902 and a
         // tint of the new blue, so nothing purple or yellow is left behind.
         // Narrower button AND larger text pull against each other, so the

@@ -24,7 +24,7 @@ interface ComicRowActionsProps {
 
 /**
  * Why Delete is disabled. Deliberately broad: the block applies to ANY customer
- * session on the comic — an abandoned or expired preview counts just as much as
+ * session on the comic - an abandoned or expired preview counts just as much as
  * a delivered order, because each session (and any order from it) points back
  * at the comic and the database refuses to delete a comic still referenced.
  */
@@ -99,7 +99,7 @@ export function ComicRowActions({ comicId, status, orderSessionsCount, deleteEli
             {deleteBlocked ? (
               <>
                 {/* A disabled menu item ignores the pointer (pointer-events:
-                    none), so it can't trigger a tooltip itself — the hover
+                    none), so it can't trigger a tooltip itself - the hover
                     lands on this wrapper instead. Opens to the left so it
                     doesn't cover the menu. */}
                 <Tooltip>
@@ -116,10 +116,10 @@ export function ComicRowActions({ comicId, status, orderSessionsCount, deleteEli
                     {blockedReason}
                   </TooltipContent>
                 </Tooltip>
-                {/* The same reason in short, always visible — touch screens
+                {/* The same reason in short, always visible - touch screens
                     have no hover, so the tooltip alone would never show. */}
                 <p className="px-2.5 pb-2 -mt-1 text-[11px] leading-snug text-neutral-500">
-                  {deleteEligibility ? blockedReason : "Can't delete — customers have already personalised this comic."}
+                  {deleteEligibility ? blockedReason : "Can't delete: customers have already personalised this comic."}
                 </p>
               </>
             ) : (

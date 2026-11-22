@@ -62,7 +62,7 @@ export function ComicFactDeleteDialog({
           )}
         </div>
 
-        {/* m-0 cancels DialogFooter's built-in negative margins — see the
+        {/* m-0 cancels DialogFooter's built-in negative margins - see the
             same fix in BlogDeleteDialog. */}
         <DialogFooter className="m-0 px-6 py-4 bg-gray-50 border-t border-gray-100 flex gap-2 sm:justify-end">
           <button

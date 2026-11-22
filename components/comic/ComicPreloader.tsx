@@ -20,7 +20,7 @@ interface ComicPreloaderProps {
   childName: string;
   onComplete: () => void;
   /**
-   * Rotating lines for this comic. Optional and often empty — the hook falls
+   * Rotating lines for this comic. Optional and often empty - the hook falls
    * back to a default line, so the caller never has to special-case it.
    */
   facts?: string[];
@@ -32,13 +32,13 @@ export default function ComicPreloader({ childName, onComplete, facts = [] }: Co
   const currentFact = useRotatingFact(facts);
 
   // The parent passes `onComplete` as an inline arrow, so it is a new function
-  // on every one of its renders — and the preview page re-renders constantly
+  // on every one of its renders - and the preview page re-renders constantly
   // (TanStack polls every 10s while the socket is down, plus every WS event).
   //
   // Depending on it directly used to tear down and restart the timer on every
   // one of those renders, which reset the progress calculation to zero and made
   // the bar visibly jump backwards. Routing through a ref keeps the timer effect
-  // on empty deps — it starts once and survives every parent render — while
+  // on empty deps - it starts once and survives every parent render - while
   // still calling the current callback.
   const onCompleteRef = useRef(onComplete);
 
@@ -57,7 +57,7 @@ export default function ComicPreloader({ childName, onComplete, facts = [] }: Co
   return (
     // `h-full` removed deliberately. It pinned this section to the viewport
     // height, so the artwork below could only ever have the space left over
-    // after the heading, fact and bar — which is why raising its max-height
+    // after the heading, fact and bar - which is why raising its max-height
     // alone did nothing. With min-height only, the section still fills the
     // screen but is free to grow, and the artwork can be sized on its own
     // terms. Top padding trimmed from pt-32/40 to pt-24/28 to hand a further
@@ -80,7 +80,7 @@ export default function ComicPreloader({ childName, onComplete, facts = [] }: Co
           {/* One linear keyframe animation across the whole duration rather than
               a JS interval nudging the width. The browser drives it, so it is
               smooth, costs zero re-renders for the full 55s, and cannot move
-              backwards — the previous interval could, and did.
+              backwards - the previous interval could, and did.
               Keyframes live in app/globals.css; see the note there for why this
               is an animation and not a transition. */}
           <div
@@ -97,7 +97,7 @@ export default function ComicPreloader({ childName, onComplete, facts = [] }: Co
        {/* Explicit height, NOT flex-1.
 
            flex-1 meant "take what is left over", which capped the artwork at
-           roughly 470px however high the max-height was set — the max simply
+           roughly 470px however high the max-height was set - the max simply
            never came into play. A declared height is what actually sizes it,
            and object-contain keeps the aspect ratio, so height is the only
            dimension worth setting. The width cap is just a ceiling for very

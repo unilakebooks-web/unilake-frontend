@@ -5,7 +5,7 @@ import { SessionSnapshot, SessionStatus, Variant, WSEvent } from "@/app/types/se
 import { SessionWebSocket } from "@/app/lib/websocket";
 
 /**
- * The customer has sent the book to print — selections are committed and the
+ * The customer has sent the book to print - selections are committed and the
  * session is read-only from here on. Includes the failure branches: PDF_FAILED
  * and SHIPMENT_FAILED are ops problems after the commit, and the customer's
  * book is exactly as final in them as in COMPLETED.
@@ -21,7 +21,7 @@ export const SENT_TO_PRINT_STATUSES: SessionStatus[] = [
 
 /**
  * Payment has been captured. Every page is unlocked. Deliberately excludes
- * AWAITING_PAYMENT — at that point the customer has only opened checkout.
+ * AWAITING_PAYMENT - at that point the customer has only opened checkout.
  */
 export const POST_PAYMENT_STATUSES: SessionStatus[] = [
   "PAID",
@@ -62,12 +62,12 @@ export function useSessionPreview(sessionId: string | null) {
 
   // The socket is bound once, but the event handler below is re-created whenever its
   // deps change. Routing through a ref keeps the binding stable while always invoking
-  // the current handler — and lets the socket effect run before the handler is declared
+  // the current handler - and lets the socket effect run before the handler is declared
   // without reaching forward into an uninitialised binding.
   const handleWsEventRef = useRef<(event: WSEvent) => void>(() => {});
 
   // Which session we have already fired /generate for. Generation is a one-way door
-  // (§13.10) and a second call 409s, so this must be a ref, not state — it has to be
+  // (§13.10) and a second call 409s, so this must be a ref, not state - it has to be
   // readable and writable synchronously, before any await, or two calls in the same
   // tick both get through.
   const generationRequestedRef = useRef<string | null>(null);
@@ -85,13 +85,13 @@ export function useSessionPreview(sessionId: string | null) {
     refetchOnWindowFocus: true, // As per API doc: refetch on tab focus
     // Fallback channel (§6.2). The socket is an optimization, not a dependency: the
     // browser API cannot tell us *why* a handshake failed, so rather than guessing we
-    // just poll the GET — which always works and contains everything — whenever the
+    // just poll the GET - which always works and contains everything - whenever the
     // socket is down and there is still something left to stream.
     refetchInterval: (query) => {
       const polledStatus = query.state.data?.status;
       
       // PAID is a brief hop before the webhook flips the session to
-      // GENERATING_PAID — poll fast so the progress bar appears promptly.
+      // GENERATING_PAID - poll fast so the progress bar appears promptly.
       //
       // AWAITING_PAYMENT is deliberately NOT polled here. Payment is confirmed
       // on the checkout page (VerifyingPaymentOverlay polls there); on the
@@ -157,7 +157,7 @@ export function useSessionPreview(sessionId: string | null) {
       // Optimistic update for page:ready
       queryClient.setQueryData(["session", sessionId], (oldData: SessionSnapshot | undefined) =>
         patchPage(oldData, event.pageNumber, (variants) => {
-          // Match on pageVersionId — the variant's stable identity. Do NOT match on
+          // Match on pageVersionId - the variant's stable identity. Do NOT match on
           // variantIndex alone: a regenerated variant is a brand-new pageVersionId.
           const existing = variants.find((v) => v.pageVersionId === event.pageVersionId);
 
@@ -167,7 +167,7 @@ export function useSessionPreview(sessionId: string | null) {
                 ? {
                     ...v,
                     status: "SD_READY" as const,
-                    // The event field is `imageUrl` — it maps onto `finalImageUrl` here.
+                    // The event field is `imageUrl` - it maps onto `finalImageUrl` here.
                     finalImageUrl: event.imageUrl,
                     displayImageUrl: event.displayImageUrl,
                     // A ready page clears any error from an earlier failed attempt:
@@ -179,7 +179,7 @@ export function useSessionPreview(sessionId: string | null) {
           }
 
           // Never seen this variant before. Two ways we get here (§8.2):
-          //   1. the user regenerated — this variant didn't exist at our last GET
+          //   1. the user regenerated - this variant didn't exist at our last GET
           //   2. the event beat the initial GET back
           // Either way, append it rather than dropping the event on the floor.
           const added: Variant = {
@@ -192,7 +192,7 @@ export function useSessionPreview(sessionId: string | null) {
             errorMessage: null,
           };
 
-          // Keep ascending by variantIndex — the snapshot guarantees that order and
+          // Keep ascending by variantIndex - the snapshot guarantees that order and
           // the variant strip / "latest variant" logic reads it positionally.
           return [...variants, added].sort((a, b) => a.variantIndex - b.variantIndex);
         })
@@ -200,7 +200,7 @@ export function useSessionPreview(sessionId: string | null) {
     } else if (event.type === "page:error") {
       // The backend emits this on EVERY failed attempt, not just the last, and
       // `isFinal` is what separates the two. A non-final failure means a retry
-      // is already queued — flipping the card to an error state there would show
+      // is already queued - flipping the card to an error state there would show
       // a false alarm for the ~2min the next attempt takes, and would invite the
       // user to burn one of only three free variant slots on a page that was
       // about to recover on its own. So record the cause and leave the status be.
@@ -220,7 +220,7 @@ export function useSessionPreview(sessionId: string | null) {
       queryClient.setQueryData(["session", sessionId], (oldData: SessionSnapshot | undefined) =>
         patchPage(oldData, event.pageNumber, (variants) =>
           // This event carries no pageVersionId, so variantIndex is all we can match on.
-          // If the variant isn't known yet we leave it alone — the next GET reconciles
+          // If the variant isn't known yet we leave it alone - the next GET reconciles
           // it, and the backend now only writes FAILED when it is genuinely terminal.
           variants.map((v) =>
             v.variantIndex === event.variantIndex
@@ -248,7 +248,7 @@ export function useSessionPreview(sessionId: string | null) {
     generationRequestedRef.current = sessionId;
 
     // Wait for the socket before starting (§13.8). Generation begins the instant the
-    // POST returns and pages without a face can finish in 1–2 seconds — events fired
+    // POST returns and pages without a face can finish in 1–2 seconds - events fired
     // before the socket is open are lost forever, with no replay.
     //
     // Bounded, and the result is deliberately ignored: a socket that will not open must
@@ -257,7 +257,7 @@ export function useSessionPreview(sessionId: string | null) {
     const socketReady = await wsRef.current?.waitUntilOpen(3000);
     if (!socketReady) {
       console.warn(
-        "Generating without an open WebSocket — falling back to polling for page updates."
+        "Generating without an open WebSocket, falling back to polling for page updates."
       );
     }
 
@@ -266,10 +266,10 @@ export function useSessionPreview(sessionId: string | null) {
       setJobsEnqueued(res.jobsEnqueued);
 
       // §7: the session flips to GENERATING_PREVIEW even when nothing was queued.
-      // Nothing will ever arrive and preview-ready will never fire, so record it —
+      // Nothing will ever arrive and preview-ready will never fire, so record it -
       // the alternative is an infinite progress bar.
       if (res.jobsEnqueued === 0) {
-        console.error("Generation enqueued 0 jobs — this comic has no preview pages flagged.");
+        console.error("Generation enqueued 0 jobs, this comic has no preview pages flagged.");
         setGenerateEnqueuedNothing(true);
       }
 
@@ -278,7 +278,7 @@ export function useSessionPreview(sessionId: string | null) {
     } catch (e) {
       const code = (e as { code?: string } | null)?.code;
 
-      // 409 means generation is already running — another tab started it, or this
+      // 409 means generation is already running - another tab started it, or this
       // session was resumed after a refresh. That is the state we wanted, not a
       // failure: keep the latch closed and just reconcile against the truth.
       if (code === "CONFLICT") {
@@ -318,10 +318,10 @@ export function useSessionPreview(sessionId: string | null) {
   ).length;
 
   // Denominator for the progress bar. `jobsEnqueued` only exists in memory, from the
-  // /generate response — a refresh mid-generation loses it and the bar would read
+  // /generate response - a refresh mid-generation loses it and the bar would read
   // "0 of ?" forever. The snapshot's own preview-page count is always available and
   // always agrees with what the backend actually queued, so it's the fallback.
-  // (Never `comic.freePreviewPages` — that's admin-typed and can disagree, §13.7.)
+  // (Never `comic.freePreviewPages` - that's admin-typed and can disagree, §13.7.)
   const totalPreviewPages = jobsEnqueued > 0 ? jobsEnqueued : previewPages.length;
 
   // No page on this comic is flagged as a free preview, so nothing will ever generate
@@ -335,7 +335,7 @@ export function useSessionPreview(sessionId: string | null) {
     (!!snapshot && previewPages.length === 0) || generateEnqueuedNothing;
 
   // Unpaid sessions die after 7 days. REST keeps working, but the WebSocket refuses the upgrade
-  // (§1.2) — so an expired session looks fine and then silently never updates.
+  // (§1.2) - so an expired session looks fine and then silently never updates.
   const isExpired = !!snapshot?.isExpired;
 
   const allPages = snapshot?.pages ?? [];
@@ -346,9 +346,9 @@ export function useSessionPreview(sessionId: string | null) {
   const totalPaidPages = paidPages.length;
 
   // Three distinct phases the viewer renders differently:
-  //   awaiting payment — preview only, checkout resumes with the locked cover
-  //   paid             — whole book unlocked (generating, or ready to select)
-  //   sent to print    — paid AND committed: read-only, printed variants only
+  //   awaiting payment - preview only, checkout resumes with the locked cover
+  //   paid             - whole book unlocked (generating, or ready to select)
+  //   sent to print    - paid AND committed: read-only, printed variants only
   const isAwaitingPayment = status === "AWAITING_PAYMENT";
   const isPaid = POST_PAYMENT_STATUSES.includes(status);
   const isSentToPrint = SENT_TO_PRINT_STATUSES.includes(status);

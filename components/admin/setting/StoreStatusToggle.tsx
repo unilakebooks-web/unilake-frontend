@@ -21,7 +21,7 @@ import { getErrorMessage } from "@/lib/utils";
  *      (possibly stale) copy of the flag back over whatever the real value was.
  *      Owning this column alone makes that impossible.
  *
- * Reads `setting?.acceptingOrders ?? true` — the row is null until the first
+ * Reads `setting?.acceptingOrders ?? true` - the row is null until the first
  * save, and absence has to mean "open" to match the column's own default.
  */
 export function StoreStatusToggle({ setting }: { setting: SiteSetting | null }) {
@@ -36,8 +36,8 @@ export function StoreStatusToggle({ setting }: { setting: SiteSetting | null }) 
         onSuccess: () => {
           toast.success(
             next
-              ? "Orders are open — customers can pay again."
-              : "Orders paused — customers can still preview, but not pay."
+              ? "Orders are open, customers can pay again."
+              : "Orders paused, customers can still preview, but not pay."
           );
         },
         onError: (error) => {
@@ -74,7 +74,7 @@ export function StoreStatusToggle({ setting }: { setting: SiteSetting | null }) 
             <h2 className="text-lg font-bold text-neutral-900">
               Accepting orders
             </h2>
-            {/* States the consequence, not the field name — whoever flips this
+            {/* States the consequence, not the field name - whoever flips this
                 needs to know what customers will experience. */}
             <p className="text-sm text-neutral-500 mt-1">
               {acceptingOrders

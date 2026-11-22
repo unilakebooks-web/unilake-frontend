@@ -14,7 +14,7 @@ export async function fetchSiteSetting(): Promise<SiteSetting | null> {
  * Partial update of the singleton. Keys omitted from the payload are left
  * untouched server-side; an explicit null clears that column.
  *
- * Empty strings are rejected by the API — callers must convert "" to null.
+ * Empty strings are rejected by the API - callers must convert "" to null.
  * See toNullable() in siteSettingFormSchema.ts.
  */
 export async function saveSiteSetting(

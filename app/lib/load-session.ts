@@ -12,7 +12,7 @@ import type { SessionSnapshot } from "@/app/types/session";
  * customer to the homepage with no explanation, mid-flow.
  *
  * WHAT IT DOES NOT RETRY
- * A 404 is a real answer, not a blip — that session does not exist and never
+ * A 404 is a real answer, not a blip - that session does not exist and never
  * will. Retrying it just makes the user wait longer for the same outcome, so it
  * returns immediately and is reported separately from a transient failure.
  */
@@ -62,7 +62,7 @@ export async function loadSessionWithRetry(
       if (attempt < MAX_ATTEMPTS) {
         // Log every failed attempt with the FIELDS, not the object. The axios
         // interceptor rejects with a plain { code, message }, and logging the
-        // object itself renders as a useless "{}" in the Next.js dev overlay —
+        // object itself renders as a useless "{}" in the Next.js dev overlay -
         // which is exactly how this class of bug stayed a mystery.
         console.warn(
           `[${context}] session fetch attempt ${attempt} failed, retrying:`,

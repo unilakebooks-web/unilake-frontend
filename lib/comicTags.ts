@@ -36,7 +36,7 @@ export function formatAgeGroup(ageGroup: AgeGroup): string {
  * One range spanning the youngest to the oldest group: [AGE_3_5, AGE_6_8] ->
  * "3-8". A single group is just that group ("3-5").
  *
- * Deliberately always one range, even when the groups are not adjacent —
+ * Deliberately always one range, even when the groups are not adjacent -
  * [AGE_0_2, AGE_9_12] reads "0-12". Returns null for an empty list so callers
  * pick their own fallback.
  */

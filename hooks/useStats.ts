@@ -6,7 +6,7 @@ import {
 } from "@/app/actions/stats";
 import type { StatsRange } from "@/app/types/stats";
 
-// Admin overview. Three separate queries on purpose — see the actions file.
+// Admin overview. Three separate queries on purpose - see the actions file.
 //
 // No refetchInterval anywhere: the admin layout's QueryClient already sets
 // staleTime 30s and retry 1, so these revalidate when someone tabs back to the
@@ -32,7 +32,7 @@ export function useStatsTimeseries(range: StatsRange) {
 }
 
 /**
- * Deliberately has no `range` in its key — this data does not vary with the
+ * Deliberately has no `range` in its key - this data does not vary with the
  * selected window, so changing the range must not refetch it.
  */
 export function useContentHealth() {

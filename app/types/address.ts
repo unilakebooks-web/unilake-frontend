@@ -12,7 +12,7 @@ export interface SavedAddress {
   zip: string;
   country: string;      // ISO alpha-2
   phone: string;
-  isDefault: boolean;   // read-only — server-controlled
+  isDefault: boolean;   // read-only - server-controlled
   createdAt: string;
   updatedAt: string;
 }
@@ -34,7 +34,7 @@ export interface CreateAddressInput {
 }
 
 /**
- * Body for PATCH /api/user/addresses/:id — any subset. `label: null` clears the
+ * Body for PATCH /api/user/addresses/:id - any subset. `label: null` clears the
  * label; line2 can be changed but never cleared.
  */
 export type UpdateAddressInput = Partial<Omit<CreateAddressInput, "label">> & {

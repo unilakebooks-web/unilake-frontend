@@ -1,10 +1,10 @@
 "use client";
 
 /**
- * "Upload another photo" form — reached from the preview screen when a customer
+ * "Upload another photo" form - reached from the preview screen when a customer
  * is unhappy with the result and wants to start again with a different photo.
  *
- * ── DUPLICATION NOTICE ──────────────────────────────────────────────────────
+ * -- DUPLICATION NOTICE ------------------------------------------------------
  * This deliberately duplicates the submit flow in
  * `components/comic/ComicPersonalizeForm.tsx` (the first-time form on the comic
  * detail page). Two separate forms was a deliberate decision, not an accident.
@@ -12,7 +12,7 @@
  * The consequence: any change to photo validation, the field set, or the
  * create -> update -> upload -> confirm sequence must be made in BOTH files.
  * If you are editing one of them, open the other.
- * ────────────────────────────────────────────────────────────────────────────
+ * ----------------------------------------------------------------------------
  *
  * Differences from the original, all intentional:
  *   - fields arrive pre-filled from the previous session
@@ -61,7 +61,7 @@ export default function NewPhotoForm({ previousSession }: NewPhotoFormProps) {
   //
   // What does NOT stay is a fallback the parent never chose. `pronounKey` of
   // THEY or null used to land on "Boy", a missing age on "4", and birthMonth on
-  // "November" unconditionally — none of which came from the previous session,
+  // "November" unconditionally - none of which came from the previous session,
   // and all of which would submit silently. Where there is nothing to inherit
   // the field is now empty and the validation below asks for it.
   const [formData, setFormData] = useState({
@@ -81,7 +81,7 @@ export default function NewPhotoForm({ previousSession }: NewPhotoFormProps) {
 
   // The photo is normalized and face-checked the moment it is dropped, not at
   // submit. Everything downstream only ever sees a blob that already passed the
-  // gate — so a rejected photo costs nothing but a re-pick, and never leaves a
+  // gate - so a rejected photo costs nothing but a re-pick, and never leaves a
   // half-filled session behind on the server.
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [normalizedPhoto, setNormalizedPhoto] = useState<Blob | null>(null);
@@ -199,7 +199,7 @@ export default function NewPhotoForm({ previousSession }: NewPhotoFormProps) {
     e.preventDefault();
 
     // Gender and age are checked explicitly now that they no longer fall back
-    // to an invented default — matches ComicPersonalizeForm.
+    // to an invented default - matches ComicPersonalizeForm.
     // Everything that is missing is named at once (same as ComicPersonalizeForm).
     const missing = [
       !formData.name.trim() && "child's name",
@@ -212,7 +212,7 @@ export default function NewPhotoForm({ previousSession }: NewPhotoFormProps) {
     if (missing.length > 0)
       return toast.error(`Please complete: ${missing.join(", ")}`);
     if (photoState === "checking")
-      return toast.error("Still checking your photo — one moment");
+      return toast.error("Still checking your photo. One moment");
     // Cannot run: a missing photo is already in `missing` above. Kept so TypeScript
     // knows the photo is set below.
     if (!normalizedPhoto)
@@ -220,7 +220,7 @@ export default function NewPhotoForm({ previousSession }: NewPhotoFormProps) {
 
     setIsLoading(true);
 
-    // Trimmed once so the session and localStorage agree — stray whitespace
+    // Trimmed once so the session and localStorage agree - stray whitespace
     // would otherwise be stamped into the speech bubbles.
     const childName = formData.name.trim();
 
@@ -229,7 +229,7 @@ export default function NewPhotoForm({ previousSession }: NewPhotoFormProps) {
         type: "image/jpeg",
       });
 
-      // 1. Create a BRAND NEW session. The old one is left alone — it keeps its
+      // 1. Create a BRAND NEW session. The old one is left alone - it keeps its
       //    pages and expires on its own 7-day clock.
       setLoadingStep("Creating your session...");
       const sessionResponse = await createSession(previousSession.comicId);
@@ -241,12 +241,12 @@ export default function NewPhotoForm({ previousSession }: NewPhotoFormProps) {
         childName,
         age: parseInt(formData.age, 10),
         // Matches ComicPersonalizeForm exactly. The backend accepts THEY, but
-        // neither form offers it — keep the two in step.
+        // neither form offers it - keep the two in step.
         pronounKey: formData.gender === "Boy" ? "HE" : "SHE",
         notificationEmail: formData.email,
       });
 
-      // 3. Upload URL — requested immediately before the PUT, it expires in 5 min.
+      // 3. Upload URL - requested immediately before the PUT, it expires in 5 min.
       setLoadingStep("Uploading photo...");
       const { uploadUrl, key } = await getPhotoUploadUrl(sessionId, "jpg");
 
@@ -262,7 +262,7 @@ export default function NewPhotoForm({ previousSession }: NewPhotoFormProps) {
       await confirmPhoto(sessionId, key);
 
       // 6. Store it. Keyed by comicId, so this OVERWRITES the old session's
-      //    entry — which is what makes the comic page offer to resume the new
+      //    entry - which is what makes the comic page offer to resume the new
       //    one rather than the abandoned one.
       saveSession(previousSession.comicId, {
         sessionId,
@@ -291,7 +291,7 @@ export default function NewPhotoForm({ previousSession }: NewPhotoFormProps) {
     <div className={`${hankenGrotesk.className} w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 py-2 lg:py-4`}>
       <div className="grid grid-cols-1 lg:grid-cols-[1.15fr_1fr] gap-4 lg:gap-6 items-start lg:h-full lg:max-h-full">
 
-        {/* ── Left: static guidance ─────────────────────────────────────── */}
+        {/* -- Left: static guidance --------------------------------------- */}
         <section className="bg-white rounded-[20px] border-[3px] border-[#914A8C] shadow-xl p-3 sm:p-4 lg:p-5 outline-2 outline-dashed outline-offset-[-8px] outline-[#914A8C]/40 flex flex-col h-full justify-start">
           <h1 className={`${chauPhilomeneOne.className} text-xl sm:text-2xl lg:text-3xl text-[#222] mb-1`}>
             Upload a photo of {childLabel}
@@ -329,7 +329,7 @@ export default function NewPhotoForm({ previousSession }: NewPhotoFormProps) {
           </p>
         </section>
 
-        {/* ── Right: the form ───────────────────────────────────────────── */}
+        {/* -- Right: the form --------------------------------------------- */}
         <section className="bg-white rounded-[20px] border-[3px] border-[#914A8C] shadow-xl p-3 sm:p-4 lg:p-5 outline-2 outline-dashed outline-offset-[-8px] outline-[#914A8C]/40 flex flex-col h-full justify-start">
           <h2 className={`${chauPhilomeneOne.className} text-lg sm:text-xl lg:text-2xl text-[#222] mb-2 lg:mb-3`}>
             Your Photo
@@ -409,7 +409,7 @@ export default function NewPhotoForm({ previousSession }: NewPhotoFormProps) {
               <input
                 type="text"
                 value={formData.name}
-                // Same cap as ComicPersonalizeForm — the name is stamped into
+                // Same cap as ComicPersonalizeForm - the name is stamped into
                 // the same speech bubbles either way. Was 50, which let this
                 // journey submit a name the other one would have refused.
                 maxLength={MAX_NAME_LENGTH}

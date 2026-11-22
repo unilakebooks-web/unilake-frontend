@@ -100,7 +100,7 @@ export async function fetchOrderLabel(orderId: string): Promise<LabelResponse> {
  * Downloads an order's Bill of Supply PDF. The backend builds it on every
  * request and stores nothing, so this always reflects the order as it is.
  *
- * Raw file, not the JSON envelope — fetched as a Blob and handed to the
+ * Raw file, not the JSON envelope - fetched as a Blob and handed to the
  * browser as a download, same as downloadCustomersCsv. The file name is set
  * here because Content-Disposition is not readable cross-origin.
  */

@@ -13,7 +13,7 @@ import ChangePhotoDialog from "./ChangePhotoDialog";
  * Statuses where a generation is still running and the customer must wait.
  *
  * Clicking through in any of these would abandon a job that may be seconds from
- * finishing — and the pages it produced are already paid for in GPU time. The
+ * finishing - and the pages it produced are already paid for in GPU time. The
  * component stays visible (it is part of the page's furniture) but explains
  * itself with a toast instead of navigating.
  *
@@ -51,7 +51,7 @@ export default function UploadAnotherPhotoBanner({
   const handleClick = () => {
     if (isGenerating) {
       toast.error(
-        "Your book is still being created — please let this generation finish first.",
+        "Your book is still being created. Please let this generation finish first.",
       );
       return;
     }
@@ -81,7 +81,7 @@ export default function UploadAnotherPhotoBanner({
       </h3>
 
       {/* Solid offset shadow rather than a blur, and it shrinks on press so the
-          button physically depresses — same treatment as the checkout CTA. */}
+          button physically depresses - same treatment as the checkout CTA. */}
       <button
         type="button"
         onClick={handleClick}

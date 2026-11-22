@@ -27,13 +27,13 @@ export default function ComicPageFaqSection({ faqs }: ComicPageFaqSectionProps) 
           `mt-20 lg:mt-32` is load-bearing, not decoration. The girl below is
           taller than the banner and deliberately overhangs its top edge, so
           this margin is the space she overhangs INTO. Without it she sits on
-          top of whatever section precedes this one — on this page, the comic's
+          top of whatever section precedes this one - on this page, the comic's
           info cards.
           ⚠️ This banner started as a copy of components/home/HomeFaq.tsx but
           now deliberately differs: on the comic page the heading reads just
           "FAQ'S" and is sized like the homepage's "Choose Your Story", and the
           girl matches that banner's dragon in height. If the girl grows,
-          re-check the overhang against this margin — the numbers are in the
+          re-check the overhang against this margin - the numbers are in the
           comment on her below. */}
       <div className="relative w-full overflow-visible mt-20 lg:mt-32">
         {/* Flared wave SVG */}
@@ -48,7 +48,7 @@ export default function ComicPageFaqSection({ faqs }: ComicPageFaqSectionProps) 
           />
         </svg>
 
-        {/* Heading — centred in the band. Sized with the shared
+        {/* Heading - centred in the band. Sized with the shared
             BANNER_HEADING_SIZE scale to match "Choose Your Story" on the
             homepage; the font stays Boogaloo, which the FAQ bands use on
             purpose. The row spans only the band's flat strip (viewBox y
@@ -70,7 +70,7 @@ export default function ComicPageFaqSection({ faqs }: ComicPageFaqSectionProps) 
           </h2>
         </div>
 
-        {/* FAQ girl — pinned to the band's far left, independent of the
+        {/* FAQ girl - pinned to the band's far left, independent of the
             centred heading. Her left inset grows with the screen; the short
             heading sits well clear of her at every width.
 
@@ -82,7 +82,7 @@ export default function ComicPageFaqSection({ faqs }: ComicPageFaqSectionProps) 
 
             She stands 10 / 15 / 20 / 22px above the band's lower edge.
             Overhang above the band's top = offset + height − band height:
-            8 / 57 / 72 / 79 / 113px — inside the wrapper's mt-20 (80px) and
+            8 / 57 / 72 / 79 / 113px - inside the wrapper's mt-20 (80px) and
             lg:mt-32 (128px) at every breakpoint. */}
         <div
           className="
@@ -150,10 +150,10 @@ export default function ComicPageFaqSection({ faqs }: ComicPageFaqSectionProps) 
                     {/* Toggle Icon */}
                     <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center">
                       {isExpanded ? (
-                        /* Horizontal line — purple */
+                        /* Horizontal line - purple */
                         <div className="w-6 h-[3px] bg-[#3F3C95] rounded-full" />
                       ) : (
-                        /* Plus symbol — black */
+                        /* Plus symbol - black */
                         <svg
                           viewBox="0 0 24 24"
                           className="w-6 h-6 text-black fill-none stroke-current stroke-[3]"

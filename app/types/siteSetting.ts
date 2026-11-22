@@ -1,5 +1,5 @@
 /**
- * Brand and contact details — a singleton row edited from admin Settings and
+ * Brand and contact details - a singleton row edited from admin Settings and
  * consumed by both the /contact page and the site-wide Footer.
  *
  * Every field is nullable: the admin fills this in progressively, and the whole
@@ -10,12 +10,12 @@ export type SiteSetting = {
   id: string;
 
   /**
-   * Store status. NOT nullable — the column is NOT NULL with a `true` default,
+   * Store status. NOT nullable - the column is NOT NULL with a `true` default,
    * so it is the one field on this model that always has a value.
    *
    * `false` means customers can still browse and generate previews but cannot
    * pay: the backend rejects any NEW checkout. Enforcement lives there, not
-   * here — the banners and the toast are how a customer finds out, not what
+   * here - the banners and the toast are how a customer finds out, not what
    * stops them.
    *
    * Read it as `setting?.acceptingOrders ?? true`: the whole row is null until
@@ -24,7 +24,7 @@ export type SiteSetting = {
    */
   acceptingOrders: boolean;
 
-  // Brand — rendered in the Footer
+  // Brand - rendered in the Footer
   brandDescription: string | null;
 
   // Intro copy at the top of /contact
@@ -46,12 +46,12 @@ export type SiteSetting = {
   country: string | null;
   mapEmbedUrl: string | null;
 
-  // SEO — site-wide fallback title/description used by the root layout for any
+  // SEO - site-wide fallback title/description used by the root layout for any
   // page that does not supply its own
   metaTitle: string | null;
   metaDescription: string | null;
 
-  // Socials — also consumed by the Footer
+  // Socials - also consumed by the Footer
   instagramUrl: string | null;
   facebookUrl: string | null;
   twitterUrl: string | null;
@@ -68,7 +68,7 @@ type EditableSiteSettingKey = Exclude<
 >;
 
 /**
- * What the admin sends on a partial update. Every key is optional — omitted
+ * What the admin sends on a partial update. Every key is optional - omitted
  * means "leave this column alone", and an explicit null clears it. The backend
  * rejects empty strings, so callers must convert "" to null before submitting.
  *

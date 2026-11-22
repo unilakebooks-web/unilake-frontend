@@ -128,7 +128,7 @@ export function ComicListTable({ comics, onDeleteClick }: ComicListTableProps) {
                       ))}
                     </div>
                   ) : (
-                    <span className="text-neutral-400">—</span>
+                    <span className="text-neutral-400">-</span>
                   )}
                 </td>
                 <td className="px-6 py-3 hidden sm:table-cell whitespace-nowrap text-xs text-neutral-500">

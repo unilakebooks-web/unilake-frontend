@@ -42,7 +42,7 @@ function OrdersPageContent() {
 
   // Deep links from the overview's needs-attention cards arrive as
   // `?status=SHIPROCKET_FAILED`. Validated against the known set rather than
-  // cast — the value comes off the URL, so a typo or a stale bookmark would
+  // cast - the value comes off the URL, so a typo or a stale bookmark would
   // otherwise be sent to the API and come back a 400.
   const statusParam = searchParams.get("status");
   const initialStatus =
@@ -54,7 +54,7 @@ function OrdersPageContent() {
 
   // Seeded with the URL's status so the FIRST request is already filtered.
   // Without this the page would fetch everything, then refetch filtered 400ms
-  // later when the filter bar's debounce fires — a visible flash of the wrong
+  // later when the filter bar's debounce fires - a visible flash of the wrong
   // list on every deep link.
   const [filters, setFilters] = useState<
     Omit<AdminOrdersFilters, "page" | "pageSize">
@@ -70,7 +70,7 @@ function OrdersPageContent() {
     pageSize: PAGE_SIZE,
   });
 
-  // Stable — OrderListFilters lists it in a debounce effect's dependencies.
+  // Stable - OrderListFilters lists it in a debounce effect's dependencies.
   const handleFiltersChange = useCallback(
     (next: Omit<AdminOrdersFilters, "page" | "pageSize">) => {
       setFilters(next);
@@ -116,7 +116,7 @@ function OrdersPageContent() {
 
 /**
  * `useSearchParams` opts a client component into deferred rendering, so Next
- * requires a Suspense boundary above it — without one the build fails on this
+ * requires a Suspense boundary above it - without one the build fails on this
  * route rather than at runtime.
  */
 export default function OrdersPage() {

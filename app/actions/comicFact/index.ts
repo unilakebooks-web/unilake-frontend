@@ -4,7 +4,7 @@ import type { AdminComicFact, ComicFactPlacement } from "@/app/types/comic";
 /**
  * Admin CRUD for a comic's rotating facts.
  *
- * The public site does NOT use any of these — it reads facts off the comic
+ * The public site does NOT use any of these - it reads facts off the comic
  * detail endpoint, which already ships them. These calls exist only for the
  * Facts tab in the admin panel, which additionally needs to see and manage
  * switched-off facts.

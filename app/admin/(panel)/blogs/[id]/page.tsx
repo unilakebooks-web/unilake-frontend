@@ -130,7 +130,7 @@ export default function EditBlogPage({ params }: { params: Promise<{ id: string 
         // documented way to clear a nullable column.
         excerpt: excerpt.trim() || null,
         tags,
-        // Same rule — null clears the override so the post falls back to its
+        // Same rule - null clears the override so the post falls back to its
         // own title/excerpt in search results.
         metaTitle: metaTitle.trim() || null,
         metaDescription: metaDescription.trim() || null,
@@ -266,13 +266,13 @@ export default function EditBlogPage({ params }: { params: Promise<{ id: string 
             </div>
           </div>
 
-          {/* SEO — both optional, blank falls back to title/excerpt */}
+          {/* SEO - both optional, blank falls back to title/excerpt */}
           <div className="pt-6 border-t border-gray-100 space-y-6">
             <div>
               <h3 className="text-sm font-bold text-gray-700">Search &amp; Sharing (SEO)</h3>
               <p className="text-xs text-gray-400 font-medium mt-0.5">
                 What Google shows and what appears when this post is shared. Both
-                optional — blank uses the title and excerpt above.
+                optional, blank uses the title and excerpt above.
               </p>
             </div>
 

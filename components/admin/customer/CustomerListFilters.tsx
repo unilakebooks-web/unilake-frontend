@@ -10,7 +10,7 @@ interface CustomerListFiltersProps {
   /** Starts the CSV download for the current search. */
   onExport: () => void;
   isExporting: boolean;
-  /** Nothing to export — disables the button. */
+  /** Nothing to export - disables the button. */
   exportDisabled: boolean;
 }
 
@@ -22,7 +22,7 @@ export function CustomerListFilters({
 }: CustomerListFiltersProps) {
   const [search, setSearch] = useState("");
 
-  // Same 400ms debounce as the Users and Orders lists — every change hits the server.
+  // Same 400ms debounce as the Users and Orders lists - every change hits the server.
   useEffect(() => {
     const handler = setTimeout(() => {
       onSearchChange(search.trim() || undefined);
@@ -51,7 +51,7 @@ export function CustomerListFilters({
         )}
       </div>
 
-      {/* Exports every customer matching the search — not just this page. */}
+      {/* Exports every customer matching the search - not just this page. */}
       <Button
         type="button"
         onClick={onExport}

@@ -8,7 +8,7 @@ import { ORDER_STATUSES } from "@/app/types/order";
  * How many orders sit at each stage of the pipeline, right now.
  *
  * Labelled rows with proportional bars, NOT a donut. There are nine statuses,
- * which is well past what colour alone can encode — a reader would be matching
+ * which is well past what colour alone can encode - a reader would be matching
  * nine legend swatches against nine wedges. Rows carry the label, the count and
  * the bar together, so nothing depends on telling two colours apart.
  *
@@ -50,7 +50,7 @@ export function StatusBreakdown({
 }: {
   ordersByStatus: Record<OrderStatus, number>;
 }) {
-  // Zero-count stages are dropped — a pipeline view should show where work
+  // Zero-count stages are dropped - a pipeline view should show where work
   // actually is, not nine rows of which six are empty.
   const rows = ORDER_STATUSES.filter((status) => ordersByStatus[status] > 0);
 
@@ -97,7 +97,7 @@ export function StatusBreakdown({
       })}
 
       <p className="text-[11px] text-neutral-400 pt-1">
-        Live totals — not affected by the date range.
+        Live totals, not affected by the date range.
       </p>
     </div>
   );

@@ -70,7 +70,7 @@ export function OrderDetailHeader({ order }: { order: AdminOrderDetail }) {
 
         <div className="flex flex-col items-end gap-2">
           <div className="flex flex-wrap justify-end gap-2">
-            {/* Only orders with a bill number have a Bill of Supply — INR
+            {/* Only orders with a bill number have a Bill of Supply - INR
                 orders paid after billing was switched on. Built on demand by
                 the backend; nothing is stored. */}
             {order.bill && (
@@ -89,7 +89,7 @@ export function OrderDetailHeader({ order }: { order: AdminOrderDetail }) {
               </button>
             )}
             {/* The customer's own preview page, in its read-only admin mode
-                (`?view=admin` — see app/personalize/[sessionId]/preview). New tab
+                (`?view=admin` - see app/personalize/[sessionId]/preview). New tab
                 so the admin keeps this order open. */}
             <a
               href={`/personalize/${order.session.id}/preview?view=admin`}

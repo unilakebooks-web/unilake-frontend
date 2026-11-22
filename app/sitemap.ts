@@ -7,7 +7,7 @@ import { absoluteUrl } from "@/lib/seo";
  * The list of pages handed to Google at /sitemap.xml.
  *
  * Built live from the API rather than maintained by hand, so publishing a comic
- * or a blog post puts it in the sitemap on its own — there is nothing for the
+ * or a blog post puts it in the sitemap on its own - there is nothing for the
  * admin to remember to do.
  *
  * Both fetches use the PUBLIC endpoints, which already filter to published
@@ -65,7 +65,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const blogEntries: MetadataRoute.Sitemap =
     blogsResult.status === "fulfilled"
       ? blogsResult.value.map((blog) => ({
-          // Blog URLs are keyed by slug, not id — the slug is frozen at create
+          // Blog URLs are keyed by slug, not id - the slug is frozen at create
           // precisely so these links stay stable.
           url: absoluteUrl(`/blog/${blog.slug}`),
           lastModified: blog.updatedAt ? new Date(blog.updatedAt) : now,

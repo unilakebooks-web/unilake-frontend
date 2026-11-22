@@ -46,7 +46,7 @@ const DEFAULT_RATING = 5;
  * The caller mounts this ONLY while the dialog is open, and keys it by the
  * review being edited (see the admin page). That makes every open a fresh
  * mount, so all state below initialises straight from props and there is
- * nothing to reset — no syncing effect, and no chance of a previous edit
+ * nothing to reset - no syncing effect, and no chance of a previous edit
  * leaking into the next one.
  */
 export function GoogleReviewModal({
@@ -112,7 +112,7 @@ export function GoogleReviewModal({
     }
 
     // The image column is NOT NULL, so a new review cannot be saved without
-    // one. On edit, keeping the existing image is fine — only a brand-new
+    // one. On edit, keeping the existing image is fine - only a brand-new
     // review can be missing it.
     if (!isEditMode && !selectedFile) {
       setErrorMessage("Please upload a display image for this review.");
@@ -144,7 +144,7 @@ export function GoogleReviewModal({
       setUploadState("saving");
 
       if (isEditMode) {
-        // Omitting imageKey keeps the current image — the API has no way to
+        // Omitting imageKey keeps the current image - the API has no way to
         // clear it, by design.
         const payload: UpdateGoogleReviewPayload = {
           customerName: trimmedName,

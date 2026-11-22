@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   title: "Terms and Conditions",
 };
 
-/** Rendered per request — see the note in app/privacy/page.tsx. */
+/** Rendered per request - see the note in app/privacy/page.tsx. */
 export const dynamic = "force-dynamic";
 
 export default async function TermsPage() {

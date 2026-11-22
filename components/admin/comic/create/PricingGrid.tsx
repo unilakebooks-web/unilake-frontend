@@ -77,7 +77,7 @@ export function PricingGrid({ values, onChange, error }: PricingGridProps) {
 
   /**
    * True when both fields of a row are filled and the MRP is below the selling
-   * price — the one combination the backend will reject. Surfaced inline so the
+   * price - the one combination the backend will reject. Surfaced inline so the
    * admin sees it before submitting rather than as a Zod error afterwards.
    */
   const hasInvertedPrices = (countryId: string, coverType: CoverType) => {
@@ -107,7 +107,7 @@ export function PricingGrid({ values, onChange, error }: PricingGridProps) {
         [field]: newValue,
       };
     } else {
-      // New row — seed BOTH fields so the object shape stays complete and the
+      // New row - seed BOTH fields so the object shape stays complete and the
       // other input stays a controlled component.
       newValues.push({
         countryId,
@@ -123,7 +123,7 @@ export function PricingGrid({ values, onChange, error }: PricingGridProps) {
 
   /**
    * One money input. Extracted because the grid now renders four of these per
-   * row — MRP and price for each of the two cover types — and inlining them
+   * row - MRP and price for each of the two cover types - and inlining them
    * would be the same fifteen lines copied four times.
    */
   const renderPriceCell = (

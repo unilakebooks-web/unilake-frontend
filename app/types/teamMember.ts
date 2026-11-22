@@ -18,7 +18,7 @@ export interface UploadUrlResponse {
   key: string;
 }
 
-// Create payload — optional fields must be OMITTED, not sent as "" or null
+// Create payload - optional fields must be OMITTED, not sent as "" or null
 export interface CreateTeamMemberPayload {
   name: string;
   role: string;
@@ -29,7 +29,7 @@ export interface CreateTeamMemberPayload {
   twitterUrl?: string;
 }
 
-// Update payload — null clears, omission leaves unchanged, "" is a 400
+// Update payload - null clears, omission leaves unchanged, "" is a 400
 export interface UpdateTeamMemberPayload {
   name?: string;
   role?: string;

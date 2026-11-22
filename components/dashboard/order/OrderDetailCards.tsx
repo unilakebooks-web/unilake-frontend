@@ -42,14 +42,14 @@ export function OrderDetailCards({ order }: { order: UserOrderDetail }) {
   // Automatic data deletion: no book to open for a deleted order (the note says why).
   const deletion = getOrderDeletion(order);
 
-  // The "Your book" card — the customer's way back to their pages. Every link
+  // The "Your book" card - the customer's way back to their pages. Every link
   // goes to the preview page, which renders the right mode for the session on
   // its own:
-  //   - AWAITING_SELECTION: still selectable, with the send-to-print section —
+  //   - AWAITING_SELECTION: still selectable, with the send-to-print section -
   //     nothing is printed until they commit it, so it must stay reachable;
   //   - PREPARING: live generation progress;
   //   - PROCESSING / SHIPPED / DELIVERED: already sent to print, so the preview
-  //     is read-only — the printed variants only, no send-to-print.
+  //     is read-only - the printed variants only, no send-to-print.
   //
   // This card replaced the PDF download. The PDF is a print file for us, not a
   // customer deliverable; the read-only preview is how they see their book.
@@ -61,14 +61,14 @@ export function OrderDetailCards({ order }: { order: UserOrderDetail }) {
     statusCode === "AWAITING_SELECTION"
       ? {
           message:
-            "Almost there — your pages are ready and waiting for you to send them to print.",
+            "Almost there! Your pages are ready and waiting for you to send them to print.",
           label: "Finish your book",
           icon: BookOpen,
         }
       : statusCode === "PREPARING"
         ? {
             message:
-              "We're creating the rest of your pages — you can watch them appear as they're made.",
+              "We're creating the rest of your pages. You can watch them appear as they're made.",
             label: "View progress",
             icon: Sparkles,
           }

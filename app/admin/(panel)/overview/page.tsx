@@ -36,7 +36,7 @@ const RANGE_SUBTITLE: Record<StatsRange, string> = {
  * Admin dashboard.
  *
  * Three independent queries rather than one, so the bands paint as their data
- * arrives — the triage band does not wait on the chart, and a single failing
+ * arrives - the triage band does not wait on the chart, and a single failing
  * aggregate shows one retry card instead of blanking the page.
  *
  * The range drives summary and timeseries only. Content health has no date
@@ -57,11 +57,11 @@ export default function OverviewPage() {
         <RangeSelector value={range} onChange={setRange} />
       </div>
 
-      {/* Band 1 — KPIs. Handles its own loading inside each tile so the row
+      {/* Band 1 - KPIs. Handles its own loading inside each tile so the row
           keeps its shape rather than collapsing to a spinner. */}
       <KpiRow summary={summaryQuery.data} isLoading={summaryQuery.isLoading} />
 
-      {/* Band 2 — triage. First thing below the fold-line for a reason. */}
+      {/* Band 2 - triage. First thing below the fold-line for a reason. */}
       <OverviewPanel
         title="Needs attention"
         icon={TriangleAlert}
@@ -77,7 +77,7 @@ export default function OverviewPage() {
         )}
       </OverviewPanel>
 
-      {/* Band 3 — trend + pipeline. Separate queries, so the chart can fail
+      {/* Band 3 - trend + pipeline. Separate queries, so the chart can fail
           without taking the status breakdown with it. */}
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-5">
         <OverviewPanel
@@ -109,7 +109,7 @@ export default function OverviewPage() {
         </OverviewPanel>
       </div>
 
-      {/* Band 4 — recent activity + best sellers. */}
+      {/* Band 4 - recent activity + best sellers. */}
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-5">
         <OverviewPanel
           title="Recent orders"
@@ -140,7 +140,7 @@ export default function OverviewPage() {
         </OverviewPanel>
       </div>
 
-      {/* Band 5 — storefront config. Independent query, no range. */}
+      {/* Band 5 - storefront config. Independent query, no range. */}
       <OverviewPanel
         title="Storefront health"
         icon={ShieldCheck}

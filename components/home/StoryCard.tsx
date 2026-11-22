@@ -35,7 +35,7 @@ interface StoryCardProps {
 export default function StoryCard({ comic }: StoryCardProps) {
   // A click anywhere on the card opens the quick-view popup, except Personalise,
   // which goes straight to /comic/[id]. "Read more" opens the popup too and is
-  // the keyboard path to it — the card itself is not focusable, since a
+  // the keyboard path to it - the card itself is not focusable, since a
   // focusable wrapper around a link and a button is invalid nesting.
   const [isQuickViewOpen, setIsQuickViewOpen] = useState(false);
 
@@ -64,7 +64,7 @@ export default function StoryCard({ comic }: StoryCardProps) {
   // ResizeObserver rather than a one-off read: the line count changes when the
   // card resizes with its grid column, and when the web font finishes loading
   // and the title re-wraps. Both change the title's height, which is exactly
-  // what the observer reports. Starts at 2 — the conservative value, and what
+  // what the observer reports. Starts at 2 - the conservative value, and what
   // the server render uses before anything can be measured.
   const titleRef = useRef<HTMLHeadingElement>(null);
   const [titleLines, setTitleLines] = useState(2);
@@ -85,7 +85,7 @@ export default function StoryCard({ comic }: StoryCardProps) {
     return () => observer.disconnect();
   }, []);
 
-  // Hover shows the second cover and holds it — no cycling through the rest.
+  // Hover shows the second cover and holds it - no cycling through the rest.
   // A comic with a single cover simply keeps showing it.
   const handleMouseEnter = () => {
     if (images.length > 1) setCurrentImageIndex(1);
@@ -95,7 +95,7 @@ export default function StoryCard({ comic }: StoryCardProps) {
     setCurrentImageIndex(0);
   };
 
-  // One range across all the comic's age groups — [3-5, 6-8] shows "AGE: 3-8".
+  // One range across all the comic's age groups - [3-5, 6-8] shows "AGE: 3-8".
   const ageLabel = formatAgeRange(comic.ageGroups) ?? "ALL AGES";
 
   // First theme (alphabetical, as the API sends them) plus a "+N" count for
@@ -118,10 +118,10 @@ export default function StoryCard({ comic }: StoryCardProps) {
     : { price: 0, mrp: NaN, showMrp: false };
   const currencySymbol = getCurrencySymbol();
 
-  // SIZING — everything inside the white body is sized in `cqw`, a percentage
+  // SIZING - everything inside the white body is sized in `cqw`, a percentage
   // of THIS card's width (the root below is the query container). The card
   // shrinks with its grid column (~272px on a phone / two-column tablet, 380px
-  // at most), while screen breakpoints only know the viewport — which is how
+  // at most), while screen breakpoints only know the viewport - which is how
   // text used to end up too big for the card at in-between widths. Sized off
   // the card itself, the layout is identical at every width, just scaled.
   //
@@ -129,8 +129,8 @@ export default function StoryCard({ comic }: StoryCardProps) {
   // comments below are what each size resolves to there.
   //
   // Vertical budget: the body starts at 46% of the card's height, and the
-  // Personalise button must end by ~86% — level with the page-curl drawn into
-  // card.svg — or it drops into the shield's taper. That is ~227px at 380 wide.
+  // Personalise button must end by ~86% - level with the page-curl drawn into
+  // card.svg - or it drops into the shield's taper. That is ~227px at 380 wide.
   // Current stack: tags 18 + 6, title+description block 92.3 + 7.6, price
   // 26.6 + 10, button 47 = ~208px. Adding height to any row eats into the
   // remaining ~19px of slack; check this sum first.
@@ -161,12 +161,12 @@ export default function StoryCard({ comic }: StoryCardProps) {
         className="pointer-events-none select-none z-0"
       />
 
-      {/* Book Cover — fills the blackboard, leaving an equal 10px strip of
+      {/* Book Cover - fills the blackboard, leaving an equal 10px strip of
           board on all four sides.
 
           Geometry, measured from the raster inside card.svg and converted to
           percentages of this card box (card is 427×623, so 1% of width ≠ 1% of
-          height — a 10px margin is a different % on each axis):
+          height - a 10px margin is a different % on each axis):
             board inner area   left 9.20%  right 90.80%  top 4.15%  bottom 44.49%
             margin             10px at 380 wide = 2.63% of card WIDTH
                                = 1.80% of card HEIGHT
@@ -181,7 +181,7 @@ export default function StoryCard({ comic }: StoryCardProps) {
           top and bottom.
 
           The bottom edge ends a few px below the tops of the duster and chalk
-          box, so the image slides BEHIND them — see the chalk-tray overlay
+          box, so the image slides BEHIND them - see the chalk-tray overlay
           further down. */}
       <div
         className="absolute z-10"
@@ -208,7 +208,7 @@ export default function StoryCard({ comic }: StoryCardProps) {
           <div className="absolute inset-0 bg-white/[0.04] mix-blend-screen pointer-events-none" />
         </div>
 
-        {/* Bestseller tag — pinned over the cover's top-left corner rather than
+        {/* Bestseller tag - pinned over the cover's top-left corner rather than
             added to the tag row below, so it costs none of the white body's
             vertical budget (see the sizing note above). Same type size as the
             pills; brand yellow + indigo, matching the yellow CTA buttons. */}
@@ -218,7 +218,7 @@ export default function StoryCard({ comic }: StoryCardProps) {
           </span>
         )}
 
-        {/* Share button (feature 14) — over the cover's top-right corner, like the Bestseller tag, so it costs none
+        {/* Share button (feature 14) - over the cover's top-right corner, like the Bestseller tag, so it costs none
             of the white body's vertical budget. Its clicks are stopped inside ShareButton, so the card's quick-view
             popup does not open. */}
         <div className="absolute top-[2.1cqw] right-[2.1cqw] z-10">
@@ -254,17 +254,17 @@ export default function StoryCard({ comic }: StoryCardProps) {
           gap-0
         "
       >
-        {/* Tags — one line, never wrapped.
+        {/* Tags - one line, never wrapped.
             `flex-nowrap` because a wrapped second row would add height here and
             push everything below it down, which is the same class of bug the
             description's fixed height exists to prevent.
             Age and pages are short and fixed, so they never give way. The theme
             name is admin-entered and unbounded, so it is the one that truncates:
-            `min-w-0` is what actually lets it shrink — a flex item will not go
+            `min-w-0` is what actually lets it shrink - a flex item will not go
             below its content width without it, and `truncate` alone would do
             nothing here. */}
         <div className="flex items-center gap-[1.6cqw] flex-nowrap mb-[1.6cqw]">
-          {/* Pills: 8px at 380 wide (2.1cqw), floored at 7px — scaled purely
+          {/* Pills: 8px at 380 wide (2.1cqw), floored at 7px - scaled purely
               proportionally they would hit ~5.8px on the narrowest card and
               stop being readable. The 1px of extra height that floor costs on
               a small card is absorbed by the budget's slack. */}
@@ -273,7 +273,7 @@ export default function StoryCard({ comic }: StoryCardProps) {
             AGE: {ageLabel}
           </span>
 
-          {/* Category Pill — the only one allowed to shrink. Only the theme
+          {/* Category Pill - the only one allowed to shrink. Only the theme
               NAME truncates: the "+N" sits outside the truncating span so it
               stays visible however long the first theme's name is. */}
           <span
@@ -292,7 +292,7 @@ export default function StoryCard({ comic }: StoryCardProps) {
           </span>
         </div>
 
-        {/* Title + description + "Read more" — one block with a FIXED height,
+        {/* Title + description + "Read more" - one block with a FIXED height,
             so the price and button below sit at the same height on every card
             in a row. The height is the worst case at 380 wide:
               title 2 × 20px × 1.25        = 50px    (13.15cqw)
@@ -304,7 +304,7 @@ export default function StoryCard({ comic }: StoryCardProps) {
             25 + 3.8 + 38.5 + 19.25 = 86.55px, still inside the block.
             "Read more" is pinned to the block's bottom (mt-auto), so it sits in
             exactly the same spot on every card whatever the title or
-            description length — that is the point of giving it its own line.
+            description length - that is the point of giving it its own line.
             Change a font size or line-height here and this sum must be redone. */}
         <div className="h-[24.3cqw] mb-[2cqw] overflow-hidden flex flex-col">
           {/* 20px at 380 wide. At most two lines, then an ellipsis; the full
@@ -317,7 +317,7 @@ export default function StoryCard({ comic }: StoryCardProps) {
             {comic.title}
           </h3>
 
-          {/* 14px at 380 wide. Two lines when the title took one, else one —
+          {/* 14px at 380 wide. Two lines when the title took one, else one -
               the line "Read more" now takes. line-clamp supplies the ellipsis
               when the text is cut off. */}
           <p
@@ -326,7 +326,7 @@ export default function StoryCard({ comic }: StoryCardProps) {
             {comic.description || "A personalized storybook adventure for your child."}
           </p>
 
-          {/* Opens the quick-view popup, like any click on the card — kept as a
+          {/* Opens the quick-view popup, like any click on the card - kept as a
               visible hint and as the keyboard-reachable way in. Same size and
               line height as the description (one 5.06cqw line, counted in the
               sum above); pinned bottom-right of the block on every card. */}
@@ -339,10 +339,10 @@ export default function StoryCard({ comic }: StoryCardProps) {
           </button>
         </div>
 
-        {/* Price row — discounted price, then the struck-through MRP beside it
+        {/* Price row - discounted price, then the struck-through MRP beside it
             on the same line, sharing a baseline (24px and 18px at 380 wide).
             The row has a fixed height (7cqw), identical in both branches, so a
-            card without a discount — or without pricing at all — never shifts
+            card without a discount - or without pricing at all - never shifts
             the button relative to its neighbours. */}
         {pricing ? (
           <div className="flex items-baseline gap-[2.1cqw] whitespace-nowrap h-[7cqw] mb-[2.6cqw]">
@@ -367,17 +367,17 @@ export default function StoryCard({ comic }: StoryCardProps) {
 
         {/* Personalise Button.
             ⚠️ Do NOT add `mt-auto` here. It looks like the right way to stop the
-            button moving, but this flex container is `top-[46%] h-[52%]` — it
+            button moving, but this flex container is `top-[46%] h-[52%]` - it
             runs to 98% of the card, while the shield shape in card.svg tapers
             and ends well above that. Pushing the button to the container's
             bottom drops it into the empty space BELOW the visible card.
             The button does not need pinning: everything above it is already a
-            fixed height — the tag row cannot wrap, and the title, description
+            fixed height - the tag row cannot wrap, and the title, description
             and price rows each reserve an explicit height. So the button lands
             at the same place on every card by simply flowing after them.
             Text is 18px at 380 wide; see the sizing note at the top.
 
-            Goes straight to the comic page — a real link, so it can be opened
+            Goes straight to the comic page - a real link, so it can be opened
             in a new tab. stopPropagation keeps the card's click handler from
             also opening the popup on the way out. Not sold in this country: a
             disabled button instead, since a link cannot be disabled. Its
@@ -410,7 +410,7 @@ export default function StoryCard({ comic }: StoryCardProps) {
         comic={comic}
         open={isQuickViewOpen}
         onOpenChange={setIsQuickViewOpen}
-        // The two covers this card shows — default and hover — and no others.
+        // The two covers this card shows - default and hover - and no others.
         coverImages={images.slice(0, 2)}
         pages={pages}
         pricing={

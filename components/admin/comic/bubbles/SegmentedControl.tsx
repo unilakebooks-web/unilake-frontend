@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
  * A row of mutually-exclusive options, styled to match the Short/Long preview
  * toggle in the bubble sidebar.
  *
- * Generic over the value so each call site keeps its own union type — passing a
+ * Generic over the value so each call site keeps its own union type - passing a
  * TextAlign to the vertical-alignment control is a compile error rather than a
  * 400 at save time.
  */

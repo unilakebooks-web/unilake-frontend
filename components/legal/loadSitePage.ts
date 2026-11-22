@@ -9,7 +9,7 @@ import type { SitePage, SitePageSlug } from "@/app/types/sitePage";
  * Shared by /privacy, /terms and /refund so the error handling exists once.
  *
  * IMPORTANT: the axios interceptor in app/lib/axios.ts rejects with a plain
- * `{ code, message }` object — there is no `.response` to inspect. Testing
+ * `{ code, message }` object - there is no `.response` to inspect. Testing
  * `error?.response?.status === 404` (as the blog detail page does) can never
  * be true, which sends an unpublished page to the error boundary instead of
  * the not-found page. Match on `code` instead.

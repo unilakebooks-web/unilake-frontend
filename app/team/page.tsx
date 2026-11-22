@@ -9,7 +9,7 @@ import type { Metadata } from "next";
 import { absoluteUrl } from "@/lib/seo";
 
 const TEAM_DESCRIPTION =
-  "Meet the people behind UniLake — the team creating personalized comic books for children.";
+  "Meet the people behind UniLake: the team creating personalized comic books for children.";
 
 export const metadata: Metadata = {
   title: "Our Team",

@@ -50,7 +50,7 @@ export default function CustomersPage() {
     search,
   });
 
-  // Stable — CustomerListFilters lists it in a debounce effect's dependencies.
+  // Stable - CustomerListFilters lists it in a debounce effect's dependencies.
   const handleSearchChange = useCallback((next: string | undefined) => {
     setSearch(next);
     setPage(1); // A narrower result set makes the old page number meaningless.

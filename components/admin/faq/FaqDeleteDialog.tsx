@@ -44,7 +44,7 @@ export function FaqDeleteDialog({ open, onOpenChange, faq, onConfirm }: FaqDelet
           </p>
           {faq && (
             <div className="mt-4 p-3 bg-gray-50 rounded-lg text-left border border-gray-100">
-              {/* Two lines max, full text on hover. Not `truncate` — see the
+              {/* Two lines max, full text on hover. Not `truncate` - see the
                   same fix in BlogDeleteDialog for why a no-wrap line here
                   pushed the dialog's contents off its right edge. */}
               <p
@@ -57,7 +57,7 @@ export function FaqDeleteDialog({ open, onOpenChange, faq, onConfirm }: FaqDelet
           )}
         </div>
 
-        {/* m-0 cancels DialogFooter's built-in negative margins — see the
+        {/* m-0 cancels DialogFooter's built-in negative margins - see the
             same fix in BlogDeleteDialog. */}
         <DialogFooter className="m-0 px-6 py-4 bg-gray-50 border-t border-gray-100 flex gap-2 sm:justify-end">
           <button

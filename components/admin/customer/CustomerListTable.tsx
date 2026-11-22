@@ -10,7 +10,7 @@ const VISIBLE_COMICS = 2;
 
 interface CustomerListTableProps {
   customers: AdminCustomerRow[];
-  /** True when a search is active — changes the empty-state wording. */
+  /** True when a search is active - changes the empty-state wording. */
   isSearching: boolean;
 }
 
@@ -54,7 +54,7 @@ export function CustomerListTable({ customers, isSearching }: CustomerListTableP
                 <tr key={customer.userId} className="hover:bg-white/60 transition-colors align-top">
                   <td className="px-6 py-3">
                     <div className="font-bold text-neutral-900 truncate max-w-[200px]">
-                      {customer.name || "—"}
+                      {customer.name || "-"}
                     </div>
                     <div className="text-xs text-neutral-500">
                       Customer since {format(new Date(customer.firstPurchaseAt), "MMM d, yyyy")}
@@ -90,7 +90,7 @@ export function CustomerListTable({ customers, isSearching }: CustomerListTableP
                     {customer.ordersCount}
                   </td>
 
-                  {/* One line per currency — never added together. */}
+                  {/* One line per currency - never added together. */}
                   <td className="px-6 py-3 hidden md:table-cell whitespace-nowrap font-semibold text-neutral-900">
                     {customer.totals.map((t) => (
                       <div key={t.currency}>{formatMoney(t.amount, t.currency)}</div>

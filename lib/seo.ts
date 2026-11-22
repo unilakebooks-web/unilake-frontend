@@ -14,12 +14,12 @@ import type { SiteSetting } from "@/app/types/siteSetting";
 
 /** Used whenever the admin has saved nothing, or the API is unreachable. */
 export const SITE_NAME = "UniLake";
-export const DEFAULT_TITLE = "UniLake — Personalized Storybooks for Kids";
+export const DEFAULT_TITLE = "UniLake: Personalized Storybooks for Kids";
 export const DEFAULT_DESCRIPTION =
   "Turn your child into the hero of their own comic book. Upload a photo, pick a story, and we print and deliver it.";
 
 /**
- * The public address of the site itself — NOT the API.
+ * The public address of the site itself - NOT the API.
  *
  * Needed for canonical links and for the absolute URLs a sitemap and social
  * share cards require. Falls back to the production host so a missing env var

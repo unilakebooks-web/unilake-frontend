@@ -11,9 +11,9 @@ import {
 type AutofillField = "city" | "state";
 
 /**
- * - idle      — nothing to say (not India, pincode incomplete, or no lookup yet)
- * - found     — fields were offered values from the data
- * - not-found — a full 6-digit Indian pincode that isn't in the data
+ * - idle      - nothing to say (not India, pincode incomplete, or no lookup yet)
+ * - found     - fields were offered values from the data
+ * - not-found - a full 6-digit Indian pincode that isn't in the data
  */
 export type PincodeStatus = "idle" | "found" | "not-found";
 
@@ -26,10 +26,10 @@ export type PincodeStatus = "idle" | "found" | "not-found";
  * `zip` would also fire when an edit form is reset with a saved address, and
  * silently rewrite City/State the moment the form opened.
  *
- * Overwrite rule — a field is only replaced while it is still "ours":
+ * Overwrite rule - a field is only replaced while it is still "ours":
  *   - it is empty, or
  *   - it still holds the value the form was loaded with (a saved address being
- *     edited — changing its pincode means the address moved), or
+ *     edited - changing its pincode means the address moved), or
  *   - it still holds the value this hook last wrote into it.
  * Anything the user typed themselves is never clobbered.
  *
@@ -40,10 +40,10 @@ export function usePincodeAutofill(form: UseFormReturn<AddressFormValues>) {
   const [status, setStatus] = useState<PincodeStatus>("idle");
   const [match, setMatch] = useState<PincodeMatch | null>(null);
 
-  // Last value this hook wrote per field — what makes a field "still ours".
+  // Last value this hook wrote per field - what makes a field "still ours".
   const autoFilledRef = useRef<Partial<Record<AutofillField, string>>>({});
   // Lookups are async; only the newest one may write. Typing 6 digits, then a
-  // 7th, then deleting it fires several — a slow early one must not win.
+  // 7th, then deleting it fires several - a slow early one must not win.
   const requestIdRef = useRef(0);
 
   const city = useWatch({ control: form.control, name: "city" });
@@ -85,7 +85,7 @@ export function usePincodeAutofill(form: UseFormReturn<AddressFormValues>) {
         result = await lookupPincode(pin);
       } catch (err) {
         // Data failed to download (offline, deploy mid-flight). Not worth
-        // alarming the customer — they can type City/State as before.
+        // alarming the customer - they can type City/State as before.
         console.warn("Pincode lookup unavailable:", err);
         if (requestId === requestIdRef.current) {
           setStatus("idle");
@@ -126,7 +126,7 @@ export function usePincodeAutofill(form: UseFormReturn<AddressFormValues>) {
     [runLookup, form]
   );
 
-  /** Call from the pincode input's onFocus — warms the data before the 6th digit. */
+  /** Call from the pincode input's onFocus - warms the data before the 6th digit. */
   const handlePincodeFocus = useCallback(() => {
     if (form.getValues("country") === "IN") preloadPincodes();
   }, [form]);

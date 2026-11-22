@@ -18,7 +18,7 @@ function initialsOf(name: string, email: string): string {
 
 /**
  * Social avatar with an initials fallback. The fallback covers both a missing
- * `image` and one that fails to load — Facebook avatar URLs are signed and
+ * `image` and one that fails to load - Facebook avatar URLs are signed and
  * expire, so a stored URL can start 403ing at any time.
  */
 function UserAvatar({ user }: { user: AdminUserRow }) {
@@ -62,7 +62,7 @@ function RoleBadge({ role }: { role: UserRole }) {
 
 interface UserListTableProps {
   users: AdminUserRow[];
-  /** The signed-in admin's id — their own row can't be demoted. */
+  /** The signed-in admin's id - their own row can't be demoted. */
   currentUserId: string | undefined;
   onChangeRole: (user: AdminUserRow) => void;
 }
@@ -108,7 +108,7 @@ export function UserListTable({ users, currentUserId, onChangeRole }: UserListTa
                       <div className="min-w-0">
                         <div className="flex items-center gap-2">
                           <span className="font-bold text-neutral-900 truncate max-w-[220px]">
-                            {user.name || "—"}
+                            {user.name || "-"}
                           </span>
                           {isSelf && (
                             <span className="text-[10px] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded-md bg-neutral-100 text-neutral-500 shrink-0">

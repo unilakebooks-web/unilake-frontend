@@ -12,7 +12,7 @@ import { useCountryStore } from "@/stores/useCountryStore";
 import { useCountryHydration } from "@/hooks/useCountryHydration";
 
 /**
- * The site's main links — one list for both the desktop bar and the phone
+ * The site's main links - one list for both the desktop bar and the phone
  * menu, so the two cannot drift apart.
  */
 const NAV_LINKS = [
@@ -30,7 +30,7 @@ interface HeaderProps {
   hideBulbForced?: boolean;
   flatBackground?: boolean;
   /**
-   * When true, scrolling back up does NOT bring the header back — it only
+   * When true, scrolling back up does NOT bring the header back - it only
    * reappears once the page is back near the top. Used on the comic preview
    * page, where the header sliding in over the pages on every small upward
    * scroll gets in the way of browsing variants.
@@ -134,7 +134,7 @@ export default function Header({ topOffset = 0, hideBulbForced = false, flatBack
       `}
     >
       <div className="max-w-[1440px] mx-auto h-full px-5 sm:px-8 lg:px-12 flex lg:grid lg:grid-cols-[1fr_auto_1fr] items-center justify-between">
-        {/* Zone 1 — Left: Logo & Mobile Menu Button */}
+        {/* Zone 1 - Left: Logo & Mobile Menu Button */}
         <div className="flex items-center justify-start gap-4">
           {/* Mobile Left: Hamburger */}
           <button 
@@ -159,7 +159,7 @@ export default function Header({ topOffset = 0, hideBulbForced = false, flatBack
           </Link>
         </div>
 
-        {/* Zone 2 — Center: Main Navigation */}
+        {/* Zone 2 - Center: Main Navigation */}
         <ul className="relative hidden lg:flex items-center justify-center gap-6 xl:gap-8 2xl:gap-10 text-white text-[15px] font-medium tracking-wide select-none whitespace-nowrap">
           {NAV_LINKS.map((item) => (
             <li key={item.name} className={`${isActive(item.href) ? "text-[#FFD54A]" : "hover:text-[#FFD54A]"} cursor-pointer transition-colors duration-200`}>
@@ -176,7 +176,7 @@ export default function Header({ topOffset = 0, hideBulbForced = false, flatBack
           )}
         </ul>
 
-        {/* Zone 3 — Right: Utility Controls */}
+        {/* Zone 3 - Right: Utility Controls */}
         <div className="flex items-center justify-end gap-4 sm:gap-5 lg:gap-6 text-white">
           {/* Desktop Only Icons */}
           <div className="hidden lg:flex items-center gap-4 xl:gap-5">

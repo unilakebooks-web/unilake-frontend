@@ -7,18 +7,18 @@ import { BlogListItem } from "@/app/types/blog";
  * One blog post card on the purple tab-shaped background. Shared by the
  * homepage "Blogs" section and the /blog index so the two never drift apart.
  *
- * GEOMETRY — blog.svg is 387×497. Its top-right corner is cut away for the
+ * GEOMETRY - blog.svg is 387×497. Its top-right corner is cut away for the
  * arrow circle: the card body there only reaches x = 258.5 (66.8% of the
  * width), and the full-width body begins at y ≈ 112 (28.9% of the WIDTH,
  * once the corner curve at the right content edge is cleared).
  *
- * Text must never sit in that cut-out — it is the page background, so white
+ * Text must never sit in that cut-out - it is the page background, so white
  * text there spills visibly out of the card. So:
  *   - the title sits beside the arrow, padded clear of the cut-out (pr-[35%]);
  *   - the title block has a minimum height that ends just below the cut-out,
  *     so the excerpt ALWAYS starts beneath it and can use the full width.
  *
- * Every vertical measure is in `cqw` — a percentage of this card's width —
+ * Every vertical measure is in `cqw` - a percentage of this card's width -
  * because the card keeps a fixed aspect ratio, so the cut-out is always the
  * same fraction of the width however wide the grid column is. Reference:
  *   content top     = 8cqw (pt-[8%], which is also % of width)
@@ -31,7 +31,7 @@ export default function BlogCard({ blog }: { blog: BlogListItem }) {
       href={`/blog/${blog.slug}`}
       className="@container relative group block w-full"
     >
-      {/* SVG background shape — default state */}
+      {/* SVG background shape - default state */}
       <Image
         src="/assets/home_page/blog.svg"
         alt=""
@@ -41,7 +41,7 @@ export default function BlogCard({ blog }: { blog: BlogListItem }) {
         className="w-full h-auto block transition-opacity duration-900 ease-in-out group-hover:opacity-0"
         draggable={false}
       />
-      {/* SVG background shape — hover state */}
+      {/* SVG background shape - hover state */}
       <Image
         src="/assets/home_page/blog_on_hover.svg"
         alt=""
@@ -65,7 +65,7 @@ export default function BlogCard({ blog }: { blog: BlogListItem }) {
           </h3>
         </div>
 
-        {/* Excerpt — always below the cut-out, so it can use the full card
+        {/* Excerpt - always below the cut-out, so it can use the full card
             width. break-words keeps a long URL or unbroken word inside. */}
         {blog.excerpt && (
           <p
@@ -75,9 +75,9 @@ export default function BlogCard({ blog }: { blog: BlogListItem }) {
           </p>
         )}
 
-        {/* Cover image — inset in the lower portion.
+        {/* Cover image - inset in the lower portion.
             Fixed box so every card in the grid stays the same height, but
-            object-contain inside it — the admin can upload any shape and none
+            object-contain inside it - the admin can upload any shape and none
             of it is ever cut off. Mismatched ratios letterbox against the
             placeholder colour, which reads as deliberate. */}
         <div className="mt-auto relative w-full aspect-[16/10] rounded-xl overflow-hidden bg-[#F3E8FF]">

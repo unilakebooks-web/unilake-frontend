@@ -17,7 +17,7 @@ interface BlogBodyRendererProps {
  *
  * It was used here until Sep 2026 and took the whole page down in production.
  * DOMPurify needs a DOM, so on the server `isomorphic-dompurify` pulls in
- * `jsdom` — and jsdom depends on seven ESM-only packages while Next.js treats
+ * `jsdom` - and jsdom depends on seven ESM-only packages while Next.js treats
  * jsdom as an *external* package, meaning it is `require()`d at runtime rather
  * than bundled. On Vercel's Node that throws ERR_REQUIRE_ESM before a single
  * line of our code runs, crashing the function with FUNCTION_INVOCATION_FAILED.
@@ -30,28 +30,28 @@ interface BlogBodyRendererProps {
  *
  * `sanitize-html` is plain JavaScript with no DOM, so there is no jsdom and
  * nothing to fake. It is also not in Next's default external list, so it is
- * bundled at build time instead of required at runtime — which is what makes it
+ * bundled at build time instead of required at runtime - which is what makes it
  * immune to this whole class of failure regardless of the Node version Vercel
  * happens to run.
  */
 
 /**
  * The allowlist is built from what the TipTap editor can actually produce, not
- * from what the toolbar has buttons for — markdown shortcuts create code blocks
+ * from what the toolbar has buttons for - markdown shortcuts create code blocks
  * (```) and horizontal rules (---) with no button, and pasted content can carry
  * both. Anything absent is dropped.
  *
  * `class` is kept on `a` and `img` because the editor bakes Tailwind classes
  * into them at insert time (rounded, centred images; purple underlined links).
  * Stripping it would silently restyle every post already published. The values
- * come from admins only and are inert — a class name cannot execute.
+ * come from admins only and are inert - a class name cannot execute.
  *
  * `allowedSchemes` is the line doing the real security work: it is what stops a
  * `javascript:` URL surviving inside an href.
  */
 const SANITIZE_OPTIONS: sanitizeHtml.IOptions = {
   allowedTags: [
-    // structure — h1 is deliberately absent, the page owns it for the title
+    // structure - h1 is deliberately absent, the page owns it for the title
     "p",
     "br",
     "hr",
@@ -126,7 +126,7 @@ function parseYouTubeUrl(href: string): { id: string; start: number } | null {
 }
 
 // sanitize-html strips every <p> attribute, so after sanitizing a paragraph is
-// always a bare `<p>` — that is what makes these patterns exact.
+// always a bare `<p>` - that is what makes these patterns exact.
 const PARAGRAPH = /<p>([\s\S]*?)<\/p>/g;
 const LINE_BREAK = /<br\s*\/?>/;
 // One line that is nothing but a single link.
@@ -152,13 +152,13 @@ function youTubePlayer(video: { id: string; start: number }, linkText: string): 
  * Turns every LINE that is only a YouTube link into a player. Works per line,
  * not per paragraph: TipTap often keeps a link that looks like it's on its
  * own line inside the next paragraph, split off with <br> (Shift+Enter or
- * pasted text) — e.g. `<p><a>Watch</a><br><br>Next paragraph…</p>`. The
+ * pasted text) - e.g. `<p><a>Watch</a><br><br>Next paragraph…</p>`. The
  * paragraph is split around the player and the text on either side stays as
  * normal paragraphs. Links inside a sentence share their line with other
  * text, so they never match and sentences are never broken apart.
  *
  * Runs on already-sanitized HTML. The iframe is built only from a validated
- * 11-character id and a numeric start time — never from the admin's markup —
+ * 11-character id and a numeric start time - never from the admin's markup -
  * so it cannot carry anything the sanitizer removed. youtube-nocookie.com is
  * YouTube's privacy-enhanced player (no tracking cookies until play).
  */

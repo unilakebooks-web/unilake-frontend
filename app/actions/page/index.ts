@@ -36,7 +36,7 @@ export async function deletePage(pageId: string): Promise<void> {
  * bubbles passed in rather than whatever is stored. That is what lets the
  * mapper preview unsaved edits.
  *
- * Text only — no face swap. Nothing is saved; the response is a data URI.
+ * Text only - no face swap. Nothing is saved; the response is a data URI.
  */
 export async function previewPageStamp(
   pageId: string,
@@ -52,7 +52,7 @@ export async function previewPageStamp(
 /**
  * Reorders a comic's pages. Position in `orderedPageIds` becomes the new
  * pageNumber (index 0 -> page 1). The backend requires the COMPLETE set of the
- * comic's page IDs — a partial list is rejected with a 400.
+ * comic's page IDs - a partial list is rejected with a 400.
  *
  * Note this route is nested under the comic, unlike updatePage/deletePage.
  * Returns the full page list in its new order.

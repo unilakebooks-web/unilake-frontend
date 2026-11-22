@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 
 /**
  * Customer-facing only. Deliberately NOT the admin OrderStatusBadge, which
- * renders the 9 raw OrderStatus values — including SHIPROCKET_FAILED, the
+ * renders the 9 raw OrderStatus values - including SHIPROCKET_FAILED, the
  * internal vocabulary the backend collapses away before it reaches a customer.
  *
  * The label always comes from the server so the wording stays in one place.

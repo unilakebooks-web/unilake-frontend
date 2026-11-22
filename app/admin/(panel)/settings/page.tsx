@@ -48,7 +48,7 @@ export default function SettingsAdminPage() {
           </button>
         </div>
       ) : (
-        /* `setting` is null until the first save — an empty form, not an error.
+        /* `setting` is null until the first save - an empty form, not an error.
            The toggle sits above the form and saves on its own; the two write to
            different columns and never to each other's. */
         <>

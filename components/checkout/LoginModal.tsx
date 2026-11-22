@@ -6,7 +6,7 @@ import { useAuth } from "@/app/hooks/useAuth";
 
 type OAuthProvider = "Google" | "Facebook";
 
-// ── Spinner ────────────────────────────────────────────────────────────────────
+// -- Spinner --------------------------------------------------------------------
 function Spinner() {
     return (
         <svg
@@ -22,7 +22,7 @@ function Spinner() {
     );
 }
 
-// ── Google Icon ────────────────────────────────────────────────────────────────
+// -- Google Icon ----------------------------------------------------------------
 function GoogleIcon() {
     return (
         <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
@@ -34,7 +34,7 @@ function GoogleIcon() {
     );
 }
 
-// ── Facebook Icon ──────────────────────────────────────────────────────────────
+// -- Facebook Icon --------------------------------------------------------------
 function FacebookIcon() {
     return (
         <svg viewBox="0 0 24 24" width="22" height="22" fill="#FFFFFF" aria-hidden="true">

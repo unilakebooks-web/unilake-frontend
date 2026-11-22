@@ -7,7 +7,7 @@ function friendlyErrorMessage(raw: string | undefined, fallback: string): string
     if (!raw) return fallback;
     const lower = raw.toLowerCase();
     if (lower.includes("not available yet") || lower.includes("503") || lower.includes("service unavailable")) {
-        return "The server is warming up — please wait a few seconds and try again.";
+        return "The server is warming up. Please wait a few seconds and try again.";
     }
     return raw || fallback;
 }

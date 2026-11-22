@@ -28,7 +28,7 @@ interface BlogDetailPageProps {
  * Per-post title, description and share card.
  *
  * Fallback chain: the admin's SEO override, then the post's excerpt, then the
- * opening of the body with its HTML stripped — a post with neither an excerpt
+ * opening of the body with its HTML stripped - a post with neither an excerpt
  * nor an SEO description still gets something meaningful rather than the
  * generic site blurb.
  *
@@ -87,7 +87,7 @@ export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
   // Unwrap params
   const { slug } = await params;
 
-  // 404 handling lives in loadBlog — see the note there on why the previous
+  // 404 handling lives in loadBlog - see the note there on why the previous
   // `error?.response?.status === 404` check could never match.
   const blog = await loadBlog(slug);
 
@@ -127,7 +127,7 @@ export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
           </p>
         </header>
 
-        {/* Cover Image — shown whole at its own proportions, never cropped.
+        {/* Cover Image - shown whole at its own proportions, never cropped.
             Width is capped by the column and height by min(70vh, 640px); the
             browser keeps the aspect ratio under both caps, so a landscape image
             still fills the column while a square or portrait one is limited by
@@ -135,7 +135,7 @@ export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
             frame (border, radius, shadow) sits on the image itself so it hugs
             the picture with no empty bands. width/height 0 + auto sizing is
             the next/image pattern for images whose real dimensions we don't
-            store — the tradeoff is a small layout shift as it loads. */}
+            store - the tradeoff is a small layout shift as it loads. */}
         {blog.coverImageUrl && (
           <div className="flex justify-center mb-12">
             <Image

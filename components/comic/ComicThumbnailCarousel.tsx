@@ -19,7 +19,7 @@ type Slide =
 const FALLBACK_IMAGE = "/assets/home_page/bookCover1.png";
 
 /**
- * How many leading thumbnails the detail page carousel skips — it opens on
+ * How many leading thumbnails the detail page carousel skips - it opens on
  * image 3. Only this carousel; the story card and share image still use them.
  */
 const SKIPPED_LEADING_IMAGES = 2;
@@ -71,7 +71,7 @@ export default function ComicThumbnailCarousel({
 
   // null = the visitor has not touched the mute button, so autoplay negotiation
   // decides. Once they have, their choice wins on every subsequent return to the
-  // slide — otherwise someone who deliberately muted gets sound thrown at them
+  // slide - otherwise someone who deliberately muted gets sound thrown at them
   // the moment they navigate back.
   const userMutePreferenceRef = useRef<boolean | null>(null);
 
@@ -95,7 +95,7 @@ export default function ComicThumbnailCarousel({
    *
    * Autoplay policy: a browser rejects play() with audio until the user has
    * interacted with the page. So try with sound first, and on rejection retry
-   * muted — which is always permitted — and surface an unmute button. A visitor
+   * muted - which is always permitted - and surface an unmute button. A visitor
    * who has clicked anything gets sound; everyone else gets a silent video
    * rather than a dead frame.
    */
@@ -115,7 +115,7 @@ export default function ComicThumbnailCarousel({
     const attemptPlay = async () => {
       const preference = userMutePreferenceRef.current;
 
-      // Explicit choice already made — honour it instead of re-negotiating.
+      // Explicit choice already made - honour it instead of re-negotiating.
       if (preference !== null) {
         video.muted = preference;
         setIsMuted(preference);
@@ -143,7 +143,7 @@ export default function ComicThumbnailCarousel({
         await video.play();
         if (!cancelled) setIsMuted(false);
       } catch {
-        // Blocked with sound — fall back to muted autoplay.
+        // Blocked with sound - fall back to muted autoplay.
         if (cancelled) return;
 
         video.muted = true;
@@ -152,7 +152,7 @@ export default function ComicThumbnailCarousel({
         try {
           await video.play();
         } catch {
-          // Even muted autoplay was refused (rare — some data-saver modes).
+          // Even muted autoplay was refused (rare - some data-saver modes).
           // Native controls are not shown, so leave it paused on its poster
           // frame rather than throwing.
         }
@@ -193,7 +193,7 @@ export default function ComicThumbnailCarousel({
 
   return (
     <div className="flex flex-col items-center w-full max-w-[480px]">
-      {/* Carousel Container — its height follows the cover box below, so the
+      {/* Carousel Container - its height follows the cover box below, so the
           arrows (top-1/2) stay vertically centred on whatever shape it has. */}
       <div className="relative w-full flex items-center justify-center mb-6 px-4">
 

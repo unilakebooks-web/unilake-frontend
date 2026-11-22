@@ -7,7 +7,7 @@ import Header from "./Header";
 import type { Announcement } from "@/app/types/announcement";
 
 interface HomeHeaderSectionProps {
-  /** Passed through to Header — see HeaderProps.showOnlyAtTop. */
+  /** Passed through to Header - see HeaderProps.showOnlyAtTop. */
   showOnlyAtTop?: boolean;
   /**
    * The home page passes the announcements it loaded (when there are some), so the banner is there from the

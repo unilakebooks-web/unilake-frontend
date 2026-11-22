@@ -16,7 +16,7 @@ import { hankenGrotesk, poppins, protestStrike } from "@/app/fonts";
 import { formatAgeGroup, formatGender } from "@/lib/comicTags";
 import { toImageUrl } from "@/lib/imageUrl";
 
-/** Price as StoryCard already resolved it — null when not sold in the country. */
+/** Price as StoryCard already resolved it - null when not sold in the country. */
 export interface QuickViewPrice {
   price: number;
   mrp: number;
@@ -29,8 +29,8 @@ interface ComicQuickViewModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   /**
-   * The covers the card shows — its default and its hover image, fallback
-   * included — so one or two entries. Shown as a slider.
+   * The covers the card shows - its default and its hover image, fallback
+   * included - so one or two entries. Shown as a slider.
    */
   coverImages: string[];
   pages: number;
@@ -66,7 +66,7 @@ function formatAmount(value: number): string {
  * is more than one.
  *
  * Rendered inside DialogContent, which unmounts on close, so the slider is back
- * on the first cover — the one the card shows — every time the popup opens.
+ * on the first cover - the one the card shows - every time the popup opens.
  *
  * Every image stays mounted and only the active one is visible, so switching
  * is instant instead of waiting on a fresh load.
@@ -95,7 +95,7 @@ function CoverSlider({
           <Image
             key={`${i}-${src}`}
             src={toImageUrl(src)}
-            alt={hasMany ? `${title} — cover ${i + 1} of ${images.length}` : title}
+            alt={hasMany ? `${title} - cover ${i + 1} of ${images.length}` : title}
             fill
             sizes="(max-width: 768px) 92vw, 340px"
             aria-hidden={i !== index}
@@ -160,14 +160,14 @@ function CoverSlider({
  * "Read more"). StoryCard's own Personalise button links straight to
  * /comic/[id]; this popup's button goes to the same place.
  *
- * Shows what the card has to clip — the full description in particular — and
+ * Shows what the card has to clip - the full description in particular - and
  * hands off to /comic/[id] for the actual personalisation form. Everything here
  * comes from the catalogue list item the card already holds, so opening it
  * costs no request.
  *
  * The price is passed in from the card rather than recomputed, so the card and
  * the popup can never disagree. Age groups, themes and genders are listed in
- * full here — every value gets its own pill, unlike the card's condensed row.
+ * full here - every value gets its own pill, unlike the card's condensed row.
  */
 export default function ComicQuickViewModal({
   comic,
@@ -187,13 +187,13 @@ export default function ComicQuickViewModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      {/* LAYOUT — a flex column, not the shared dialog's default grid.
+      {/* LAYOUT - a flex column, not the shared dialog's default grid.
           The grid's single `auto` column grows to its widest child, which on a
           phone made rows wider than the popup and clipped them on the right.
           As a flex column each child is bounded by the popup's width instead.
 
           The popup itself never scrolls (overflow-hidden). Only the middle
-          region does, which is what lets the close button and — on phones —
+          region does, which is what lets the close button and - on phones -
           the Personalise footer stay put while a long description scrolls.
 
           Width: the shared base keeps a 1rem gutter each side on phones
@@ -213,10 +213,10 @@ export default function ComicQuickViewModal({
           <XIcon className="size-5" />
         </DialogClose>
 
-        {/* ── Scrollable body ──────────────────────────────────────── */}
+        {/* -- Scrollable body ---------------------------------------- */}
         <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain p-4 sm:p-6 md:p-7">
           <div className="flex flex-col md:flex-row gap-5 md:gap-8 min-w-0">
-            {/* ── Cover ──────────────────────────────────────────────── */}
+            {/* -- Cover ------------------------------------------------ */}
             <div className="w-full md:w-[45%] shrink-0 min-w-0">
               <CoverSlider
                 images={coverImages}
@@ -225,9 +225,9 @@ export default function ComicQuickViewModal({
               />
             </div>
 
-            {/* ── Details ────────────────────────────────────────────── */}
+            {/* -- Details ---------------------------------------------- */}
             <div className="flex flex-col min-w-0 flex-1">
-              {/* Tags wrap here — unlike the card there is no fixed height to
+              {/* Tags wrap here - unlike the card there is no fixed height to
                   protect, so every age group, theme and gender gets its own
                   pill and long theme names show in full. The right padding on
                   md+ clears the close button, which sits above this column
@@ -292,7 +292,7 @@ export default function ComicQuickViewModal({
               <div className="h-px bg-[#3F3C95]/10 my-4" />
 
               {/* Full, unclamped description. whitespace-pre-wrap keeps any line
-                  breaks the admin typed. Plain text — never rendered as HTML. */}
+                  breaks the admin typed. Plain text - never rendered as HTML. */}
               <DialogDescription
                 className={`${poppins.className} text-sm sm:text-[15px] leading-relaxed text-black/75 whitespace-pre-wrap break-words`}
               >
@@ -301,7 +301,7 @@ export default function ComicQuickViewModal({
 
               {/* md and up: the button follows the description inside the
                   details column. Below md it lives in the pinned footer
-                  instead — the two are never visible at the same time. */}
+                  instead - the two are never visible at the same time. */}
               <button
                 type="button"
                 onClick={personalise}
@@ -314,7 +314,7 @@ export default function ComicQuickViewModal({
           </div>
         </div>
 
-        {/* ── Pinned footer (phones / small tablets only) ──────────────
+        {/* -- Pinned footer (phones / small tablets only) --------------
             shrink-0 keeps it out of the scroll region, so the button is
             always on screen however long the description is. */}
         <div className="md:hidden shrink-0 border-t border-[#3F3C95]/10 bg-white px-4 sm:px-6 pt-3 pb-4">

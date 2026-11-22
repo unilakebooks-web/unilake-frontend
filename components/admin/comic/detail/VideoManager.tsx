@@ -13,7 +13,7 @@ interface VideoManagerProps {
   comic: ComicDetail;
 }
 
-// Frontend-only cap, matching the rest of the system — presigned URLs sign no
+// Frontend-only cap, matching the rest of the system - presigned URLs sign no
 // ContentLength, so R2 itself will accept any size. This stops the accident,
 // not a determined caller.
 const MAX_VIDEO_BYTES = 100 * 1024 * 1024;
@@ -185,7 +185,7 @@ export function VideoManager({ comic }: VideoManagerProps) {
           </div>
 
           {/* The dropzone root still has to be mounted for `open()` to work, but
-              it is click/drag-disabled while a video exists — replacing is an
+              it is click/drag-disabled while a video exists - replacing is an
               explicit button, never an accidental drop onto the preview. */}
           <div {...getRootProps()} className="hidden">
             <input {...getInputProps()} />
@@ -218,7 +218,7 @@ export function VideoManager({ comic }: VideoManagerProps) {
                   : "Click or drag a video to add one"}
               </p>
               <p className="text-xs text-neutral-500 mt-1">
-                MP4 or WebM, up to {formatMb(MAX_VIDEO_BYTES)}. Optional — a comic
+                MP4 or WebM, up to {formatMb(MAX_VIDEO_BYTES)}. Optional, a comic
                 without a video simply shows its images.
               </p>
             </div>

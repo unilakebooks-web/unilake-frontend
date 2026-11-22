@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 /**
  * Is the public site correctly configured right now?
  *
- * Every row is a boolean with a link to the screen that fixes it. Not a chart —
+ * Every row is a boolean with a link to the screen that fixes it. Not a chart -
  * booleans are not magnitudes.
  *
  * The How It Works row is the reason this panel exists. Its real publish rule
@@ -75,7 +75,7 @@ export function StorefrontHealth({ health }: { health: ContentHealth }) {
       detail:
         comics.published > 0
           ? `${comics.published} live · ${comics.draft} draft`
-          : "Nothing is published — the catalogue is empty",
+          : "Nothing is published: the catalogue is empty",
       href: "/admin/comics",
       blocking: true,
     },
@@ -88,7 +88,7 @@ export function StorefrontHealth({ health }: { health: ContentHealth }) {
         comics.publishedMissingPricing > 0
           ? `${comics.publishedMissingPricing} published comic(s) have no pricing at all`
           : comics.publishedWithIncompleteMrp > 0
-            ? `${comics.publishedWithIncompleteMrp} published comic(s) have a rule with no MRP — the strike-through price won't show`
+            ? `${comics.publishedWithIncompleteMrp} published comic(s) have a rule with no MRP, the strike-through price won't show`
             : "Every published comic is priced",
       href: "/admin/comics",
       blocking: true,
@@ -99,7 +99,7 @@ export function StorefrontHealth({ health }: { health: ContentHealth }) {
       detail:
         countries.active > 0
           ? `${countries.active} active`
-          : "No active country — nobody can check out",
+          : "No active country: nobody can check out",
       href: "/admin/countries",
       blocking: true,
     },
@@ -109,7 +109,7 @@ export function StorefrontHealth({ health }: { health: ContentHealth }) {
       detail:
         homepage.activeHeroImages > 0
           ? `${homepage.activeHeroImages} active`
-          : "No active slide — the homepage hero is empty",
+          : "No active slide: the homepage hero is empty",
       href: "/admin/hero-slides",
       blocking: true,
     },
@@ -118,7 +118,7 @@ export function StorefrontHealth({ health }: { health: ContentHealth }) {
       ok: homepage.howItWorksReady,
       detail: homepage.howItWorksReady
         ? "Live on the homepage"
-        : "Hidden — needs to be active, with a video and at least one step",
+        : "Hidden, needs to be active, with a video and at least one step",
       href: "/admin/how-it-works",
       blocking: true,
     },
@@ -128,7 +128,7 @@ export function StorefrontHealth({ health }: { health: ContentHealth }) {
       detail:
         homepage.activeAnnouncements > 0
           ? `${homepage.activeAnnouncements} rotating`
-          : "None active — the bar is hidden",
+          : "None active: the bar is hidden",
       href: "/admin/announcement-bar",
     },
     {
@@ -154,7 +154,7 @@ export function StorefrontHealth({ health }: { health: ContentHealth }) {
         settings.contactEmailSet &&
         settings.contactPhoneSet,
       detail: !settings.siteSettingsSaved
-        ? "Never saved — the footer and contact page have no details"
+        ? "Never saved: the footer and contact page have no details"
         : !settings.contactEmailSet || !settings.contactPhoneSet
           ? "Missing a contact email or phone number"
           : "Brand and contact details are set",

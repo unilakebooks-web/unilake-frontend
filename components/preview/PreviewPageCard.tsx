@@ -47,7 +47,7 @@ interface PreviewPageCardProps {
    */
   generatingFact?: string;
   /**
-   * The book has been sent to print. Shows only the variant that was printed —
+   * The book has been sent to print. Shows only the variant that was printed -
    * no arrows, no thumbnails, no regenerate.
    */
   readOnly?: boolean;
@@ -59,7 +59,7 @@ interface PreviewPageCardProps {
   canRegenerate?: boolean;
 }
 
-/** Variant caps — must match MAX_VARIANTS_BEFORE/AFTER_PAYMENT in the backend's config/generation.ts. */
+/** Variant caps - must match MAX_VARIANTS_BEFORE/AFTER_PAYMENT in the backend's config/generation.ts. */
 const MAX_VARIANTS_BEFORE_PAYMENT = 3;
 const MAX_VARIANTS_AFTER_PAYMENT = 8;
 
@@ -80,7 +80,7 @@ export default function PreviewPageCard({
   //
   // Read-only narrows that to the printed one. The fallback (newest finished)
   // only covers a session with no selection recorded, which send-to-print
-  // should make impossible — but an empty card would be worse than a guess.
+  // should make impossible - but an empty card would be worse than a guess.
   const variants = readOnly
     ? (() => {
         const printed = page.variants.filter((v) => v.isSelected);
@@ -101,7 +101,7 @@ export default function PreviewPageCard({
   const [isLoadingRegenerate, setIsLoadingRegenerate] = useState(false);
 
   // The variant this user just asked for. Set on a successful regenerate, cleared once
-  // that variant lands. Only a variant the user personally requested auto-switches —
+  // that variant lands. Only a variant the user personally requested auto-switches -
   // anything else arriving would yank the view away from what they chose to look at.
   const awaitedVariantRef = useRef<number | null>(null);
 
@@ -247,7 +247,7 @@ export default function PreviewPageCard({
             )}
 
             {/* After showRegenerateSlide, so navigating to the regenerate slide
-                still works from a failed page — which is what the copy tells
+                still works from a failed page - which is what the copy tells
                 the user to do. */}
             {!isLocked && !showRegenerateSlide && hasFailed && (
               <PageErrorPlaceholder />

@@ -34,7 +34,7 @@ export function getErrorCode(error: unknown): string | undefined {
 }
 
 /**
- * Renders an API money value for display — "₹48,500.00" rather than
+ * Renders an API money value for display - "₹48,500.00" rather than
  * "INR 48500.00".
  *
  * Amounts arrive as STRINGS (Prisma serialises Decimal that way) and stay
@@ -43,7 +43,7 @@ export function getErrorCode(error: unknown): string | undefined {
  * group the digits and attach the right symbol. Nothing downstream consumes the
  * result arithmetically, so there is no float rounding to leak anywhere.
  *
- * Deliberately NOT used in dense tables — OrderListTable's `{currency} {amount}`
+ * Deliberately NOT used in dense tables - OrderListTable's `{currency} {amount}`
  * is correct there, where a column of bare aligned numbers reads better than a
  * column of symbols. This is for headline figures.
  *
@@ -69,7 +69,7 @@ export function formatMoney(amount: string, currency: string): string {
 }
 
 /**
- * Compact form for stat tiles where the full figure would wrap — 48500 → "48.5K".
+ * Compact form for stat tiles where the full figure would wrap - 48500 → "48.5K".
  * Keeps the currency symbol. Falls back to the full format below the threshold,
  * because "850" is not improved by being written "0.9K".
  */
@@ -94,7 +94,7 @@ export function formatMoneyCompact(amount: string, currency: string): string {
  * Works out what to render for a pricing rule's MRP.
  *
  * Prices arrive from the API as strings (Prisma serializes Decimal that way),
- * and `mrp` is additionally nullable — the column was added after launch, so
+ * and `mrp` is additionally nullable - the column was added after launch, so
  * rows written before then have none.
  *
  * `showMrp` folds both awkward cases into one flag:

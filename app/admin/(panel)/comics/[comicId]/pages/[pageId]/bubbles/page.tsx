@@ -62,7 +62,7 @@ export default function BubbleMapperPage({
 
   // New bubbles inherit the colour last chosen on this page, so colouring a
   // whole page one shade doesn't mean re-picking it every time. Resets to black
-  // on a fresh page load — deliberately not persisted anywhere.
+  // on a fresh page load - deliberately not persisted anywhere.
   const [lastUsedColor, setLastUsedColor] = useState<string>(DEFAULT_FONT_COLOR);
   // Same for the name colour. null ("Same as text") is a real choice and is
   // remembered too, so picking it once sticks for the next bubbles.
@@ -135,7 +135,7 @@ export default function BubbleMapperPage({
   /**
    * Preview is only allowed on a clean, complete page.
    *
-   * The button stays clickable while blocked so this can say WHY — a disabled
+   * The button stays clickable while blocked so this can say WHY - a disabled
    * button would swallow the click and leave the admin guessing.
    *
    * Check order matters. A page can be both unsaved AND missing a font, and in
@@ -146,14 +146,14 @@ export default function BubbleMapperPage({
   const handlePreview = () => {
     if (hasMissingFont) {
       toast.error(
-        "Cannot preview — some bubbles have no font assigned. Assign a font to every bubble first.",
+        "Cannot preview: some bubbles have no font assigned. Assign a font to every bubble first.",
       );
       return;
     }
 
     if (hasEmptyDialogue) {
       toast.error(
-        "Cannot preview — some bubbles have no dialogue. Fill them in first.",
+        "Cannot preview: some bubbles have no dialogue. Fill them in first.",
       );
       return;
     }
@@ -193,7 +193,7 @@ export default function BubbleMapperPage({
   };
 
   // What the preview renders: the bubbles exactly as they stand on screen,
-  // saved or not. Deleted ones are filtered out — a bubble removed but not yet
+  // saved or not. Deleted ones are filtered out - a bubble removed but not yet
   // saved must not appear. The `?? DEFAULT_` fallbacks mirror the save payload
   // so preview and save always send the same values.
   const previewBubbles: PreviewStampBubble[] = bubbles
@@ -275,7 +275,7 @@ export default function BubbleMapperPage({
 
   const handleSave = async () => {
     if (!hasUnsavedChanges) return;
-    // Sidebar numbers bubbles by their position among non-deleted ones —
+    // Sidebar numbers bubbles by their position among non-deleted ones -
     // match that here or the error points at the wrong bubble.
     const activeBubbles = bubbles.filter((b) => !b.isDeleted);
     const emptyIndex = activeBubbles.findIndex((b) => !b.dialogue?.trim());
@@ -288,7 +288,7 @@ export default function BubbleMapperPage({
       return;
     }
 
-    // Catches bubbles loaded from the API with fontId: null — new ones always
+    // Catches bubbles loaded from the API with fontId: null - new ones always
     // get a font assigned on creation.
     const noFontIndex = activeBubbles.findIndex((b) => !b.fontId);
 
@@ -305,7 +305,7 @@ export default function BubbleMapperPage({
     try {
       const promises: Promise<unknown>[] = [];
 
-      // Deletions come from the full list — activeBubbles excludes them.
+      // Deletions come from the full list - activeBubbles excludes them.
       for (const bubble of bubbles) {
         if (bubble.isDeleted && !bubble.isNew) {
           promises.push(deleteBubble(bubble.id));
@@ -340,7 +340,7 @@ export default function BubbleMapperPage({
 
         // Renumber untouched bubbles too when their stored value is stale.
         // Without this, saving one edited bubble leaves a mix of old zeros and
-        // new indexes — which sorts worse than all-zeros did.
+        // new indexes - which sorts worse than all-zeros did.
         const needsRenumber = bubble.sortOrder !== index;
 
         if (bubble.isModified || needsRenumber) {

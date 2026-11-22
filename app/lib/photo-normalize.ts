@@ -1,7 +1,7 @@
 // 🔴 heic2any is deliberately NOT imported at the top of this file.
 //
 // It reads `window` while its module body is evaluating, and "use client" does
-// not mean "browser only" — Next still renders client components on the server
+// not mean "browser only" - Next still renders client components on the server
 // to produce the initial HTML. A top-level import therefore crashes the server
 // render of every route that reaches this module, and /comic/[comicId] returned
 // a 500 on any direct visit or hard refresh.

@@ -22,7 +22,7 @@ interface ComicSeoEditorProps {
  * Deliberately its own card rather than two more fields inside ComicInfoEditor.
  *
  * That editor renders <ComicDetailsFields />, which is SHARED with the
- * create-comic wizard — adding SEO inputs there would surface them during
+ * create-comic wizard - adding SEO inputs there would surface them during
  * creation too, which is not what was asked for. Keeping this separate also
  * keeps it clear of that form's freePreviewPages/pageCount cross-validation,
  * which has nothing to do with SEO.
@@ -37,7 +37,7 @@ export function ComicSeoEditor({ comic }: ComicSeoEditorProps) {
 
   // The comic comes from a query that refetches (saving the video or the
   // thumbnails invalidates it), so the inputs have to re-seed when the row
-  // itself changes — but NOT on every refetch, or a refetch mid-typing would
+  // itself changes - but NOT on every refetch, or a refetch mid-typing would
   // wipe what the admin is writing.
   //
   // This is React's documented "adjusting state when a prop changes" pattern:
@@ -94,7 +94,7 @@ export function ComicSeoEditor({ comic }: ComicSeoEditorProps) {
           </h2>
           <p className="text-sm text-neutral-500 mt-0.5">
             What Google shows, and the preview card when someone shares this
-            comic on WhatsApp. Both optional — leave blank to use the comic’s own
+            comic on WhatsApp. Both optional, leave blank to use the comic’s own
             title and description.
           </p>
         </div>
@@ -136,7 +136,7 @@ export function ComicSeoEditor({ comic }: ComicSeoEditorProps) {
             <p className="text-xs text-neutral-500">
               {comic.description
                 ? "Blank uses the comic’s description."
-                : "This comic has no description — add one, or set an SEO description here."}
+                : "This comic has no description, add one, or set an SEO description here."}
             </p>
             <CharCounter
               value={metaDescription}
@@ -147,7 +147,7 @@ export function ComicSeoEditor({ comic }: ComicSeoEditorProps) {
 
         {/* <p className="text-xs text-neutral-500 bg-neutral-50 border border-neutral-100 rounded-xl p-3">
           The share image is taken from this comic’s first cover thumbnail
-          automatically — nothing to upload here.
+          automatically - nothing to upload here.
         </p> */}
       </div>
 

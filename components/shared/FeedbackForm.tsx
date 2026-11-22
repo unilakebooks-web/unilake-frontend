@@ -25,7 +25,7 @@ const inputClass = `
 /**
  * The homepage "Feedback & Suggestion" form.
  *
- * Collects name and message only. Email and phone are deliberately absent —
+ * Collects name and message only. Email and phone are deliberately absent -
  * feedback has no reply channel by design, which is why the success copy below
  * promises nothing back.
  *
@@ -53,12 +53,12 @@ export default function FeedbackForm({
     const formData = new FormData(form);
 
     // Honeypot check. Stays indistinguishable from success so a bot learns
-    // nothing — but it is logged, because a false positive here silently
+    // nothing - but it is logged, because a false positive here silently
     // destroys a real person's message. If this ever shows up in a genuine
     // user's console, the honeypot is misfiring and must be fixed, not tuned.
     if (formData.get("confirm_ref")) {
       console.warn(
-        "Feedback form: honeypot tripped — submission was NOT sent. If you are a real user, this is a bug."
+        "Feedback form: honeypot tripped, submission was NOT sent. If you are a real user, this is a bug."
       );
       setIsSuccess(true);
       return;
@@ -118,7 +118,7 @@ export default function FeedbackForm({
       ) : (
         <form onSubmit={handleFeedbackSubmit} className="space-y-4">
           {/*
-            Honeypot. `display: none` on the wrapper, NOT `left: -9999px` —
+            Honeypot. `display: none` on the wrapper, NOT `left: -9999px` -
             that distinction is load-bearing.
 
             An off-screen field is still rendered, so browser profile autofill
@@ -132,7 +132,7 @@ export default function FeedbackForm({
             autofill actively looks for.
 
             This form asks only for name and message, so it is less likely to
-            be classified as an address form than /contact was — but the
+            be classified as an address form than /contact was - but the
             failure mode is identical, and it is silent.
           */}
           <div style={{ display: "none" }} aria-hidden="true">

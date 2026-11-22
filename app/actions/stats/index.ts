@@ -10,7 +10,7 @@ import type {
 // ADMIN OVERVIEW (/api/admin/stats)
 // ============================================================
 //
-// Three calls rather than one so the dashboard can render progressively — the
+// Three calls rather than one so the dashboard can render progressively - the
 // triage band paints off /summary without waiting on the chart, and one failing
 // aggregate degrades a single panel instead of blanking the page.
 //
@@ -35,7 +35,7 @@ export async function fetchStatsTimeseries(
   return data;
 }
 
-// No range parameter — storefront configuration is always a statement about
+// No range parameter - storefront configuration is always a statement about
 // right now, and nothing on it varies with a date window.
 export async function fetchContentHealth(): Promise<ContentHealth> {
   const { data } = await api.get<ContentHealth>(

@@ -18,7 +18,7 @@ interface TagChipsFieldProps {
 }
 
 /**
- * Multi-select as a row of toggle pills — used for a comic's genders, age
+ * Multi-select as a row of toggle pills - used for a comic's genders, age
  * groups and themes. Every option is visible at once, and the row wraps, so it
  * works the same for 3 genders as for a long theme list.
  *

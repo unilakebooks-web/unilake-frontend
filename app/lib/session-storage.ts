@@ -3,7 +3,7 @@ const STORAGE_KEY_PREFIX = "unilake_session_";
 /**
  * How long a stored session is kept before it is forgotten. Mirrors the
  * backend's session lifetime (`SESSION_LIFETIME_DAYS` in the backend's
- * session.service.ts) — two repos, so change both together, along with the
+ * session.service.ts) - two repos, so change both together, along with the
  * "Previews are kept for…" message on the preview page. ⚠️ Also repeated in the backend's
  * config/dataDeletion.ts (the deletion of unpaid previews).
  */
@@ -15,7 +15,7 @@ const UUID_PATTERN =
 /**
  * Session IDs reach us from the URL and from localStorage, so they can be truncated,
  * hand-edited or left over from an older build. Only `/generate` and `/regenerate`
- * validate the format server-side — on GET and PATCH a malformed ID goes straight to
+ * validate the format server-side - on GET and PATCH a malformed ID goes straight to
  * the database and comes back as a 500, not a 404 (§13.1).
  *
  * Checking the shape first turns that into an immediate, honest "start again".
@@ -80,7 +80,7 @@ export function getSession(comicId: string): StoredSession | null {
 
     const data = JSON.parse(raw) as StoredSession;
 
-    // Never hand a malformed ID back to a caller — it would 500 on the first request.
+    // Never hand a malformed ID back to a caller - it would 500 on the first request.
     if (!isValidSessionId(data?.sessionId)) {
       clearSession(comicId);
       return null;

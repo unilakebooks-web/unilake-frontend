@@ -26,7 +26,7 @@ const PROBLEM_STROKE = "#dc2626";
 interface BubbleMapperCanvasProps {
   artworkUrl: string | null;
   /**
-   * The artwork's real pixel size from the DB (Sharp-probed on upload) — the
+   * The artwork's real pixel size from the DB (Sharp-probed on upload) - the
    * same numbers the print renderer lays text out against. Null only on pages
    * uploaded before probing existed; the loaded image's size is used then.
    */
@@ -39,7 +39,7 @@ interface BubbleMapperCanvasProps {
   /**
    * Sample child name substituted into `{name}` for the on-canvas preview, so
    * the admin sizes bubbles against a realistic name instead of the literal
-   * token. Comes from the page's Short/Long toggle — the same one driving the
+   * token. Comes from the page's Short/Long toggle - the same one driving the
    * sidebar preview.
    */
   previewName: string;
@@ -217,7 +217,7 @@ export function BubbleMapperCanvas({
                     dragBoundFunc={(pos) => {
                       // pos is in absolute stage coordinates; bubbles live inside
                       // the centring Group at (offsetX, offsetY).
-                      // Assumes an unscaled Stage — revisit if zoom is added.
+                      // Assumes an unscaled Stage - revisit if zoom is added.
                       const maxX = offsetX + dimensions.imageWidth - width;
                       const maxY = offsetY + dimensions.imageHeight - height;
 
@@ -239,7 +239,7 @@ export function BubbleMapperCanvas({
                       // Snap the node to the clamped position explicitly. If the
                       // clamped value equals the previous one, React sees no prop
                       // change and Konva would leave the node where it was
-                      // dropped — visually outside the artwork.
+                      // dropped - visually outside the artwork.
                       e.target.x(normalizedToPixel(clamped.x, 0, image.width, dimensions.imageWidth));
                       e.target.y(normalizedToPixel(clamped.y, 0, image.height, dimensions.imageHeight));
 
@@ -319,7 +319,7 @@ export function BubbleMapperCanvas({
 
             <Transformer
               ref={trRef}
-              // No backend field for rotation — see note in app/types/comic.ts
+              // No backend field for rotation - see note in app/types/comic.ts
               rotateEnabled={false}
               boundBoxFunc={(oldBox, newBox) => {
                 // Minimum size
@@ -351,7 +351,7 @@ export function BubbleMapperCanvas({
 }
 
 // ============================================================
-// BUBBLE CONTENT — box + text exactly as it prints
+// BUBBLE CONTENT - box + text exactly as it prints
 // ============================================================
 
 interface BubbleContentProps {
@@ -392,7 +392,7 @@ function BubbleContent({
 }: BubbleContentProps) {
   const dialogue = bubble.dialogue ?? "";
 
-  // Primitives and the parsed font only — the FontFileState wrapper object is
+  // Primitives and the parsed font only - the FontFileState wrapper object is
   // rebuilt on every render, so depending on it would re-run the layout (the
   // expensive shrink-to-fit loop) for every bubble on every render. The parsed
   // font itself is the query's cached value and keeps its identity.
@@ -547,8 +547,8 @@ function tracePath(ctx: CanvasRenderingContext2D, commands: PathCommand[]) {
 }
 
 /**
- * Draws the bubble's glyph outlines — the same geometry the print renderer
- * stamps — in one fill per colour. Layout is in artwork px, so it is scaled to
+ * Draws the bubble's glyph outlines - the same geometry the print renderer
+ * stamps - in one fill per colour. Layout is in artwork px, so it is scaled to
  * the on-screen size here. Click-through: selection is handled by the box.
  */
 function GlyphText({

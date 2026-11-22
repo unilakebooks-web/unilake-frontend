@@ -11,10 +11,10 @@ import { authService } from "@/app/lib/auth-service";
 import { parseUserRole } from "@/app/types/auth";
 import type { AuthContextType, User } from "@/app/types/auth";
 
-// ── Context ────────────────────────────────────────────────────────────────────
+// -- Context --------------------------------------------------------------------
 const AuthContext = createContext<AuthContextType | null>(null);
 
-// ── Provider ───────────────────────────────────────────────────────────────────
+// -- Provider -------------------------------------------------------------------
 export function AuthProvider({ children }: { children: React.ReactNode }) {
     const { data, isPending, refetch } = authClient.useSession();
 
@@ -82,7 +82,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
-// ── Hook ───────────────────────────────────────────────────────────────────────
+// -- Hook -----------------------------------------------------------------------
 export function useAuthContext(): AuthContextType {
     const context = useContext(AuthContext);
     if (!context) {

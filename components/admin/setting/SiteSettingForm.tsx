@@ -134,7 +134,7 @@ export function SiteSettingForm({ setting }: SiteSettingFormProps) {
 
       <Section
         title="Search engine (SEO)"
-        description="What Google shows, and what appears when someone shares a link on WhatsApp or Facebook. Used for any page that has no SEO text of its own — comics and blog posts can override it individually."
+        description="What Google shows, and what appears when someone shares a link on WhatsApp or Facebook. Used for any page that has no SEO text of its own, comics and blog posts can override it individually."
       >
         <Field
           label="Site title"
@@ -143,7 +143,7 @@ export function SiteSettingForm({ setting }: SiteSettingFormProps) {
         >
           <Input
             {...register("metaTitle")}
-            placeholder="UniLake — Personalized Storybooks for Kids"
+            placeholder="UniLake: Personalized Storybooks for Kids"
             className={inputClass}
           />
           <div className="flex justify-end pt-0.5">
@@ -159,7 +159,7 @@ export function SiteSettingForm({ setting }: SiteSettingFormProps) {
           <Textarea
             {...register("metaDescription")}
             rows={3}
-            placeholder="Turn your child into the hero of their own comic book — upload a photo and we do the rest."
+            placeholder="Turn your child into the hero of their own comic book. Upload a photo and we do the rest."
             className="rounded-xl bg-white resize-none"
           />
           <div className="flex justify-end pt-0.5">

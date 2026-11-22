@@ -1,4 +1,4 @@
-// Admin customer list — GET /api/admin/customers (+ /export for CSV).
+// Admin customer list - GET /api/admin/customers (+ /export for CSV).
 //
 // A "customer" is an account with at least one PAID order (any status from
 // payment captured to delivered; never unpaid or cancelled).
@@ -11,7 +11,7 @@ export interface CustomerCurrencyTotal {
 }
 
 export interface AdminCustomerRow {
-  /** Better Auth's own random id — not a uuid. */
+  /** Better Auth's own random id - not a uuid. */
   userId: string;
   name: string;
   /** Account (login) email. */
@@ -28,7 +28,7 @@ export interface AdminCustomerRow {
   lastPurchaseAt: string;
 }
 
-/** Always most-recent-purchase first server-side — there is no sort to pass. */
+/** Always most-recent-purchase first server-side - there is no sort to pass. */
 export interface AdminCustomersFilters {
   page?: number;
   pageSize?: number;

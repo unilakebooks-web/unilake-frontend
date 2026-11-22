@@ -3,7 +3,7 @@
 /**
  * First-time personalization form on the comic detail page.
  *
- * ── DUPLICATION NOTICE ──────────────────────────────────────────────────────
+ * -- DUPLICATION NOTICE ------------------------------------------------------
  * `components/personalize/NewPhotoForm.tsx` deliberately duplicates this
  * component's submit flow for the "upload another photo" journey. Two separate
  * forms was a deliberate decision.
@@ -11,7 +11,7 @@
  * The consequence: any change to photo validation, the field set, or the
  * create -> update -> upload -> confirm sequence must be made in BOTH files.
  * If you are editing this one, open the other.
- * ────────────────────────────────────────────────────────────────────────────
+ * ----------------------------------------------------------------------------
  */
 
 import { useState, useCallback } from "react";
@@ -46,7 +46,7 @@ export default function ComicPersonalizeForm({ comic, onSuccess }: ComicPersonal
   const router = useRouter();
 
   // Everything starts empty. A pre-selected gender, age or birth month is a
-  // value the parent never chose but that ships in their book — "Boy" and "4"
+  // value the parent never chose but that ships in their book - "Boy" and "4"
   // submit silently if they skip the field. An unset dropdown forces a real
   // answer and makes the required-field validation below meaningful.
   const [formData, setFormData] = useState({
@@ -60,7 +60,7 @@ export default function ComicPersonalizeForm({ comic, onSuccess }: ComicPersonal
 
   // The photo is normalized and face-checked the moment it is dropped, not at submit.
   // Everything downstream (session creation, upload) only ever sees a blob that has
-  // already passed the gate — so a rejected photo costs nothing but a re-pick, and
+  // already passed the gate - so a rejected photo costs nothing but a re-pick, and
   // never leaves a half-filled session behind on the server.
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [normalizedPhoto, setNormalizedPhoto] = useState<Blob | null>(null);
@@ -179,7 +179,7 @@ export default function ComicPersonalizeForm({ comic, onSuccess }: ComicPersonal
     
     // Client-side Validation
     // Gender and age are checked explicitly now that they no longer carry a
-    // default — before, an untouched dropdown quietly submitted "Boy" and 4.
+    // default - before, an untouched dropdown quietly submitted "Boy" and 4.
     // Everything that is missing is named at once, so the parent does not have
     // to press the button once per field. A photo still being checked is not
     // "missing"; it gets its own message below.
@@ -192,7 +192,7 @@ export default function ComicPersonalizeForm({ comic, onSuccess }: ComicPersonal
       !normalizedPhoto && photoState !== "checking" && "child's photo",
     ].filter(Boolean);
     if (missing.length > 0) return toast.error(`Please complete: ${missing.join(", ")}`);
-    if (photoState === "checking") return toast.error("Still checking your photo — one moment");
+    if (photoState === "checking") return toast.error("Still checking your photo. One moment");
     // Cannot run: a missing photo is already in `missing` above. Kept so TypeScript
     // knows the photo is set below.
     if (!normalizedPhoto) return toast.error("Please upload a photo of the child");
@@ -200,7 +200,7 @@ export default function ComicPersonalizeForm({ comic, onSuccess }: ComicPersonal
     setIsLoading(true);
 
     // Trimmed once, here, so the name that reaches the session, localStorage and
-    // the success callback is the same string — stray whitespace would otherwise
+    // the success callback is the same string - stray whitespace would otherwise
     // be stamped into the speech bubbles.
     const childName = formData.name.trim();
 
@@ -226,7 +226,7 @@ export default function ComicPersonalizeForm({ comic, onSuccess }: ComicPersonal
         notificationEmail: formData.email,
       });
 
-      // 3. Get Upload URL — requested immediately before the PUT, it expires in 5 min.
+      // 3. Get Upload URL - requested immediately before the PUT, it expires in 5 min.
       setLoadingStep("Uploading photo...");
       const { uploadUrl, key } = await getPhotoUploadUrl(sessionId, "jpg");
 
@@ -394,7 +394,7 @@ export default function ComicPersonalizeForm({ comic, onSuccess }: ComicPersonal
             required
             placeholder="someone@gmail.com"
             // Styled like every other field rather than filled purple with
-            // purple placeholder text — that combination read as a real entered
+            // purple placeholder text - that combination read as a real entered
             // value. The example is kept, but greyed so it is clearly a hint.
             className="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-[#333333] placeholder-gray-400 focus:outline-none focus:border-[#3F3C95] transition-colors"
             value={formData.email}

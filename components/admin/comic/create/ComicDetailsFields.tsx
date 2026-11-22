@@ -125,7 +125,7 @@ export function ComicDetailsFields({ form }: ComicDetailsFieldsProps) {
                 </FormControl>
               ) : (
                 <p className="text-sm text-neutral-500">
-                  No themes yet — create one on the Themes page first.
+                  No themes yet, create one on the Themes page first.
                 </p>
               )}
               <FormMessage />

@@ -15,7 +15,7 @@ type Pan = { x: number; y: number };
 
 interface PreviewZoomViewportProps {
   src: string;
-  /** True pixel dimensions of the render — what actually goes to print. */
+  /** True pixel dimensions of the render - what actually goes to print. */
   naturalWidth: number;
   naturalHeight: number;
   alt: string;
@@ -36,7 +36,7 @@ function clampPan(
   contentHeight: number,
 ): Pan {
   const clampAxis = (value: number, viewport: number, content: number) => {
-    // Content smaller than the viewport has no slack — centre it and ignore
+    // Content smaller than the viewport has no slack - centre it and ignore
     // whatever the drag asked for.
     if (content <= viewport) return (viewport - content) / 2;
     // Otherwise the offset runs from "right/bottom edge flush" up to 0.
@@ -54,7 +54,7 @@ function clampPan(
  *
  * Two states only: fit (whole page visible) and 1:1 (true print pixels).
  * 1:1 rather than an arbitrary multiplier because the question this preview
- * exists to answer is "will this text be right in the printed book" — and a 2×
+ * exists to answer is "will this text be right in the printed book" - and a 2×
  * blow-up of an already-downscaled render is interpolation, which cannot answer
  * that. At 1:1 the admin is looking at the actual output pixels.
  *
@@ -63,7 +63,7 @@ function clampPan(
  *
  * All interaction runs through pointer events, never a separate onClick. A
  * click handler would fire after the state change from pointerup and could read
- * the new state, toggling straight back — so press/move/release is the single
+ * the new state, toggling straight back - so press/move/release is the single
  * source of truth for both gestures.
  */
 export function PreviewZoomViewport({
@@ -87,7 +87,7 @@ export function PreviewZoomViewport({
   } | null>(null);
 
   // NOTE ON RESETTING: a fresh render must not inherit the previous image's
-  // zoom — the pan offset would point at meaningless coordinates on a page of
+  // zoom - the pan offset would point at meaningless coordinates on a page of
   // different dimensions. That reset is the caller's job, via a `key` that
   // changes per render, which remounts this component and clears all state.
   // Doing it here in an effect would mean an extra cascading render, and React
@@ -124,7 +124,7 @@ export function PreviewZoomViewport({
     const fitScale = Math.min(
       rect.width / naturalWidth,
       rect.height / naturalHeight,
-      // Never scale a small page UP to fit — that would make the fit view
+      // Never scale a small page UP to fit - that would make the fit view
       // blurrier than the 1:1 view it is supposed to contrast with.
       1,
     );
@@ -235,7 +235,7 @@ export function PreviewZoomViewport({
             top: pan.y,
             width: naturalWidth,
             height: naturalHeight,
-            // Defeats any inherited max-width — at 1:1 the image must be
+            // Defeats any inherited max-width - at 1:1 the image must be
             // allowed to overflow the viewport, that is the point.
             maxWidth: "none",
           }}

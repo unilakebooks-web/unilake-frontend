@@ -145,7 +145,7 @@ export function PageEditModal({ open, onOpenChange, page, comic, comicId }: Page
       setIsSaving(true);
 
       // 3. Update Page (only send changed values)
-      // pageNumber is deliberately NOT sent — it is not in updatePageSchema and
+      // pageNumber is deliberately NOT sent - it is not in updatePageSchema and
       // would be stripped silently. Page order is changed via the reorder
       // endpoint from the Pages tab instead.
       const updates: any = {};

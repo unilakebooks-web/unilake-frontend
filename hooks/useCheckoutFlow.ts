@@ -17,7 +17,7 @@ interface UseCheckoutFlowArgs {
   /**
    * Preview pages that exhausted every retry and have no finished variant.
    * Non-empty blocks checkout: a customer must not be able to pay for a book
-   * with a page that does not exist, and the fix is free — regenerate it.
+   * with a page that does not exist, and the fix is free - regenerate it.
    */
   failedPageNumbers: number[];
 }
@@ -26,7 +26,7 @@ interface UseCheckoutFlowArgs {
  * Owns the cover-selection and checkout flow for one session.
  *
  * This lives in a hook rather than inside PricingSection because the preview
- * page now renders that section several times — once after every third comic
+ * page now renders that section several times - once after every third comic
  * page, plus the closing one. With the state inside the component, each copy
  * had its own `selectedFormat`, so choosing Softcover on one block and
  * scrolling to the next showed nothing selected; each copy also mounted its own
@@ -53,7 +53,7 @@ export function useCheckoutFlow({
   // Resume: checkout was already started, so an unpaid Order + Razorpay order
   // exist, priced for the cover chosen back then. The backend has locked
   // coverType since (a PATCH 409s), so the cover is read off the session and
-  // cannot be changed here — derived, not stored, so it can never drift.
+  // cannot be changed here - derived, not stored, so it can never drift.
   const isResume = snapshot.status === "AWAITING_PAYMENT";
   const selectedFormat: CoverFormat | null = isResume
     ? snapshot.coverType
@@ -85,7 +85,7 @@ export function useCheckoutFlow({
       return;
     }
 
-    // Store closed — stop here, on this page.
+    // Store closed - stop here, on this page.
     //
     // Deliberately the FIRST thing in this function, before the cover-type
     // PATCH, before the login modal, before anything touches the network.
@@ -95,7 +95,7 @@ export function useCheckoutFlow({
     // This is a courtesy, not the enforcement. The backend rejects checkout on
     // its own, so a stale flag here (the public settings query caches for five
     // minutes) can only mean someone gets to the address page and is stopped a
-    // step later — never that an order goes through.
+    // step later - never that an order goes through.
     if (ordersPaused) {
       toast.error(ORDERS_PAUSED_MESSAGE);
       return;
@@ -124,7 +124,7 @@ export function useCheckoutFlow({
 
       // 2. Check auth. The popup's login returns the customer straight to the
       //    checkout page (see PreviewViewer), which links the session to the
-      //    account itself — so step 3 below only runs for someone who was
+      //    account itself - so step 3 below only runs for someone who was
       //    already logged in.
       if (!isAuthenticated) {
         setShowLoginModal(true);

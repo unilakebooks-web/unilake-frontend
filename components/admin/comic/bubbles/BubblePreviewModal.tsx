@@ -34,7 +34,7 @@ interface BubblePreviewModalProps {
   pageNumber: number;
   /**
    * The bubbles exactly as they stand on screen, deleted ones already removed.
-   * Passed in rather than fetched so the preview reflects unsaved edits — the
+   * Passed in rather than fetched so the preview reflects unsaved edits - the
    * whole point of the feature.
    */
   bubbles: PreviewStampBubble[];
@@ -49,7 +49,7 @@ interface BubblePreviewModalProps {
  * against the real renderer itself, and the only place to try any name and
  * pronoun.
  *
- * Text only — the face swap is a separate pipeline stage and is not involved.
+ * Text only - the face swap is a separate pipeline stage and is not involved.
  * For a page with hasFace off, this is pixel-identical to what prints.
  */
 export function BubblePreviewModal({
@@ -95,7 +95,7 @@ export function BubblePreviewModal({
       <DialogContent className="sm:max-w-3xl max-h-[90vh] overflow-y-auto rounded-2xl">
         <DialogHeader>
           <DialogTitle className="text-lg font-bold text-neutral-900">
-            Preview — Page {pageNumber}
+            Preview: Page {pageNumber}
           </DialogTitle>
           <DialogDescription className="text-xs text-neutral-500">
             Final check with the real print renderer. No face swap. Nothing is saved.
@@ -159,7 +159,7 @@ export function BubblePreviewModal({
             </div>
           ) : preview.isError ? (
             /* The renderer fails loudly on a bad font, a missing glyph or a
-               bubble without a font — the same failure a real generation job
+               bubble without a font - the same failure a real generation job
                would hit. Showing it verbatim is the point: this is where the
                admin is meant to find out, not on a printed book. */
             <div className="flex flex-col items-center gap-2 text-center px-4">
@@ -173,7 +173,7 @@ export function BubblePreviewModal({
             /* Fitted into a fixed-height viewport rather than rendered at full
                width: a tall page used to run past the bottom of the dialog and
                force it to scroll. The viewport also carries click-to-zoom, so
-               shrinking it here costs no detail — 1:1 inspection is a click
+               shrinking it here costs no detail - 1:1 inspection is a click
                away. */
             <PreviewZoomViewport
               /* Remounts on every new render, which is what clears any zoom

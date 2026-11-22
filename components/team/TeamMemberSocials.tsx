@@ -9,13 +9,13 @@ import type { TeamMember } from "@/app/types/teamMember";
 /**
  * The social icon row for one team member.
  *
- * Shared by TeamMemberCard and TeamMemberModal — the two rendered the same
+ * Shared by TeamMemberCard and TeamMemberModal - the two rendered the same
  * three conditional links, so a change to the hover treatment or the icon set
  * had to be made twice. Renders nothing when the member has no links at all,
  * which is what lets the card drop the row entirely rather than reserve space.
  */
 
-// `twitterUrl` keeps its field name — the platform was renamed, the column was
+// `twitterUrl` keeps its field name - the platform was renamed, the column was
 // not. Only the icon and the accessible label say "X".
 const SOCIAL_LINKS = [
   { key: "linkedinUrl", Icon: LinkedInIcon, label: "LinkedIn" },
@@ -25,7 +25,7 @@ const SOCIAL_LINKS = [
 
 interface TeamMemberSocialsProps {
   member: TeamMember;
-  /** Wrapper classes — lets the card pin the row to the bottom with mt-auto. */
+  /** Wrapper classes - lets the card pin the row to the bottom with mt-auto. */
   className?: string;
 }
 

@@ -28,7 +28,7 @@ export function UserListFilters({ onFiltersChange }: UserListFiltersProps) {
   const [search, setSearch] = useState("");
   const [role, setRole] = useState<string>("ALL");
 
-  // Same 400ms debounce as OrderListFilters — every change hits the server.
+  // Same 400ms debounce as OrderListFilters - every change hits the server.
   useEffect(() => {
     const handler = setTimeout(() => {
       onFiltersChange({

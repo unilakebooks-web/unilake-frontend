@@ -1,7 +1,7 @@
 import type { CoverType } from "@/app/types/comic";
 import type { OrderStatus } from "@/app/types/order";
 
-// Response shapes for GET /api/admin/stats/* — the admin overview dashboard.
+// Response shapes for GET /api/admin/stats/* - the admin overview dashboard.
 //
 // Conventions carried over from app/types/order.ts:
 //   - money is a STRING, never a number (Prisma serialises Decimal that way,
@@ -22,7 +22,7 @@ export const STATS_RANGES: { value: StatsRange; label: string }[] = [
 // ============================================================
 
 /**
- * One row per currency — deliberately an array, not a scalar.
+ * One row per currency - deliberately an array, not a scalar.
  *
  * Totals are never summed across currencies. Only INR is active today, so this
  * has exactly one entry in practice, but the shape is what lets a second market
@@ -35,7 +35,7 @@ export interface RevenueBucket {
   averageOrderValue: string;
 }
 
-/** Lifetime figures carry no AOV — an average only means something over a period. */
+/** Lifetime figures carry no AOV - an average only means something over a period. */
 export interface LifetimeBucket {
   currency: string;
   total: string;
@@ -55,7 +55,7 @@ export interface NeedsAttention {
   abandonedCheckouts: number;
   staleTracking: number;
   openFeedback: number;
-  /** Unanswered /contact submissions. Counted apart from feedback — a waiting customer. */
+  /** Unanswered /contact submissions. Counted apart from feedback - a waiting customer. */
   openEnquiries: number;
 }
 
@@ -69,7 +69,7 @@ export interface TopComic {
   revenue: string;
 }
 
-/** Narrower than AdminOrderRow — the overview list shows six fields, not twelve. */
+/** Narrower than AdminOrderRow - the overview list shows six fields, not twelve. */
 export interface OverviewOrderRow {
   id: string;
   createdAt: string;

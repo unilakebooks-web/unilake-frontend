@@ -1,15 +1,15 @@
 import type { UserRole } from "./auth";
 
-// Admin user management — GET /api/admin/users, PATCH /api/admin/users/:userId/role.
+// Admin user management - GET /api/admin/users, PATCH /api/admin/users/:userId/role.
 
 /** One row of the admin user list. Basic details only, by decision. */
 export interface AdminUserRow {
-  /** Better Auth's own random id — not a uuid. */
+  /** Better Auth's own random id - not a uuid. */
   id: string;
   name: string;
   /**
    * Facebook accounts without an email carry a synthetic
-   * `${facebookId}@facebook.local` address — shown as-is.
+   * `${facebookId}@facebook.local` address - shown as-is.
    */
   email: string;
   /** Google/Facebook avatar URL. Facebook ones expire, so render with a fallback. */
@@ -18,7 +18,7 @@ export interface AdminUserRow {
   createdAt: string;
 }
 
-/** Always newest-joined first server-side — there is no sort to pass. */
+/** Always newest-joined first server-side - there is no sort to pass. */
 export interface AdminUsersFilters {
   page?: number;
   pageSize?: number;
@@ -37,6 +37,6 @@ export interface AdminUsersPagination {
 export interface AdminUsersResponse {
   users: AdminUserRow[];
   pagination: AdminUsersPagination;
-  /** Total admins across ALL users — unaffected by search/filter. */
+  /** Total admins across ALL users - unaffected by search/filter. */
   adminCount: number;
 }

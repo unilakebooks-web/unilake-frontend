@@ -24,7 +24,7 @@ export function GenerateAwbForm({ order }: { order: AdminOrderDetail }) {
 
   // The backend saves dimensions BEFORE calling Shiprocket, so a Phase B that
   // failed partway leaves the admin's typed values on the order. Prefer those
-  // over the defaults — otherwise a retry silently discards what they entered.
+  // over the defaults - otherwise a retry silently discards what they entered.
   const { dimensions } = order;
   const defaultValues: AwbFormValues = {
     length: dimensions.finalLength ?? DEFAULT_DIMENSIONS.length,
@@ -52,7 +52,7 @@ export function GenerateAwbForm({ order }: { order: AdminOrderDetail }) {
       toast.success(
         `AWB ${result.awbCode} assigned via ${result.courierName}${
           result.pickupScheduledDate
-            ? ` — pickup ${new Date(result.pickupScheduledDate).toLocaleDateString()}`
+            ? `, pickup ${new Date(result.pickupScheduledDate).toLocaleDateString()}`
             : ""
         }`
       );

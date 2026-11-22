@@ -30,7 +30,7 @@ export default function HomeFaq({ faqs }: HomeFaqProps) {
 
           The scroll margin is how far the girl pokes up above this box (her
           height + bottom offset − the SVG height, per breakpoint below) plus
-          the 86px fixed Header plus a 16px gap — so she lands fully visible
+          the 86px fixed Header plus a 16px gap - so she lands fully visible
           even when the Header is showing. Change the girl's width/bottom or
           the SVG height and these numbers must move with them. */}
       <div
@@ -49,15 +49,15 @@ export default function HomeFaq({ faqs }: HomeFaqProps) {
           />
         </svg>
 
-        {/* Text overlay — centered vertically over the SVG.
+        {/* Text overlay - centered vertically over the SVG.
             The left padding reserves the girl's footprint (her `left` offset
             + width + a small gap, per breakpoint below), so the title is
             centered in the space beside her and never runs into her. Below
             1280px this container starts at the viewport edge, so the padding
             equals that footprint; above that the container is centered, so
             the reservation shrinks by the side gutter `(100vw - 1280px) / 2`.
-            Vertically it spans only the band's flat strip — viewBox y 46→240
-            of 311, i.e. 14.8% from the top and 22.8% from the bottom — not
+            Vertically it spans only the band's flat strip - viewBox y 46→240
+            of 311, i.e. 14.8% from the top and 22.8% from the bottom - not
             the whole SVG box. The flares make the box taller below the strip
             than above it, so centering on the box sat the text visibly low. */}
         <div className="absolute inset-x-0 top-[14.8%] bottom-[22.8%] flex items-center pointer-events-none">
@@ -78,7 +78,7 @@ export default function HomeFaq({ faqs }: HomeFaqProps) {
           </div>
         </div>
 
-        {/* Girl Image — Top-Left, sitting above the bar with space.
+        {/* Girl Image - Top-Left, sitting above the bar with space.
             Bottom offsets are unchanged, so the larger size grows upward;
             each width is capped so she stays within the section's top
             margin (mt-20, lg:mt-32) and doesn't reach the section above. */}
@@ -127,7 +127,7 @@ export default function HomeFaq({ faqs }: HomeFaqProps) {
           {/* FAQ Accordion List.
               No bottom margin: the gap down to the Feedback block is this
               section's pb-6 plus FaqFeedback's own top padding (64px mobile,
-              88px desktop). Adjust it there, not here — FaqFeedback's padding
+              88px desktop). Adjust it there, not here - FaqFeedback's padding
               must still stand on its own when there are no FAQs and this
               component renders nothing. */}
           <div className="flex flex-col gap-5">
@@ -155,10 +155,10 @@ export default function HomeFaq({ faqs }: HomeFaqProps) {
                     {/* Toggle Icon */}
                     <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center">
                       {isExpanded ? (
-                        /* Horizontal line — purple */
+                        /* Horizontal line - purple */
                         <div className="w-6 h-[3px] bg-[#8E4A92] rounded-full" />
                       ) : (
-                        /* Plus symbol — black */
+                        /* Plus symbol - black */
                         <svg
                           viewBox="0 0 24 24"
                           className="w-6 h-6 text-black fill-none stroke-current stroke-[3]"
@@ -196,7 +196,7 @@ export default function HomeFaq({ faqs }: HomeFaqProps) {
                       ${isExpanded ? "max-h-[300px] mt-4 opacity-100" : "max-h-0 opacity-0"}
                     `}
                   >
-                    {/* PLAIN TEXT rendering — never use dangerouslySetInnerHTML here */}
+                    {/* PLAIN TEXT rendering - never use dangerouslySetInnerHTML here */}
                     <p
                       className={`
                         ${hankenGrotesk.className}

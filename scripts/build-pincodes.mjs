@@ -5,7 +5,7 @@
 // is checked in, so a deploy never depends on this script succeeding.
 //
 // Source columns: pincode,state,district,blocks,state_lgd,district_lgd
-// Only the first three are used. The source has no "city" column — district
+// Only the first three are used. The source has no "city" column - district
 // stands in for city in the address form (an agreed product decision).
 //
 // Output shape (dictionary-encoded to keep the browser download small):
@@ -61,7 +61,7 @@ const byPin = new Map();
 lines.forEach((line, i) => {
   const match = line.match(ROW);
   if (!match) {
-    // Fail loudly — a silently skipped row is a pincode customers can't auto-fill.
+    // Fail loudly - a silently skipped row is a pincode customers can't auto-fill.
     throw new Error(`Unparseable row ${i + 2}: ${line}`);
   }
   const [, pin, rawState, rawDistrict] = match;

@@ -16,7 +16,7 @@ interface SitePageTableProps {
 }
 
 function formatDate(value: string | null): string {
-  if (!value) return "—";
+  if (!value) return "-";
   return new Date(value).toLocaleDateString("en-GB", {
     day: "numeric",
     month: "short",

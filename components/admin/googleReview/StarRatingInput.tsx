@@ -23,7 +23,7 @@ export function StarRatingInput({
   onChange,
   disabled = false,
 }: StarRatingInputProps) {
-  // Which star the pointer is over, or null. Drives the preview only — it
+  // Which star the pointer is over, or null. Drives the preview only - it
   // never changes the committed value.
   const [hovered, setHovered] = useState<number | null>(null);
 

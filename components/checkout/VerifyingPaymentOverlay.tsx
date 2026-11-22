@@ -15,9 +15,9 @@ interface VerifyingPaymentOverlayProps {
 
 /** Gap between polls. Fast enough not to feel broken right after paying. */
 const POLL_INTERVAL_MS = 2_000;
-/** ~20s — soften the copy, the webhook is taking longer than usual. */
+/** ~20s - soften the copy, the webhook is taking longer than usual. */
 const SLOW_AFTER_POLLS = 10;
-/** ~90s — stop polling and hand the user an explicit next step. */
+/** ~90s - stop polling and hand the user an explicit next step. */
 const MAX_POLLS = 45;
 /** Ask our server to confirm the payment with the payment provider on every Nth check (about every 6 s). */
 const CONFIRM_EVERY_POLLS = 3;
@@ -28,13 +28,13 @@ export default function VerifyingPaymentOverlay({ sessionId }: VerifyingPaymentO
   const router = useRouter();
   const [status, setStatus] = useState<"verifying" | "slow" | "timeout" | "failed">("verifying");
   // Bumped by "Check again" to restart the loop. It is the ONLY piece of state in
-  // this effect's deps — see the note below.
+  // this effect's deps - see the note below.
   const [restartKey, setRestartKey] = useState(0);
 
   useEffect(() => {
     // The poll counter lives here, not in state, on purpose. Putting it in state and
     // listing it as a dep re-ran this effect on every tick, and the effect body fires
-    // a request immediately — so each response triggered another request with no delay
+    // a request immediately - so each response triggered another request with no delay
     // and the whole retry budget burned in a few seconds instead of 90.
     //
     // Everything mutable is scoped to this closure and torn down by the cleanup, so at
@@ -63,7 +63,7 @@ export default function VerifyingPaymentOverlay({ sessionId }: VerifyingPaymentO
 
         const s = snapshot.status;
 
-        // Every paid page failed to generate. The money WAS taken — never phrase
+        // Every paid page failed to generate. The money WAS taken - never phrase
         // this to the user as a failed payment.
         if (s === "FAILED") {
           setStatus("failed");
@@ -77,7 +77,7 @@ export default function VerifyingPaymentOverlay({ sessionId }: VerifyingPaymentO
           return;
         }
 
-        // Still pending — fall through to the retry budget below.
+        // Still pending - fall through to the retry budget below.
       } catch {
         if (!isActive) return;
         // A network blip spends a poll and keeps trying. Only the server moves this
@@ -98,7 +98,7 @@ export default function VerifyingPaymentOverlay({ sessionId }: VerifyingPaymentO
       timerId = setTimeout(poll, POLL_INTERVAL_MS);
     };
 
-    // First check runs immediately — the webhook has often already landed by the
+    // First check runs immediately - the webhook has often already landed by the
     // time the Razorpay modal finishes closing.
     void poll();
 
@@ -168,7 +168,7 @@ export default function VerifyingPaymentOverlay({ sessionId }: VerifyingPaymentO
           
           <p className="text-gray-600 text-lg font-medium">
             {status === "slow" 
-              ? "Still working — payment confirmations occasionally take a little longer." 
+              ? "Still working. Payment confirmations occasionally take a little longer." 
               : "Please don't close this window. This usually takes a few seconds."}
           </p>
         </div>

@@ -30,7 +30,7 @@ export async function createComic(payload: CreateComicPayload): Promise<Comic> {
   return data;
 }
 
-// `thumbnailKeys`, `videoKey` and `themeIds` are REQUEST-only fields — none
+// `thumbnailKeys`, `videoKey` and `themeIds` are REQUEST-only fields - none
 // exists on the Comic response (the backend returns `coverThumbnailUrls`,
 // `previewVideoUrl` and `themes`), so Partial<Comic> alone will not admit them.
 // `themeIds`, when sent, replaces the comic's whole theme set.
@@ -84,7 +84,7 @@ export async function getComicVideoUploadUrl(
 /**
  * Sets or clears the comic's carousel promo video.
  *
- * Pass a freshly-uploaded R2 key to set/replace it, or null to remove it —
+ * Pass a freshly-uploaded R2 key to set/replace it, or null to remove it -
  * the backend deletes the previous file from R2 in both cases. Omitting the
  * field entirely (i.e. not calling this) leaves the video untouched.
  */

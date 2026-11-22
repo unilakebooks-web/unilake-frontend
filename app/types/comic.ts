@@ -65,7 +65,7 @@ export interface Comic {
   /**
    * Optional promo video for the comic-detail carousel. Full R2 public URL, or
    * null when the comic has none (most of them). Written via the unified comic
-   * PATCH as `videoKey` — the request field and the response field differ on
+   * PATCH as `videoKey` - the request field and the response field differ on
    * purpose: you send a key, you get back a URL.
    */
   previewVideoUrl: string | null;
@@ -94,7 +94,7 @@ export interface Comic {
 }
 
 export interface ComicListItem extends Comic {
-  /** May be empty on older comics — see `ageGroups`. */
+  /** May be empty on older comics - see `ageGroups`. */
   themes: ComicTheme[];
   _count: { pages: number; orderSessions: number; pricingRules: number };
   /** ISO strings, or null. Absent when the backend predates automatic data deletion. */
@@ -114,7 +114,7 @@ export interface ComicListItem extends Comic {
 }
 
 export interface ComicDetail extends Comic {
-  /** May be empty on older comics — see `ageGroups`. */
+  /** May be empty on older comics - see `ageGroups`. */
   themes: ComicTheme[];
   pages: PageWithBubbles[];
   fonts: Font[];
@@ -172,7 +172,7 @@ export type TextCase = "AS_TYPED" | "UPPERCASE" | "LOWERCASE";
 // NOTE: There is intentionally no `rotation` field. The backend `Bubble` model
 // stores 13 fields only (x, y, width, height, dialogue, fontId, fontSize,
 // fontColor, nameColor, textAlign, textVerticalAlign, textCase, sortOrder) and
-// validateBody strips anything else silently — a rotation sent here would save
+// validateBody strips anything else silently - a rotation sent here would save
 // with a 200 and vanish on reload.
 // Removed 2026-08-01. To add it later: rotation column + migration, both Zod
 // schemas, rotation support in the Sharp text stamper, and a decision on whether
@@ -189,7 +189,7 @@ export interface Bubble {
   dialogue: string;
   fontId: string | null;
   fontSize: number;
-  /** Canonical "#rrggbb". Never null — the column defaults to #000000. */
+  /** Canonical "#rrggbb". Never null - the column defaults to #000000. */
   fontColor: string;
   /**
    * Canonical "#rrggbb" for the {name} part of the dialogue only.
@@ -252,7 +252,7 @@ export interface PricingRule {
   comicId: string;
   countryId: string;
   coverType: CoverType;
-  // Strike-through price. Null on rows created before this field existed —
+  // Strike-through price. Null on rows created before this field existed -
   // the column is nullable purely to tolerate those. Every new write supplies it.
   mrp: string | null;    // comes as STRING from API
   price: string;         // comes as STRING from API
@@ -329,7 +329,7 @@ export type ComicFactPlacement = "PRELOADER" | "GENERATING";
 
 /**
  * A fact as the public site sees it. The API only ever sends active ones, and
- * only these three fields — there is no isActive here because an inactive fact
+ * only these three fields - there is no isActive here because an inactive fact
  * never reaches the browser at all.
  */
 export interface ComicFact {
@@ -368,15 +368,15 @@ export interface PublicComicDetail {
   freePreviewPages: number;
   coverThumbnailUrls: string[];
   /**
-   * Null for most comics. Returned by the detail endpoint only — the catalogue
+   * Null for most comics. Returned by the detail endpoint only - the catalogue
    * list (PublicComicListItem) deliberately does not carry it.
    */
   previewVideoUrl: string | null;
-  /** Null falls back to `title` / `description` — see generateMetadata. */
+  /** Null falls back to `title` / `description` - see generateMetadata. */
   metaTitle: string | null;
   metaDescription: string | null;
   /**
-   * Active facts for both generation screens, in one flat list — the consumer
+   * Active facts for both generation screens, in one flat list - the consumer
    * filters by placement. Empty for most comics; both screens fall back to a
    * default line when there is nothing here.
    */

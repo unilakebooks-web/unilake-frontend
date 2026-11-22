@@ -1,6 +1,6 @@
 interface PreviewProgressProps {
   pagesReady: number;
-  /** Total preview pages expected. Always a real number — the hook falls back to the
+  /** Total preview pages expected. Always a real number - the hook falls back to the
    *  snapshot's own preview-page count when /generate's value isn't in memory. */
   totalPages: number;
   /** Defaults to the preview wording; the paid-pages bar passes its own. */
