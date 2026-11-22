@@ -12,6 +12,7 @@ import {
 import { buildPageMetadata } from "@/lib/seo";
 import { MAX_RATING, type GoogleReview } from "@/app/types/googleReview";
 import type { CustomerReview } from "@/app/types/customerReview";
+import ReviewVideo from "@/components/reviews/ReviewVideo";
 
 const REVIEWS_DESCRIPTION =
   "Read what parents say about UniLake personalised comic books, with video reviews and Google reviews from families whose child became the hero of their own story.";
@@ -91,13 +92,9 @@ export default async function ReviewsPage() {
                       key={review.id}
                       className="bg-white rounded-3xl shadow-sm border border-[#E5E7EB] overflow-hidden"
                     >
-                      <video
+                      <ReviewVideo
                         src={review.videoUrl}
-                        controls
-                        preload="none"
-                        playsInline
-                        aria-label={`Video review from ${review.customerName}`}
-                        className="w-full aspect-video bg-black object-cover"
+                        label={`Video review from ${review.customerName}`}
                       />
                       <div className="p-6">
                         <h3

@@ -149,7 +149,7 @@ export function ShareImageField({
         disabled={isBusy}
       />
       <p className="text-xs text-neutral-500">
-        {SHARE_IMAGE_SIZE_HINT} PNG, JPG or WEBP, max 5 MB.
+        {SHARE_IMAGE_SIZE_HINT} PNG, JPG or WEBP, max 5 MB; a smaller file (a few hundred KB) shows more reliably in chat apps.
         {fallbackNote ? ` ${fallbackNote}` : ""}
       </p>
     </div>

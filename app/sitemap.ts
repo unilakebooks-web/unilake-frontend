@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 import { fetchPublicComics } from "@/app/actions/comic";
 import { fetchPublicBlogs } from "@/app/actions/public";
-import { absoluteUrl } from "@/lib/seo";
+import { absoluteUrl, laterDate } from "@/lib/seo";
 import { comicHref } from "@/lib/comicUrl";
 
 /**
@@ -71,7 +71,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
           // precisely so these links stay stable.
           url: absoluteUrl(`/blog/${blog.slug}`),
           // The date of the last real content change; updatedAt also moves on the publish switch.
-          lastModified: new Date(blog.contentUpdatedAt ?? blog.publishedAt ?? blog.createdAt),
+          lastModified: new Date(laterDate(blog.contentUpdatedAt, blog.publishedAt ?? blog.createdAt)),
           changeFrequency: "monthly" as const,
           priority: 0.6,
         }))

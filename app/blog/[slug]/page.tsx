@@ -21,6 +21,7 @@ import {
   BRAND_NAME,
   DEFAULT_DESCRIPTION,
   SITE_NAME,
+  laterDate,
 } from "@/lib/seo";
 
 const ENABLE_YOUTUBE_EMBEDS = false;
@@ -89,7 +90,7 @@ export async function generateMetadata({
         url: canonical,
         // The same dates the page shows and the BlogPosting markup carries.
         publishedTime: blog.publishedAt ?? blog.createdAt,
-        modifiedTime: blog.contentUpdatedAt ?? blog.publishedAt ?? blog.createdAt,
+        modifiedTime: laterDate(blog.contentUpdatedAt, blog.publishedAt ?? blog.createdAt),
         ...(shareImage && {
           images: [{ url: shareImage, alt: shareImageAlt }],
         }),
@@ -123,7 +124,7 @@ export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
   // (createdAt is when the draft was started); contentUpdatedAt moves only when the title, excerpt, body or
   // cover change, so the publish switch or an unchanged save never makes the post look freshly updated.
   const publishedDate = blog.publishedAt ?? blog.createdAt;
-  const updatedDate = blog.contentUpdatedAt ?? publishedDate;
+  const updatedDate = laterDate(blog.contentUpdatedAt, publishedDate);
   const formatDate = (iso: string) =>
     new Date(iso).toLocaleDateString("en-US", {
       month: "long",

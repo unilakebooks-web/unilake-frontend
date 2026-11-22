@@ -9,7 +9,7 @@ import { ComicDetail } from "@/app/types/comic";
 import { useUpdateComicSeo } from "@/hooks/useSeo";
 import { normalizeSlug, validateSlug, SLUG_MAX_LENGTH } from "@/lib/comicSlug";
 import { SITE_URL } from "@/components/share/shareUrl";
-import { getErrorCode, getErrorMessage } from "@/lib/utils";
+import { getErrorMessage } from "@/lib/utils";
 
 interface ComicSlugEditorProps {
   comic: ComicDetail;
@@ -52,7 +52,7 @@ export function ComicSlugEditor({ comic }: ComicSlugEditorProps) {
       const message = getErrorMessage(err, "Server error");
       setServerError(message);
       toast.error(
-        (getErrorCode(err) === "CONFLICT" ? "Address already in use: " : "Failed to save address: ") +
+        "Failed to save address: " +
           message
       );
     }

@@ -85,7 +85,7 @@ export function GoogleReviewTable({
                 <p className="text-sm text-neutral-600 mt-1 line-clamp-2">
                   {review.reviewText}
                 </p>
-                <GoogleReviewAltEdit review={review} />
+                <GoogleReviewAltEdit key={`${review.id}:${review.imageAlt ?? ""}`} review={review} />
               </div>
             </div>
 

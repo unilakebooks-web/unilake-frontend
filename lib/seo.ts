@@ -247,3 +247,12 @@ export async function buildPageMetadata({
     },
   };
 }
+
+/**
+ * The later of a post's last content change and its publication date. A post edited as a draft on one day and
+ * published on a later day was not "last updated" before it was published, and the markup must never say it was
+ * modified before it was published. Both are ISO strings in the same format, so they compare as text.
+ */
+export function laterDate(changedAt: string | null | undefined, publishedAt: string): string {
+  return changedAt && changedAt > publishedAt ? changedAt : publishedAt;
+}
