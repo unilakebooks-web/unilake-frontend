@@ -10,6 +10,7 @@ interface HeroSlideGridProps {
   togglingId: string | null;
   onToggleStatus: (id: string) => void;
   onDelete: (heroImage: HeroImage) => void;
+  onAltSaved: (updated: HeroImage) => void;
   onAddFirst: () => void;
 }
 
@@ -18,6 +19,7 @@ export function HeroSlideGrid({
   togglingId,
   onToggleStatus,
   onDelete,
+  onAltSaved,
   onAddFirst,
 }: HeroSlideGridProps) {
   if (heroImages.length === 0) {
@@ -53,6 +55,7 @@ export function HeroSlideGrid({
           isToggling={togglingId === image.id}
           onToggleStatus={onToggleStatus}
           onDelete={onDelete}
+          onAltSaved={onAltSaved}
         />
       ))}
     </div>

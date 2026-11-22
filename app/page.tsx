@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import HomeHeaderSection from "@/components/home/HomeHeaderSection";
 import Hero from "@/components/home/Hero";
 import ChooseStory from "@/components/home/ChooseStory";
@@ -8,10 +9,22 @@ import HomeFaq from "@/components/home/HomeFaq";
 import LatestBlogs from "@/components/home/LatestBlogs";
 import FeedbackForm from "@/components/home/FaqFeedback";
 import Footer from "@/components/home/Footer";
+import AllBooksList from "@/components/home/AllBooksList";
+import SeedAllBooks from "@/components/home/SeedAllBooks";
+import JsonLd from "@/components/seo/JsonLd";
 
 import { fetchPublicCustomerReviews, fetchPublicTeamMembers, fetchPublicHowItWorks, fetchPublicFaqs, fetchPublicBlogs } from "@/app/actions/public";
 import { getPublicHeroImages } from "@/app/actions/heroimage";
 import { fetchPublicAnnouncements } from "@/app/actions/announcement";
+import { absoluteUrl, buildPageMetadata, getSiteSetting, BRAND_ALTERNATE_NAME, BRAND_NAME, SITE_URL } from "@/lib/seo";
+
+/**
+ * The admin's SEO text for the home page when saved; otherwise nothing but the canonical, share tags and
+ * default share image, so the title and description still come from the site settings (root layout).
+ */
+export async function generateMetadata(): Promise<Metadata> {
+  return buildPageMetadata({ slug: "HOME", path: "/" });
+}
 
 /**
  * Rendered per request, like the other pages that show admin-managed content (see app/privacy/page.tsx): the
@@ -21,6 +34,12 @@ import { fetchPublicAnnouncements } from "@/app/actions/announcement";
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
+  const setting = await getSiteSetting();
+  // Only addresses the admin actually saved: the footer's built-in fallback links are not the brand's pages.
+  const sameAs = [setting?.instagramUrl, setting?.facebookUrl, setting?.twitterUrl, setting?.youtubeUrl, setting?.linkedinUrl]
+    .map((u) => u?.trim())
+    .filter((u): u is string => !!u);
+
   const [reviewsResult, teamResult, howItWorksResult, faqsResult, blogsResult, heroResult, announcementsResult] = await Promise.allSettled([
     fetchPublicCustomerReviews(),
     fetchPublicTeamMembers(),
@@ -46,6 +65,30 @@ export default async function Home() {
 
   return (
     <main className="min-h-screen bg-[#F8E7D2] overflow-x-hidden">
+      <JsonLd
+        data={{
+          "@context": "https://schema.org",
+          "@graph": [
+            {
+              "@type": "WebSite",
+              "@id": `${SITE_URL}/#website`,
+              name: BRAND_NAME,
+              alternateName: BRAND_ALTERNATE_NAME,
+              url: SITE_URL,
+            },
+            {
+              "@type": "Organization",
+              "@id": `${SITE_URL}/#organization`,
+              name: BRAND_NAME,
+              alternateName: BRAND_ALTERNATE_NAME,
+              url: SITE_URL,
+              logo: absoluteUrl("/assets/home_page/logo.png"),
+              ...(sameAs.length > 0 && { sameAs }),
+            },
+          ],
+        }}
+      />
+
       {/* ================= NAVBAR ================= */}
 
       <HomeHeaderSection announcements={announcements} />
@@ -61,6 +104,9 @@ export default async function Home() {
       <HomeFaq faqs={homeFaqs} />
       <FeedbackForm />
       <LatestBlogs blogs={blogs} />
+      <SeedAllBooks>
+        <AllBooksList />
+      </SeedAllBooks>
       <Footer />
 
     </main>

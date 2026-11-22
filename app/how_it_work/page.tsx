@@ -6,21 +6,19 @@ import Footer from "@/components/home/Footer";
 import { HowItWorksVideo } from "@/components/home/HowItWorksVideo";
 import { fetchPublicHowItWorks } from "@/app/actions/public";
 import type { Metadata } from "next";
-import { absoluteUrl } from "@/lib/seo";
+import { buildPageMetadata } from "@/lib/seo";
 
 const HOW_IT_WORKS_DESCRIPTION =
   "See how it works: upload a photo, pick a story, and we turn your child into the hero of their own printed comic book.";
 
-export const metadata: Metadata = {
-  title: "How It Works",
-  description: HOW_IT_WORKS_DESCRIPTION,
-  alternates: { canonical: absoluteUrl("/how_it_work") },
-  openGraph: {
+export async function generateMetadata(): Promise<Metadata> {
+  return buildPageMetadata({
+    slug: "HOW_IT_WORKS",
+    path: "/how_it_work",
     title: "How It Works",
     description: HOW_IT_WORKS_DESCRIPTION,
-    url: absoluteUrl("/how_it_work"),
-  },
-};
+  });
+}
 
 export default async function HowItWorksPage() {
   const howItWorks = await fetchPublicHowItWorks();
@@ -55,6 +53,7 @@ export default async function HowItWorksPage() {
               <HowItWorksVideo
                 videoUrl={howItWorks.videoUrl}
                 posterUrl={howItWorks.posterUrl ?? undefined}
+                posterAlt={howItWorks.posterAlt}
               />
             </div>
 
@@ -69,9 +68,9 @@ export default async function HowItWorksPage() {
 
                   {/* Text Content */}
                   <div className="flex flex-col gap-1.5">
-                    <h4 className="text-[#1A1A1A] font-extrabold text-xl md:text-2xl transition-colors duration-300 group-hover:text-[#914B8C]">
+                    <h2 className="text-[#1A1A1A] font-extrabold text-xl md:text-2xl transition-colors duration-300 group-hover:text-[#914B8C]">
                       {step.heading}
-                    </h4>
+                    </h2>
                     <p className="text-[#555555] font-medium text-sm md:text-base leading-relaxed max-w-lg">
                       {step.description}
                     </p>

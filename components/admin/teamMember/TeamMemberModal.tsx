@@ -30,6 +30,7 @@ export function TeamMemberModal({
   const [name, setName] = useState("");
   const [role, setRole] = useState("");
   const [description, setDescription] = useState("");
+  const [imageAlt, setImageAlt] = useState("");
   const [linkedinUrl, setLinkedinUrl] = useState("");
   const [instagramUrl, setInstagramUrl] = useState("");
   const [twitterUrl, setTwitterUrl] = useState("");
@@ -55,6 +56,7 @@ export function TeamMemberModal({
       setName(member?.name || "");
       setRole(member?.role || "");
       setDescription(member?.description || "");
+      setImageAlt(member?.imageAlt || "");
       setLinkedinUrl(member?.linkedinUrl || "");
       setInstagramUrl(member?.instagramUrl || "");
       setTwitterUrl(member?.twitterUrl || "");
@@ -103,6 +105,7 @@ export function TeamMemberModal({
     if (name.trim() !== member.name) return true;
     if (role.trim() !== member.role) return true;
     if (description.trim() !== (member.description || "")) return true;
+    if (imageAlt.trim() !== (member.imageAlt || "")) return true;
     if (linkedinUrl.trim() !== (member.linkedinUrl || "")) return true;
     if (instagramUrl.trim() !== (member.instagramUrl || "")) return true;
     if (twitterUrl.trim() !== (member.twitterUrl || "")) return true;
@@ -157,6 +160,8 @@ export function TeamMemberModal({
           role: trimmedRole !== member.role ? trimmedRole : undefined,
           description: description.trim() !== (member.description || "") 
             ? (description.trim() || null) : undefined,
+          imageAlt: imageAlt.trim() !== (member.imageAlt || "")
+            ? (imageAlt.trim() || null) : undefined,
           linkedinUrl: linkedinUrl.trim() !== (member.linkedinUrl || "") 
             ? (linkedinUrl.trim() || null) : undefined,
           instagramUrl: instagramUrl.trim() !== (member.instagramUrl || "") 
@@ -181,6 +186,7 @@ export function TeamMemberModal({
           role: trimmedRole,
         };
         if (description.trim()) payload.description = description.trim();
+        if (imageAlt.trim()) payload.imageAlt = imageAlt.trim();
         if (linkedinUrl.trim()) payload.linkedinUrl = linkedinUrl.trim();
         if (instagramUrl.trim()) payload.instagramUrl = instagramUrl.trim();
         if (twitterUrl.trim()) payload.twitterUrl = twitterUrl.trim();
@@ -318,6 +324,16 @@ export function TeamMemberModal({
               onChange={handleFileSelect}
               className="hidden"
               disabled={isBusy}
+            />
+            <Input
+              id="imageAlt"
+              value={imageAlt}
+              onChange={(e) => setImageAlt(e.target.value)}
+              placeholder="Photo description (alt text), optional"
+              aria-label="Photo description (alt text)"
+              disabled={isBusy}
+              className="h-10 px-3.5 text-sm rounded-xl border-[#914A8C]/30 focus-visible:border-[#914A8C] bg-[#F8E7D2]/20"
+              maxLength={200}
             />
           </div>
 

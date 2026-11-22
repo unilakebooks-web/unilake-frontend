@@ -65,7 +65,7 @@ export default function GoogleReviews() {
           <div className="relative shrink-0 w-[150px] sm:w-[320px] md:w-[400px] lg:w-[540px] xl:w-[700px]">
             <Image
               src="/assets/home_page/ufoImg.png"
-              alt="5 Star UFO"
+              alt=""
               width={822}
               height={301}
               priority

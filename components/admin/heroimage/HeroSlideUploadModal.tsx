@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { UploadCloud, Image as ImageIcon, Loader2, CheckCircle2, AlertCircle, RefreshCw, X } from "lucide-react";
 import { requestUploadUrl, createHeroImage } from "@/app/actions/heroimage";
 import { uploadToR2 } from "@/app/lib/r2-upload";
@@ -25,6 +26,7 @@ export function HeroSlideUploadModal({
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [imageAlt, setImageAlt] = useState("");
   
   // Upload status states: "idle" | "requesting" | "uploading" | "registering" | "done" | "error"
   const [uploadState, setUploadState] = useState<
@@ -41,6 +43,7 @@ export function HeroSlideUploadModal({
       setSelectedFile(null);
       setPreviewUrl(null);
       setErrorMessage(null);
+      setImageAlt("");
       setUploadState("idle");
       setProgressPercent(0);
     }
@@ -104,7 +107,7 @@ export function HeroSlideUploadModal({
 
       // Step 3: Register verified object key in Postgres via backend endpoint
       setUploadState("registering");
-      const createdImage = await createHeroImage(key);
+      const createdImage = await createHeroImage(key, imageAlt.trim() || undefined);
 
       setUploadState("done");
       toast.success("Hero slide successfully uploaded & published!");
@@ -209,6 +212,21 @@ export function HeroSlideUploadModal({
             className="hidden"
             disabled={isBusy}
           />
+
+          <div className="space-y-2">
+            <label htmlFor="hero-image-alt" className="text-sm font-semibold text-neutral-800 block">
+              Image description (alt text)
+            </label>
+            <Input
+              id="hero-image-alt"
+              value={imageAlt}
+              onChange={(e) => setImageAlt(e.target.value)}
+              placeholder="Optional. Describe the slide for people who cannot see it"
+              disabled={isBusy}
+              maxLength={200}
+              className="h-10 px-3.5 text-sm rounded-xl border-[#914A8C]/30 focus-visible:border-[#914A8C] bg-[#F8E7D2]/20"
+            />
+          </div>
 
           {/* Error Banner */}
           {errorMessage && (

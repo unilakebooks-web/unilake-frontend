@@ -26,8 +26,8 @@ export async function requestUploadUrl(
 /**
  * Step 3 of upload: registers the R2 object key in Postgres after PUT succeeds
  */
-export async function createHeroImage(imageKey: string): Promise<HeroImage> {
-  const { data } = await api.post<HeroImage>("/api/admin/hero-images", { imageKey });
+export async function createHeroImage(imageKey: string, imageAlt?: string): Promise<HeroImage> {
+  const { data } = await api.post<HeroImage>("/api/admin/hero-images", { imageKey, imageAlt });
   return data;
 }
 

@@ -116,7 +116,7 @@ export async function fetchPublicComics(
 }
 
 export async function fetchPublicComic(comicId: string): Promise<PublicComicDetail> {
-  const { data } = await api.get<PublicComicDetail>(`/api/public/comics/${comicId}`);
+  const { data } = await api.get<PublicComicDetail>(`/api/public/comics/${encodeURIComponent(comicId)}`);
   return data;
 }
 

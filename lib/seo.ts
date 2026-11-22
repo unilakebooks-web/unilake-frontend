@@ -1,7 +1,10 @@
 import { cache } from "react";
 import { unstable_cache } from "next/cache";
-import { fetchPublicSiteSetting } from "@/app/actions/public";
+import type { Metadata } from "next";
+import { fetchPublicPageSeo, fetchPublicSiteSetting } from "@/app/actions/public";
 import type { SiteSetting } from "@/app/types/siteSetting";
+import type { PageSeoSlug } from "@/app/types/seo";
+import { toImageUrl } from "@/lib/imageUrl";
 
 /**
  * Shared SEO plumbing for every page's metadata.
@@ -14,6 +17,9 @@ import type { SiteSetting } from "@/app/types/siteSetting";
 
 /** Used whenever the admin has saved nothing, or the API is unreachable. */
 export const SITE_NAME = "UniLake";
+/** Structured data only (WebSite and Organization): page titles keep using SITE_NAME. */
+export const BRAND_NAME = "UniLake Kids";
+export const BRAND_ALTERNATE_NAME = "UniLake";
 export const DEFAULT_TITLE = "UniLake: Personalized Storybooks for Kids";
 export const DEFAULT_DESCRIPTION =
   "Turn your child into the hero of their own comic book. Upload a photo, pick a story, and we print and deliver it.";
@@ -118,4 +124,116 @@ export function firstNonEmpty(
     }
   }
   return null;
+}
+
+/**
+ * The share picture of every page that has none of its own: the logo on the site's cream background, 1200x630.
+ * A path under public/, made absolute by absoluteUrl where it is used.
+ */
+export const DEFAULT_OG_IMAGE = {
+  path: "/assets/og-default.png",
+  width: 1200,
+  height: 630,
+  alt: "UniLake: personalized storybooks for kids",
+};
+
+/** One row of GET /public/page-seo; only pages the admin has saved appear. */
+export type PageSeoPublic = {
+  slug: PageSeoSlug;
+  metaTitle: string | null;
+  metaDescription: string | null;
+  ogTitle: string | null;
+  ogDescription: string | null;
+  ogImageUrl: string | null;
+  ogImageAlt: string | null;
+};
+
+/**
+ * The admin's SEO text for the fixed pages, cached for five minutes exactly like the site settings above
+ * (same two layers, same reasons). fetchPublicPageSeo throws on failure so that a failure is not cached;
+ * it is caught here, and the page then shows its fixed text.
+ */
+const getPageSeoListCached = unstable_cache(
+  async () => fetchPublicPageSeo(),
+  ["public-page-seo"],
+  { revalidate: REVALIDATE_SECONDS, tags: ["page-seo"] }
+);
+
+const getPageSeoList = cache(async (): Promise<PageSeoPublic[]> => {
+  try {
+    return await getPageSeoListCached();
+  } catch {
+    return [];
+  }
+});
+
+/** The saved SEO text of one fixed page, or null when the admin saved nothing for it. */
+export async function getPageSeo(slug: PageSeoSlug): Promise<PageSeoPublic | null> {
+  const items = await getPageSeoList();
+  return items.find((item) => item.slug === slug) ?? null;
+}
+
+/**
+ * The complete metadata of a fixed public page: the admin's SEO text when set, today's fixed text otherwise,
+ * with its own canonical, description and share tags.
+ *
+ * Why every page repeats siteName, type and locale: Next replaces `openGraph` and `twitter` wholesale with
+ * the deepest segment's object (it does not merge field by field), so a page that sets its own would
+ * otherwise lose them, and a page that sets none would show the homepage's title and url.
+ *
+ * `title` and `description` are the fixed fallbacks. The homepage passes neither: it keeps the root layout's
+ * title (the site settings text) unless the admin saved one for it.
+ */
+export async function buildPageMetadata({
+  slug,
+  path,
+  title,
+  description,
+}: {
+  slug: PageSeoSlug;
+  path: string;
+  title?: string;
+  description?: string;
+}): Promise<Metadata> {
+  const [seo, setting] = await Promise.all([getPageSeo(slug), getSiteSetting()]);
+
+  const pageTitle = firstNonEmpty(seo?.metaTitle, title);
+  const pageDescription =
+    firstNonEmpty(seo?.metaDescription, description, setting?.metaDescription) ?? DEFAULT_DESCRIPTION;
+  const shareTitle =
+    firstNonEmpty(seo?.ogTitle, seo?.metaTitle, title, setting?.metaTitle) ?? DEFAULT_TITLE;
+  const shareDescription = firstNonEmpty(seo?.ogDescription, pageDescription) ?? DEFAULT_DESCRIPTION;
+
+  const ogImage = seo?.ogImageUrl
+    ? { url: toImageUrl(seo.ogImageUrl), alt: firstNonEmpty(seo.ogImageAlt, shareTitle) ?? shareTitle }
+    : {
+        url: absoluteUrl(DEFAULT_OG_IMAGE.path),
+        width: DEFAULT_OG_IMAGE.width,
+        height: DEFAULT_OG_IMAGE.height,
+        alt: DEFAULT_OG_IMAGE.alt,
+      };
+  // The homepage address has no trailing slash, as the root layout has always declared it.
+  const url = path === "/" ? SITE_URL : absoluteUrl(path);
+
+  return {
+    // Homepage: no title unless the admin saved one, so the root layout's default (no suffix) still applies.
+    ...(pageTitle && { title: slug === "HOME" ? { absolute: pageTitle } : pageTitle }),
+    description: pageDescription,
+    alternates: { canonical: url },
+    openGraph: {
+      type: "website",
+      siteName: SITE_NAME,
+      locale: "en_IN",
+      url,
+      title: shareTitle,
+      description: shareDescription,
+      images: [ogImage],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: shareTitle,
+      description: shareDescription,
+      images: [ogImage.url],
+    },
+  };
 }

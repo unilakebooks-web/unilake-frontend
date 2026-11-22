@@ -21,6 +21,7 @@ const NAV_LINKS = [
   { name: "How it works", href: "/how_it_work" },
   { name: "FAQ", href: "/#faq" },
   { name: "Blogs", href: "/blog" },
+  { name: "About Us", href: "/about" },
   { name: "Contact us", href: "/contact" },
 ];
 

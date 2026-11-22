@@ -6,21 +6,19 @@ import Link from "next/link";
 import { MoveLeft } from "lucide-react";
 import BlogCard from "@/components/blog/BlogCard";
 import type { Metadata } from "next";
-import { absoluteUrl } from "@/lib/seo";
+import { buildPageMetadata } from "@/lib/seo";
 
 const BLOG_INDEX_DESCRIPTION =
   "Stories, tips and ideas about reading, imagination and personalized books for children.";
 
-export const metadata: Metadata = {
-  title: "Blog",
-  description: BLOG_INDEX_DESCRIPTION,
-  alternates: { canonical: absoluteUrl("/blog") },
-  openGraph: {
+export async function generateMetadata(): Promise<Metadata> {
+  return buildPageMetadata({
+    slug: "BLOGS",
+    path: "/blog",
     title: "Blog",
     description: BLOG_INDEX_DESCRIPTION,
-    url: absoluteUrl("/blog"),
-  },
-};
+  });
+}
 
 export default async function BlogIndexPage() {
   const blogs = await fetchPublicBlogs();
@@ -56,7 +54,7 @@ export default async function BlogIndexPage() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {blogs.map((blog) => (
-              <BlogCard key={blog.id} blog={blog} />
+              <BlogCard key={blog.id} blog={blog} titleTag="h2" />
             ))}
           </div>
         )}

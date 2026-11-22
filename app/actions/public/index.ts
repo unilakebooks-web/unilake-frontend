@@ -9,6 +9,7 @@ import { Blog, BlogListItem } from "@/app/types/blog";
 import { SitePage, SitePageSlug } from "@/app/types/sitePage";
 import { SiteSetting } from "@/app/types/siteSetting";
 import { GoogleReview } from "@/app/types/googleReview";
+import type { PageSeoPublic } from "@/lib/seo";
 
 export async function fetchPublicCustomerReviews(): Promise<CustomerReview[]> {
   try {
@@ -136,4 +137,15 @@ export async function fetchPublicSitePage(
 export async function fetchPublicTeamMembersOrThrow(): Promise<TeamMember[]> {
   const { data } = await api.get<TeamMember[]>("/api/public/team-members");
   return data || [];
+}
+
+/**
+ * The SEO text the admin saved for the fixed public pages (only the pages that have a row).
+ *
+ * Unlike the fetches above this one THROWS on failure: getPageSeo in lib/seo.ts caches the result for five
+ * minutes, and a swallowed error would be cached as "no SEO text" for that long. getPageSeo catches it.
+ */
+export async function fetchPublicPageSeo(): Promise<PageSeoPublic[]> {
+  const { data } = await api.get<{ items: PageSeoPublic[] }>("/api/public/page-seo");
+  return data?.items ?? [];
 }

@@ -1,8 +1,13 @@
 "use client";
 
 import { HeroImage } from "@/app/types/heroimage";
+import { useState } from "react";
+import { toast } from "sonner";
 import { Switch } from "@/components/ui/switch";
-import { Loader2, Trash2, Calendar, Eye, EyeOff } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { useUpdateHeroImageAlt } from "@/hooks/useSeo";
+import { getErrorMessage } from "@/lib/utils";
+import { Loader2, Trash2, Calendar, Eye, EyeOff, Save } from "lucide-react";
 
 interface HeroSlideCardProps {
   heroImage: HeroImage;
@@ -10,6 +15,8 @@ interface HeroSlideCardProps {
   isToggling: boolean;
   onToggleStatus: (id: string) => void;
   onDelete: (heroImage: HeroImage) => void;
+  /** Called with the saved row after the alt text is edited. */
+  onAltSaved: (updated: HeroImage) => void;
 }
 
 export function HeroSlideCard({
@@ -18,7 +25,25 @@ export function HeroSlideCard({
   isToggling,
   onToggleStatus,
   onDelete,
+  onAltSaved,
 }: HeroSlideCardProps) {
+  const updateAlt = useUpdateHeroImageAlt();
+  const [altText, setAltText] = useState(heroImage.imageAlt ?? "");
+  const altDirty = altText.trim() !== (heroImage.imageAlt ?? "");
+
+  const handleSaveAlt = async () => {
+    try {
+      const updated = await updateAlt.mutateAsync({
+        id: heroImage.id,
+        imageAlt: altText.trim() || null,
+      });
+      onAltSaved(updated);
+      toast.success("Image description saved");
+    } catch (err: unknown) {
+      toast.error("Failed to save description: " + getErrorMessage(err, "Server error"));
+    }
+  };
+
   const formattedDate = new Date(heroImage.createdAt).toLocaleDateString("en-US", {
     year: "numeric",
     month: "short",
@@ -31,7 +56,7 @@ export function HeroSlideCard({
       <div className="relative w-full aspect-[16/9] bg-neutral-900 overflow-hidden">
         <img
           src={heroImage.imageUrl}
-          alt={`Hero Slide ${index + 1}`}
+          alt={heroImage.imageAlt || `Hero Slide ${index + 1}`}
           className={`w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 ${
             !heroImage.isActive ? "grayscale-[40%] opacity-75" : ""
           }`}
@@ -57,6 +82,28 @@ export function HeroSlideCard({
             </span>
           )}
         </div>
+      </div>
+
+      {/* Image description (alt text) */}
+      <div className="px-4 pt-3 flex items-center gap-2">
+        <Input
+          value={altText}
+          onChange={(e) => setAltText(e.target.value)}
+          disabled={updateAlt.isPending}
+          maxLength={200}
+          placeholder="Image description (alt text), optional"
+          aria-label={`Image description of slide ${index + 1}`}
+          className="h-9 text-sm rounded-xl"
+        />
+        <button
+          type="button"
+          onClick={handleSaveAlt}
+          disabled={!altDirty || updateAlt.isPending}
+          title="Save description"
+          className="w-9 h-9 rounded-xl bg-[#914A8C] text-white hover:bg-[#7a3e75] transition-colors flex items-center justify-center shrink-0 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+        >
+          {updateAlt.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+        </button>
       </div>
 
       {/* Control Footer */}

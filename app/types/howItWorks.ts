@@ -7,6 +7,7 @@ export type HowItWorks = {
   id: string;
   videoUrl: string | null;
   posterUrl: string | null;
+  posterAlt: string | null;
   steps: HowItWorksStep[];
   isActive: boolean;
   createdAt: string;

@@ -166,6 +166,17 @@ export function BlogEditor({
       return;
     }
 
+    // Ask for the description before uploading, so cancelling costs nothing. An empty answer marks the image as
+    // decorative (alt=""), which screen readers skip; Cancel stops the insert. Images already in a post keep
+    // whatever alt they have.
+    const alt = window.prompt(
+      'Describe this image for people who cannot see it (for example "A child reading a comic on a sofa").\n\nLeave empty and press OK only if the image is purely decorative.'
+    );
+    if (alt === null) {
+      if (fileInputRef.current) fileInputRef.current.value = "";
+      return;
+    }
+
     const toastId = toast.loading("Uploading image...");
 
     try {
@@ -184,7 +195,7 @@ export function BlogEditor({
       });
 
       // Insert image at cursor
-      editor.chain().focus().setImage({ src: publicUrl }).run();
+      editor.chain().focus().setImage({ src: publicUrl, alt: alt.trim() }).run();
       
       toast.success("Image uploaded", { id: toastId });
     } catch (error: any) {

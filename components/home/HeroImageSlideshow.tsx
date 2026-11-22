@@ -65,7 +65,7 @@ export function HeroImageSlideshow({
         >
           <Image
             src={toImageUrl(img.imageUrl)}
-            alt="Hero Slideshow Image"
+            alt={img.imageAlt || "Hero Slideshow Image"}
             fill
             sizes="(max-width: 1024px) 100vw, 540px"
             className="object-cover w-full h-full"

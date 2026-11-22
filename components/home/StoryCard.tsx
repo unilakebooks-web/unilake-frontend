@@ -12,6 +12,7 @@ import { formatAgeRange } from "@/lib/comicTags";
 import ComicQuickViewModal from "@/components/home/ComicQuickViewModal";
 import { toImageUrl } from "@/lib/imageUrl";
 import ShareButton from "@/components/share/ShareButton";
+import { comicHref } from "@/lib/comicUrl";
 
 /** Shared by the Personalise link and its disabled stand-in. */
 const PERSONALISE_CLASSES = `
@@ -156,7 +157,7 @@ export default function StoryCard({ comic }: StoryCardProps) {
       {/* Background SVG Frame (card.svg includes shadow & body) */}
       <Image
         src="/assets/card.svg"
-        alt="Story Card Background"
+        alt=""
         fill
         className="pointer-events-none select-none z-0"
       />
@@ -191,7 +192,7 @@ export default function StoryCard({ comic }: StoryCardProps) {
         <div className="absolute inset-0 overflow-hidden rounded-[1.6cqw]">
           <Image
             src={toImageUrl(images[currentImageIndex])}
-            alt={comic.title}
+            alt={comic.coverThumbnailAlts?.[currentImageIndex] || comic.title}
             fill
             // The box is ~76% of a card that is at most 380px wide.
             sizes="(max-width: 640px) 80vw, 300px"
@@ -222,7 +223,7 @@ export default function StoryCard({ comic }: StoryCardProps) {
             of the white body's vertical budget. Its clicks are stopped inside ShareButton, so the card's quick-view
             popup does not open. */}
         <div className="absolute top-[2.1cqw] right-[2.1cqw] z-10">
-          <ShareButton path={`/comic/${comic.id}`} title={comic.title} variant="overlay" />
+          <ShareButton path={comicHref(comic)} title={comic.title} variant="overlay" />
         </div>
       </div>
 
@@ -386,7 +387,7 @@ export default function StoryCard({ comic }: StoryCardProps) {
         <div className="flex justify-center w-full">
           {pricing ? (
             <Link
-              href={`/comic/${comic.id}`}
+              href={comicHref(comic)}
               onClick={(e) => e.stopPropagation()}
               className={`${PERSONALISE_CLASSES} hover:brightness-110 active:translate-y-[2px] active:border-b-[2px] cursor-pointer`}
             >

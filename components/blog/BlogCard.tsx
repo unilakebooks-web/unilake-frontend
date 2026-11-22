@@ -25,7 +25,14 @@ import { BlogListItem } from "@/app/types/blog";
  *   cut-out clears  ≈ 30.4cqw from the card top (28.9 + 1.5 breathing room)
  *   title block     = 30.4 − 8 − 2 (excerpt margin) ≈ 20.5cqw minimum
  */
-export default function BlogCard({ blog }: { blog: BlogListItem }) {
+export default function BlogCard({
+  blog,
+  titleTag: Title = "h3",
+}: {
+  blog: BlogListItem;
+  /** The title's heading level: h3 under a section heading (homepage), h2 straight under the page's h1 (/blog). */
+  titleTag?: "h2" | "h3";
+}) {
   return (
     <Link
       href={`/blog/${blog.slug}`}
@@ -58,11 +65,11 @@ export default function BlogCard({ blog }: { blog: BlogListItem }) {
             (see GEOMETRY above) so a short title can never let the excerpt
             ride up into the cut-out. A long title simply grows the block. */}
         <div className="pr-[35%] min-h-[20.5cqw] shrink-0">
-          <h3
+          <Title
             className={`${chauPhilomeneOne.className} text-white text-xl sm:text-[22px] leading-[1.15] uppercase line-clamp-3 break-words`}
           >
             {blog.title}
-          </h3>
+          </Title>
         </div>
 
         {/* Excerpt - always below the cut-out, so it can use the full card

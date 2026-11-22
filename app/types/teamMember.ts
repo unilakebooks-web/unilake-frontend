@@ -4,6 +4,7 @@ export interface TeamMember {
   role: string;
   description: string | null;
   imageUrl: string | null;
+  imageAlt: string | null;
   linkedinUrl: string | null;
   instagramUrl: string | null;
   twitterUrl: string | null;
@@ -24,6 +25,7 @@ export interface CreateTeamMemberPayload {
   role: string;
   description?: string;
   imageKey?: string;
+  imageAlt?: string;
   linkedinUrl?: string;
   instagramUrl?: string;
   twitterUrl?: string;
@@ -35,6 +37,7 @@ export interface UpdateTeamMemberPayload {
   role?: string;
   description?: string | null;
   imageKey?: string | null;
+  imageAlt?: string | null;
   linkedinUrl?: string | null;
   instagramUrl?: string | null;
   twitterUrl?: string | null;

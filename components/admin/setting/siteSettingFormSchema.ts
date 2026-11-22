@@ -83,6 +83,11 @@ export const siteSettingFormSchema = z.object({
   twitterUrl: optionalUrl("Twitter URL"),
   youtubeUrl: optionalUrl("YouTube URL"),
   linkedinUrl: optionalUrl("LinkedIn URL"),
+
+  // Blog author, shown on every post (feature 13)
+  blogAuthorName: z.string().trim().max(100, "Author name is too long"),
+  blogAuthorInstagramUrl: optionalUrl("Author Instagram URL"),
+  blogAuthorLinkedinUrl: optionalUrl("Author LinkedIn URL"),
 });
 
 export type SiteSettingFormValues = z.infer<typeof siteSettingFormSchema>;
@@ -110,6 +115,9 @@ export const EMPTY_FORM_VALUES: SiteSettingFormValues = {
   twitterUrl: "",
   youtubeUrl: "",
   linkedinUrl: "",
+  blogAuthorName: "",
+  blogAuthorInstagramUrl: "",
+  blogAuthorLinkedinUrl: "",
 };
 
 /**
@@ -145,6 +153,9 @@ export function toFormValues(setting: SiteSetting | null): SiteSettingFormValues
     twitterUrl: fromRow(setting.twitterUrl),
     youtubeUrl: fromRow(setting.youtubeUrl),
     linkedinUrl: fromRow(setting.linkedinUrl),
+    blogAuthorName: fromRow(setting.blogAuthorName),
+    blogAuthorInstagramUrl: fromRow(setting.blogAuthorInstagramUrl),
+    blogAuthorLinkedinUrl: fromRow(setting.blogAuthorLinkedinUrl),
   };
 }
 

@@ -21,6 +21,7 @@ import {
   firstNonEmpty,
   SITE_NAME,
   SITE_URL,
+  DEFAULT_OG_IMAGE,
   DEFAULT_TITLE,
   DEFAULT_DESCRIPTION,
 } from "@/lib/seo";
@@ -52,11 +53,9 @@ export async function generateMetadata(): Promise<Metadata> {
     },
     description: siteDescription,
     applicationName: SITE_NAME,
-    // Browser tab / bookmark icon. Hardcoded to the brand logo for now.
-    icons: {
-      icon: "/assets/home_page/logo.png",
-      apple: "/assets/home_page/logo.png",
-    },
+    // The browser tab, bookmark and search-result icon come from app/icon.png, app/apple-icon.png and
+    // app/favicon.ico (Next's file convention): the brand logo padded onto a square, because Google wants
+    // a square icon and /favicon.ico has to exist.
     openGraph: {
       type: "website",
       siteName: SITE_NAME,
@@ -64,11 +63,21 @@ export async function generateMetadata(): Promise<Metadata> {
       description: siteDescription,
       url: SITE_URL,
       locale: "en_IN",
+      // The default share picture, for every page that sets no image of its own (login, dashboard...).
+      images: [
+        {
+          url: DEFAULT_OG_IMAGE.path,
+          width: DEFAULT_OG_IMAGE.width,
+          height: DEFAULT_OG_IMAGE.height,
+          alt: DEFAULT_OG_IMAGE.alt,
+        },
+      ],
     },
     twitter: {
       card: "summary_large_image",
       title: siteTitle,
       description: siteDescription,
+      images: [DEFAULT_OG_IMAGE.path],
     },
   };
 }

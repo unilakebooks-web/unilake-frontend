@@ -327,6 +327,43 @@ export function SiteSettingForm({ setting }: SiteSettingFormProps) {
         </div>
       </Section>
 
+      <Section
+        title="Blog author"
+        description="The one author shown on every blog post and in its search markup. Leave blank to show no author."
+      >
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+          <Field label="Author name" error={errors.blogAuthorName?.message}>
+            <Input
+              {...register("blogAuthorName")}
+              maxLength={100}
+              className={inputClass}
+            />
+          </Field>
+
+          <Field
+            label="Author Instagram"
+            error={errors.blogAuthorInstagramUrl?.message}
+          >
+            <Input
+              {...register("blogAuthorInstagramUrl")}
+              placeholder="https://instagram.com/…"
+              className={inputClass}
+            />
+          </Field>
+
+          <Field
+            label="Author LinkedIn"
+            error={errors.blogAuthorLinkedinUrl?.message}
+          >
+            <Input
+              {...register("blogAuthorLinkedinUrl")}
+              placeholder="https://linkedin.com/in/…"
+              className={inputClass}
+            />
+          </Field>
+        </div>
+      </Section>
+
       {/* Sticky so the button stays reachable on a long form. */}
       <div className="sticky bottom-4 flex justify-end">
         <button

@@ -1,10 +1,17 @@
 import type { Metadata } from "next";
 import LegalPageView from "@/components/legal/LegalPageView";
 import { loadSitePage } from "@/components/legal/loadSitePage";
+import { buildPageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Privacy Policy",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return buildPageMetadata({
+    slug: "PRIVACY",
+    path: "/privacy",
+    title: "Privacy Policy",
+    description:
+      "How UniLake collects, uses and protects your information.",
+  });
+}
 
 /**
  * Rendered per request, not at build time.

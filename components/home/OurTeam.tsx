@@ -86,7 +86,7 @@ export default function OurTeam({ members }: OurTeamProps) {
         >
           <Image
             src="/assets/home_page/teamSectionMainImg.png"
-            alt="Our Team Characters"
+            alt=""
             width={460}
             height={320}
             priority

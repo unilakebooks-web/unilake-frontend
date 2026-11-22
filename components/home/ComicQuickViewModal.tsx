@@ -15,6 +15,7 @@ import { PublicComicListItem } from "@/app/types/comic";
 import { hankenGrotesk, poppins, protestStrike } from "@/app/fonts";
 import { formatAgeGroup, formatGender } from "@/lib/comicTags";
 import { toImageUrl } from "@/lib/imageUrl";
+import { comicHref } from "@/lib/comicUrl";
 
 /** Price as StoryCard already resolved it - null when not sold in the country. */
 export interface QuickViewPrice {
@@ -180,7 +181,7 @@ export default function ComicQuickViewModal({
 }: ComicQuickViewModalProps) {
   const router = useRouter();
 
-  const personalise = () => router.push(`/comic/${comic.id}`);
+  const personalise = () => router.push(comicHref(comic));
   const buttonState = !pricing
     ? "opacity-50 cursor-not-allowed"
     : "hover:brightness-110 active:translate-y-[2px] active:border-b-[2px] cursor-pointer";

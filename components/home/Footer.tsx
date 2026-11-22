@@ -83,7 +83,7 @@ export default function Footer() {
         >
           <Image
             src="/assets/home_page/sun-logo-8FjyKkdiCt.png"
-            alt="Sun"
+            alt=""
             width={110}
             height={110}
             priority
@@ -183,9 +183,9 @@ export default function Footer() {
             {/* Middle Column: Explore */}
             <div className="md:col-span-3 flex flex-col items-center">
               <div className="flex flex-col items-center text-center">
-                <h4 className="text-xl font-medium uppercase tracking-wide mb-6">
+                <h2 className="text-xl font-medium uppercase tracking-wide mb-6">
                   EXPLORE
-                </h4>
+                </h2>
                 <ul className={`${hankenGrotesk.className} flex flex-col gap-3 text-[15px] uppercase text-white/90`}>
                   <li>
                     <Link href="/" className="hover:text-white transition-colors duration-200">
@@ -200,6 +200,11 @@ export default function Footer() {
                   <li>
                     <Link href="/blog" className="hover:text-white transition-colors duration-200">
                       BLOG
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/about" className="hover:text-white transition-colors duration-200">
+                      ABOUT US
                     </Link>
                   </li>
                   <li>
@@ -229,9 +234,9 @@ export default function Footer() {
             {/* Right Column: Legal & Support */}
             <div className="md:col-span-3 flex flex-col items-center">
               <div className="flex flex-col items-center text-center">
-                <h4 className="text-xl font-medium uppercase tracking-wide mb-6">
+                <h2 className="text-xl font-medium uppercase tracking-wide mb-6">
                   LEGAL &amp; SUPPORT
-                </h4>
+                </h2>
                 <ul className={`${hankenGrotesk.className} flex flex-col gap-3 text-[15px] uppercase text-white/90`}>
                   <li>
                     <Link href="/privacy" className="hover:text-white transition-colors duration-200">

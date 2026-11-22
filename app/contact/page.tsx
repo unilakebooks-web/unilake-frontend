@@ -5,10 +5,17 @@ import Footer from "@/components/home/Footer";
 import ContactForm from "@/components/shared/ContactForm";
 import { fetchPublicSiteSetting } from "@/app/actions/public";
 import { chauPhilomeneOne, hankenGrotesk } from "@/app/fonts";
+import { buildPageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Contact Us",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return buildPageMetadata({
+    slug: "CONTACT",
+    path: "/contact",
+    title: "Contact Us",
+    description:
+      "Get in touch with the UniLake team: questions about your order, a personalized storybook or anything else.",
+  });
+}
 
 /** Rendered per request - see the note in app/privacy/page.tsx. */
 export const dynamic = "force-dynamic";

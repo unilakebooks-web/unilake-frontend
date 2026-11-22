@@ -103,7 +103,7 @@ export default function HomeFaq({ faqs }: HomeFaqProps) {
         >
           <Image
             src="/assets/home_page/girlFeedbackImg.png"
-            alt="Girl student raising hand"
+            alt=""
             width={328}
             height={381}
             priority

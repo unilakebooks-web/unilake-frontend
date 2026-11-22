@@ -27,6 +27,7 @@ export default function HowItWorksAdminPage() {
   
   const [posterUrl, setPosterUrl] = useState<string | null>(null);
   const [posterKey, setPosterKey] = useState<string | null | undefined>(undefined);
+  const [posterAlt, setPosterAlt] = useState("");
 
   // Upload State
   const [isVideoUploading, setIsVideoUploading] = useState(false);
@@ -43,6 +44,7 @@ export default function HowItWorksAdminPage() {
       setSteps(howItWorks?.steps ?? []);
       setVideoUrl(howItWorks?.videoUrl ?? null);
       setPosterUrl(howItWorks?.posterUrl ?? null);
+      setPosterAlt(howItWorks?.posterAlt ?? "");
       // Reset keys since we just loaded from server
       setVideoKey(undefined);
       setPosterKey(undefined);
@@ -172,6 +174,8 @@ export default function HowItWorksAdminPage() {
       const payload: Record<string, unknown> = {
         steps,
         isActive,
+        // null, not "": the API treats null as "clear it" (feature 13).
+        posterAlt: posterAlt.trim() || null,
       };
 
       if (videoKey !== undefined) payload.videoKey = videoKey;
@@ -358,6 +362,15 @@ export default function HowItWorksAdminPage() {
               className="hidden" 
               ref={posterInputRef}
               onChange={handlePosterUpload}
+            />
+            <input
+              type="text"
+              value={posterAlt}
+              onChange={(e) => setPosterAlt(e.target.value)}
+              placeholder="Poster description (alt text), optional"
+              aria-label="Poster description (alt text)"
+              maxLength={200}
+              className="w-full bg-white border border-gray-200 rounded-xl px-4 py-2 text-sm text-gray-600 outline-none focus:border-[#914A8C] focus:ring-1 focus:ring-[#914A8C] transition-all"
             />
           </div>
         </div>
