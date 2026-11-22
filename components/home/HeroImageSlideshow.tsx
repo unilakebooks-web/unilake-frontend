@@ -46,6 +46,7 @@ export function HeroImageSlideshow({
           sizes="(max-width: 1024px) 100vw, 540px"
           className="object-cover w-full h-full"
           priority
+          fetchPriority="high"
         />
       </div>
     );
@@ -70,6 +71,8 @@ export function HeroImageSlideshow({
             sizes="(max-width: 1024px) 100vw, 540px"
             className="object-cover w-full h-full"
             priority={index === 0}
+            // The first slide is the largest thing on the page: tell the browser to fetch it before everything else.
+            fetchPriority={index === 0 ? "high" : undefined}
           />
         </div>
       ))}
