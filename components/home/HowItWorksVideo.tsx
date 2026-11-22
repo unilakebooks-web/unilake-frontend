@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
+import { VideoSeekBar } from "@/components/shared/VideoSeekBar";
 
 export function HowItWorksVideo({ videoUrl, posterUrl }: { videoUrl?: string | null; posterUrl?: string }) {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -27,8 +28,8 @@ export function HowItWorksVideo({ videoUrl, posterUrl }: { videoUrl?: string | n
         className="
           relative
           w-full
-          max-w-[400px]
-          aspect-[4/5]
+          max-w-[min(400px,45vh)]
+          aspect-[9/16]
           transition-transform
           duration-300
           hover:scale-[1.03]
@@ -54,6 +55,8 @@ export function HowItWorksVideo({ videoUrl, posterUrl }: { videoUrl?: string | n
             onPlay={() => setIsPlaying(true)}
             onPause={() => setIsPlaying(false)}
           />
+
+          <VideoSeekBar videoRef={videoRef} />
 
           {/* Interactive Mute Overlay */}
           {isPlaying && (

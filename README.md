@@ -231,8 +231,9 @@ a hook in `hooks/`, then use the hook in the component.
 4. **Checkout** — `PricingSection` (full section + floating `CheckoutBar`, both
    driven by `useCheckoutFlow`): pick a cover, log in, choose an address (Indian
    pincodes auto-fill city and state from `data/pincodes.json`), pay with
-   Razorpay. The backend confirms payment via webhook;
-   `VerifyingPaymentOverlay` waits for it.
+   Razorpay. The backend confirms payment via webhook, and the page also asks
+   it to confirm with Razorpay (`confirmPayment` on opening the checkout page,
+   on closing the payment window and while `VerifyingPaymentOverlay` waits).
 5. **Paid book** — the remaining pages generate on the same preview page. The
    customer picks a variant per page and clicks Send to Print (full section +
    floating `SendToPrintBar`, both driven by `useSendToPrintFlow`).

@@ -1,7 +1,8 @@
 // ⚠️ Same values as the backend: config/sample.ts (MAX_SAMPLE_PAGES, SAMPLE_TTL_HOURS,
 // SAMPLE_CLEANUP_MARGIN_MS), validators/sample.schema.ts (name length, age range) and
 // MAX_VARIANTS_BEFORE_PAYMENT in config/generation.ts. Two repos, so change them together.
-export const MAX_SAMPLE_PAGES = 12;
+// A safety ceiling, not a product limit: the admin may choose the whole book (the live books have 38 and 46 pages).
+export const MAX_SAMPLE_PAGES = 100;
 export const SAMPLE_TTL_HOURS = 6;
 export const SAMPLE_NAME_MAX = 50;
 export const SAMPLE_AGE_MIN = 0;

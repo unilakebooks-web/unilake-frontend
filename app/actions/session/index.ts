@@ -7,6 +7,7 @@ import {
   PhotoUploadUrlResponse,
   RegenerateResponse,
   SessionSnapshot,
+  SessionStatus,
   CheckoutResponse,
   SendToPrintSelection,
   SendToPrintResponse,
@@ -79,6 +80,20 @@ export async function initiateCheckout(
   const { data } = await api.post<CheckoutResponse>(
     `/api/public/sessions/${sessionId}/checkout`,
     couponCode === undefined ? undefined : { couponCode }
+  );
+  return data;
+}
+
+export interface PaymentConfirmation {
+  status: SessionStatus;
+  confirmed: boolean;
+}
+
+// Asks our server whether the payment was received (the server asks the payment provider itself
+// and marks the order paid), so the page does not depend on the provider's webhook arriving.
+export async function confirmPayment(sessionId: string): Promise<PaymentConfirmation> {
+  const { data } = await api.post<PaymentConfirmation>(
+    `/api/public/sessions/${sessionId}/confirm-payment`
   );
   return data;
 }

@@ -18,7 +18,6 @@ import ImageCropModal from "@/components/comic/ImageCropModal";
 import { getErrorMessage } from "@/lib/utils";
 import {
   estimateSampleCost,
-  MAX_SAMPLE_PAGES,
   SAMPLE_CLEANUP_MINUTES,
   SAMPLE_NAME_MAX,
   SAMPLE_TTL_HOURS,
@@ -311,7 +310,7 @@ export function SampleCreateCard({
       {comicId && (
         <div className="space-y-2">
           <p aria-live="polite" className="text-xs font-bold text-[#914A8C]/80">
-            Pages to generate ({picked.length} of at most {MAX_SAMPLE_PAGES})
+            Pages to generate ({picked.length} of {pages.length})
           </p>
           {comicLoading ? (
             <p className="text-sm text-[#914A8C]/70">Loading pages...</p>
@@ -391,7 +390,8 @@ export function SampleCreateCard({
 
       <div className="sticky bottom-4 z-40 [@media(max-height:480px)]:static flex flex-wrap items-center gap-3 rounded-2xl border border-[#914A8C]/20 bg-white p-3 shadow-lg">
         <p className="mr-auto text-xs font-bold text-[#914A8C]">
-          {picked.length} of {MAX_SAMPLE_PAGES} pages, about ${estimate}
+          {picked.length}
+          {pages.length > 0 ? ` of ${pages.length}` : ""} pages, about ${estimate}
         </p>
         <Button
           onClick={handleCreate}

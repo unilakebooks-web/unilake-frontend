@@ -3,13 +3,16 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { SessionSnapshot } from "@/app/types/session";
-import { initiateCheckout } from "@/app/actions/session";
+import { confirmPayment, initiateCheckout } from "@/app/actions/session";
 import { loadRazorpayScript } from "@/app/lib/razorpay";
 import { toast } from "sonner";
 import { Loader2, CreditCard } from "lucide-react";
 import { usePublicComic } from "@/hooks/usePublicComics";
 import api from "@/app/lib/axios";
 import { isCouponRejection } from "./couponErrors";
+
+/** Longest wait for our server to confirm a payment after the payment window is closed. */
+const CONFIRM_ON_DISMISS_WAIT_MS = 3_000;
 
 interface PaymentButtonProps {
   sessionId: string;
@@ -87,8 +90,18 @@ export default function PaymentButton({
         },
         modal: {
           ondismiss: async function () {
-            // User closed the modal. Check status.
+            // User closed the modal. Ask our server whether a payment went through
+            // (a UPI payment can finish after the window is closed), then check status.
+            // Waits at most CONFIRM_ON_DISMISS_WAIT_MS for the confirmation, so the button is not busy for long.
             try {
+              let waitTimer: ReturnType<typeof setTimeout> | undefined;
+              await Promise.race([
+                confirmPayment(sessionId).catch(() => undefined),
+                new Promise((resolve) => {
+                  waitTimer = setTimeout(resolve, CONFIRM_ON_DISMISS_WAIT_MS);
+                }),
+              ]);
+              clearTimeout(waitTimer);
               const { data: currentSnapshot } = await api.get<SessionSnapshot>(`/api/public/sessions/${sessionId}`);
               setIsProcessing(false);
               onPaymentDismissed(currentSnapshot.status);

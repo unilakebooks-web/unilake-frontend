@@ -46,7 +46,8 @@ export function SamplePagePicker({
   const [note, setNote] = useState<string | null>(null);
 
   const atCap = chosen.length >= MAX_SAMPLE_PAGES;
-  const previewPages = pages.filter((p) => p.isPreviewPage && !pageProblem(p));
+  const usablePages = pages.filter((p) => !pageProblem(p));
+  const previewPages = usablePages.filter((p) => p.isPreviewPage);
 
   const togglePage = (id: string) => {
     if (disabled) return;
@@ -76,6 +77,29 @@ export function SamplePagePicker({
     );
   };
 
+  // Every page that can be generated, up to the ceiling. Pages without artwork (or a face page without
+  // its mask) are left out and the note says how many.
+  const selectAll = () => {
+    if (disabled) return;
+    onChange(usablePages.slice(0, MAX_SAMPLE_PAGES).map((p) => p.id));
+    const skipped = pages.length - usablePages.length;
+    const notes = [
+      skipped > 0
+        ? `Skipped ${skipped} page(s) that cannot be generated.`
+        : null,
+      usablePages.length > MAX_SAMPLE_PAGES
+        ? `Chose the first ${MAX_SAMPLE_PAGES} of ${usablePages.length} pages.`
+        : null,
+    ].filter(Boolean);
+    setNote(notes.length > 0 ? notes.join(" ") : null);
+  };
+
+  const deselectAll = () => {
+    if (disabled) return;
+    onChange([]);
+    setNote(null);
+  };
+
   const openPage = pages.find((p) => p.id === openId);
   const openSelected = !!openPage && chosen.includes(openPage.id);
 
@@ -90,6 +114,26 @@ export function SamplePagePicker({
           ) : null}
           {note && <p>{note}</p>}
         </div>
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={selectAll}
+          disabled={disabled || usablePages.length === 0}
+          className="ml-auto cursor-pointer"
+        >
+          Select all
+        </Button>
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={deselectAll}
+          disabled={disabled || chosen.length === 0}
+          className="cursor-pointer"
+        >
+          Deselect all
+        </Button>
         {previewPages.length > 0 && (
           <Button
             type="button"
@@ -97,7 +141,7 @@ export function SamplePagePicker({
             size="sm"
             onClick={pickFreePreview}
             disabled={disabled}
-            className="ml-auto cursor-pointer"
+            className="cursor-pointer"
           >
             Select free-preview pages
           </Button>
