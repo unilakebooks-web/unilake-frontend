@@ -75,7 +75,7 @@ export function KpiRow({
         isLoading={isLoading}
         icon={IndianRupee}
         label="Revenue"
-        value={revenue ? formatMoneyCompact(revenue.total, revenue.currency) : "-"}
+        value={revenue ? formatMoneyCompact(revenue.total, revenue.currency) : "N/A"}
         sub={
           otherCurrencies
             ? `plus ${otherCurrencies}`
@@ -102,7 +102,7 @@ export function KpiRow({
         value={
           revenue && revenue.orderCount > 0
             ? formatMoney(revenue.averageOrderValue, revenue.currency)
-            : "-"
+            : "N/A"
         }
         sub={
           hardcoverShare !== null
