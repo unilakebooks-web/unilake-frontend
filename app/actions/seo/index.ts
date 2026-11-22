@@ -44,7 +44,7 @@ export async function updateHeroImageAlt(
   return data;
 }
 
-/** Always returns all ten pages; one never saved comes back as a placeholder with `id: null`. */
+/** Always returns every page; one never saved comes back as a placeholder with `id: null`. */
 export async function fetchPageSeos(): Promise<PageSeo[]> {
   const { data } = await api.get<PageSeo[]>("/api/admin/page-seo");
   return data;

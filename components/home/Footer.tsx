@@ -212,6 +212,11 @@ export default function Footer() {
                       TEAM
                     </Link>
                   </li>
+                  <li>
+                    <Link href="/reviews" className="hover:text-white transition-colors duration-200">
+                      REVIEWS
+                    </Link>
+                  </li>
                   {/* <li>
                     <Link href="/faq" className="hover:text-white transition-colors duration-200">
                       FAQ

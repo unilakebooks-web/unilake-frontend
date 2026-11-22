@@ -10,7 +10,7 @@ import { AlertCircle, RefreshCw } from "lucide-react";
 export default function SeoAdminPage() {
   const { data: pages = [], isLoading, isError, error, refetch } = usePageSeos();
 
-  // The API returns all ten slugs; ordering here keeps the screen stable if it ever does not.
+  // The API returns every slug; ordering here keeps the screen stable if it ever does not.
   const ordered = PAGE_SEO_SLUGS.flatMap((slug) => {
     const page = pages.find((p) => p.slug === slug);
     return page ? [page] : [];

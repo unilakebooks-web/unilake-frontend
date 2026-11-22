@@ -2,9 +2,11 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { chauPhilomeneOne, hankenGrotesk } from "@/app/fonts";
 import { BANNER_HEADING_SIZE } from "@/components/home/bannerHeading";
 import { usePublicGoogleReviews } from "@/hooks/usePublicContent";
+import { MoveRight } from "lucide-react";
 import { MAX_RATING } from "@/app/types/googleReview";
 
 const INITIAL_VISIBLE_COUNT = 3;
@@ -233,6 +235,23 @@ export default function GoogleReviews() {
               </button>
             </div>
           )}
+
+          {/* Link to the full reviews page */}
+          <div className="mt-12 flex justify-center">
+            <Link
+              href="/reviews"
+              className="
+                bg-transparent hover:bg-[#8E4A92] text-[#8E4A92] hover:text-white
+                border-2 border-[#8E4A92]
+                px-8 py-3 rounded-full font-bold shadow-sm
+                transition-colors
+                flex items-center justify-center gap-2
+              "
+            >
+              <span>Read all reviews</span>
+              <MoveRight className="w-5 h-5" />
+            </Link>
+          </div>
 
         </div>
       </section>

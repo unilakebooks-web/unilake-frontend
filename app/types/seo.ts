@@ -9,7 +9,8 @@ export type PageSeoSlug =
   | "ABOUT"
   | "PRIVACY"
   | "TERMS"
-  | "REFUND";
+  | "REFUND"
+  | "REVIEWS";
 
 export const PAGE_SEO_SLUGS: PageSeoSlug[] = [
   "HOME",
@@ -22,6 +23,7 @@ export const PAGE_SEO_SLUGS: PageSeoSlug[] = [
   "PRIVACY",
   "TERMS",
   "REFUND",
+  "REVIEWS",
 ];
 
 /** Human labels for the admin screen. */
@@ -36,6 +38,7 @@ export const PAGE_SEO_LABELS: Record<PageSeoSlug, string> = {
   PRIVACY: "Privacy Policy",
   TERMS: "Terms and Conditions",
   REFUND: "Refund Policy",
+  REVIEWS: "Reviews",
 };
 
 /** The public route of each page. */
@@ -50,10 +53,11 @@ export const PAGE_SEO_ROUTES: Record<PageSeoSlug, string> = {
   PRIVACY: "/privacy",
   TERMS: "/terms",
   REFUND: "/refund",
+  REVIEWS: "/reviews",
 };
 
 /**
- * One page's SEO row as the admin API returns it. The admin list always returns all ten slugs; a page
+ * One page's SEO row as the admin API returns it. The admin list always returns every slug; a page
  * never saved comes back as a placeholder with `id: null` and every text field null.
  */
 export type PageSeo = {
