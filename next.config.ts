@@ -13,6 +13,11 @@ const PRIVATE_PATHS = [
   "/admin/:path*",
 ];
 
+// Pages that stay reachable for customers but are kept out of search results, so that the site's main
+// results show only the pages that sell and explain the product. Same header approach as above; links
+// on them may still be followed.
+const NOT_FOR_SEARCH_PATHS = ["/privacy", "/terms", "/refund", "/contact", "/team"];
+
 const nextConfig: NextConfig = {
   async rewrites() {
     return [
@@ -29,6 +34,10 @@ const nextConfig: NextConfig = {
         source: "/share/:path*",
         headers: [{ key: "Referrer-Policy", value: "no-referrer" }],
       },
+      ...NOT_FOR_SEARCH_PATHS.map((source) => ({
+        source,
+        headers: [{ key: "X-Robots-Tag", value: "noindex" }],
+      })),
       ...PRIVATE_PATHS.map((source) => ({
         source,
         headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }],

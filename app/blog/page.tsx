@@ -15,7 +15,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return buildPageMetadata({
     slug: "BLOGS",
     path: "/blog",
-    title: "Blog",
+    title: "Blogs",
     description: BLOG_INDEX_DESCRIPTION,
   });
 }

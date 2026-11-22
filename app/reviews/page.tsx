@@ -21,7 +21,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return buildPageMetadata({
     slug: "REVIEWS",
     path: "/reviews",
-    title: "Reviews",
+    title: "Customer Reviews",
     description: REVIEWS_DESCRIPTION,
   });
 }

@@ -199,7 +199,7 @@ export default function Footer() {
                   </li>
                   <li>
                     <Link href="/blog" className="hover:text-white transition-colors duration-200">
-                      BLOG
+                      BLOGS
                     </Link>
                   </li>
                   <li>
@@ -214,7 +214,7 @@ export default function Footer() {
                   </li>
                   <li>
                     <Link href="/reviews" className="hover:text-white transition-colors duration-200">
-                      REVIEWS
+                      CUSTOMER REVIEWS
                     </Link>
                   </li>
                   {/* <li>
