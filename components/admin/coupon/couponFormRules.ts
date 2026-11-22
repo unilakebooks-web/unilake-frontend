@@ -151,7 +151,7 @@ const GENERIC = "Something went wrong while saving the coupon. Please try again.
  */
 export function friendlyServerMessage(message: string): string {
   if (/prisma|invocation|\.ts:\d+|\/src\//i.test(message)) return GENERIC;
-  const stripped = message.replace(/^\s*validation failed\s*[-:–—]?\s*/i, "").trim();
+  const stripped = message.replace(/^\s*validation failed\s*[-:\u2013\u2014]?\s*/i, "").trim();
   if (stripped === "") return GENERIC;
   return stripped.replace(/\b([a-z][A-Za-z]*):\s/g, (whole, key: string) =>
     FIELD_LABELS[key] ? `${FIELD_LABELS[key]}: ` : whole

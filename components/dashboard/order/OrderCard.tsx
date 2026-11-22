@@ -14,7 +14,7 @@ import { OrderDeletedNote, getOrderDeletion } from "./OrderDeletedNote";
  * which renders the right thing for the session's state on its own: resume
  * payment, live generation progress, variant selection, or the printed book.
  *
- * Cancelled has no entry — there is no book to go back to.
+ * Cancelled has no entry - there is no book to go back to.
  */
 const PREVIEW_ACTIONS: Partial<
   Record<
@@ -38,11 +38,11 @@ const PREVIEW_ACTIONS: Partial<
   },
   // Paid and fully generated, but the customer never sent it to print. Nothing
   // is happening on our side, so the card has to say so and hand them the way
-  // back in — otherwise the order just sits there looking finished.
+  // back in - otherwise the order just sits there looking finished.
   AWAITING_SELECTION: {
     label: "Finish your book",
     icon: BookOpen,
-    message: "Your pages are ready — finish your book to get it printed.",
+    message: "Your pages are ready. Finish your book to get it printed.",
     messageClass: "text-orange-800",
   },
   PROCESSING: { label: "View your book", icon: BookOpen },

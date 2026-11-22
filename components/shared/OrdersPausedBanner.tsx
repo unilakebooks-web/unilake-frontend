@@ -7,12 +7,12 @@ import { cn } from "@/lib/utils";
 /**
  * Shown on the comic page while the store is not accepting orders.
  *
- * This is NOT what stops an order — the backend rejects checkout on its own,
+ * This is NOT what stops an order - the backend rejects checkout on its own,
  * and the preview page's "Continue to checkout" button stops the customer
  * before they ever reach an address form. This exists so they know before
  * picking a comic, uploading a photo and waiting out a generation.
  *
- * Fails open via useOrdersPaused — see that hook for why absence of data has to
+ * Fails open via useOrdersPaused - see that hook for why absence of data has to
  * mean "open".
  */
 export function OrdersPausedBanner({ className }: { className?: string }) {
@@ -36,7 +36,7 @@ export function OrdersPausedBanner({ className }: { className?: string }) {
           We&apos;re not accepting orders right now
         </h3>
         <p className="text-sm text-[#3F3C95]/80">
-          Feel free to preview any comic you like — personalising and previewing
+          Feel free to preview any comic you like. Personalising and previewing
           still work exactly as normal. Ordering will be back soon.
         </p>
       </div>

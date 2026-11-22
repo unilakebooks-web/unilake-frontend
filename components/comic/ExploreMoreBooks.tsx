@@ -12,7 +12,7 @@ interface ExploreMoreBooksProps {
 }
 
 export default function ExploreMoreBooks({ comicId }: ExploreMoreBooksProps) {
-  // Three, not four — and it has to match the grid's column count below.
+  // Three, not four - and it has to match the grid's column count below.
   // StoryCard caps at max-w-[380px] but has no minimum, so it shrinks to fill
   // whatever column it is given: four columns inside max-w-7xl work out to
   // ~272px each, which is why these cards looked smaller than the homepage's.
@@ -39,7 +39,7 @@ export default function ExploreMoreBooks({ comicId }: ExploreMoreBooksProps) {
           />
         </svg>
 
-        {/* Heading + explorer form ONE row, centred as a group — the same
+        {/* Heading + explorer form ONE row, centred as a group - the same
             structure as "Choose Your Story" + dragon on the homepage, so the
             two can never overlap however large the heading gets.
 
@@ -71,7 +71,7 @@ export default function ExploreMoreBooks({ comicId }: ExploreMoreBooksProps) {
             Explore More Books
           </h2>
 
-          {/* Explorer slot — the image's width, the row's full height. It may
+          {/* Explorer slot - the image's width, the row's full height. It may
               shrink (min-w-0) on a very narrow phone rather than push the page
               sideways; the heading never does.
 
@@ -81,8 +81,8 @@ export default function ExploreMoreBooks({ comicId }: ExploreMoreBooksProps) {
                 above the band's top:    2 / 26 / 32 / 37 / 53px
                 below the band's bottom: 0 / 16 / 20 / 20 / 37px
               Both fit inside the neighbouring sections' padding (≥ 64px above
-              — the FAQ section's pb-20, or the info section's lg:py-16 when a
-              comic has no FAQs — and the cards' pt-10 / md:pt-16 below), so no
+              - the FAQ section's pb-20, or the info section's lg:py-16 when a
+              comic has no FAQs - and the cards' pt-10 / md:pt-16 below), so no
               extra margin is needed. */}
           <div className="relative min-w-0 w-[156px] sm:w-[324px] md:w-[424px] lg:w-[514px] xl:w-[582px]">
             <Image
@@ -124,7 +124,7 @@ export default function ExploreMoreBooks({ comicId }: ExploreMoreBooksProps) {
                 ))}
               </div>
 
-              {/* Inside the loaded branch on purpose — a call to action under a
+              {/* Inside the loaded branch on purpose - a call to action under a
                   set of skeletons invites a click on nothing. */}
               <div className="flex justify-center">
                 <Link

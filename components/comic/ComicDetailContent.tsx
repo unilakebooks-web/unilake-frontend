@@ -22,7 +22,7 @@ export default function ComicDetailContent({ comic }: ComicDetailContentProps) {
   const [resumeSessionId, setResumeSessionId] = useState<string | null>(null);
 
   // A stored session is only a hint. Before offering "Continue" we confirm with the
-  // server that it still exists, hasn't expired, and actually has a photo — otherwise
+  // server that it still exists, hasn't expired, and actually has a photo - otherwise
   // the button is a dead end that lands the user on an error screen.
   useEffect(() => {
     const stored = getStoredSession(comic.id);
@@ -48,7 +48,7 @@ export default function ComicDetailContent({ comic }: ComicDetailContentProps) {
         }
       })
       .catch(() => {
-        // Gone, or unreachable. Either way, don't offer it — just fall back to the
+        // Gone, or unreachable. Either way, don't offer it - just fall back to the
         // normal form. The user never learns anything was wrong.
         if (!cancelled) clearSession(comic.id);
       });
@@ -90,7 +90,7 @@ export default function ComicDetailContent({ comic }: ComicDetailContentProps) {
                   Photo Guidelines.
 
                   Below lg the columns stack, and the form should come right
-                  after the carousel — so the tiles and guidelines are hidden
+                  after the carousel - so the tiles and guidelines are hidden
                   here and rendered again under the form instead (see the
                   right column). Only one copy is ever displayed. */}
               <div className="w-full lg:w-[45%] flex flex-col items-center lg:items-start lg:sticky lg:top-24">
@@ -109,7 +109,7 @@ export default function ComicDetailContent({ comic }: ComicDetailContentProps) {
               </div>
 
               {/* Right Column: Form, then (below lg only) the text guidelines
-                  and the four tiles. The example image is not repeated here —
+                  and the four tiles. The example image is not repeated here -
                   on these screens it opens from the form's "Click here for
                   Photo Guidelines: Important" button, just above the consent checkbox. */}
               <div className="w-full lg:w-[55%] flex flex-col items-center lg:items-start">

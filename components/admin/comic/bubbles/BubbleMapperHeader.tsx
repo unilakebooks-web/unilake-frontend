@@ -60,7 +60,7 @@ export function BubbleMapperHeader({
             button swallows the click, and the page needs that click to raise a
             toast explaining why nothing happened. It is muted instead, so it
             still reads as unavailable, and the page decides what to do with the
-            click. `isSaving` IS a real disable — that state is transient and
+            click. `isSaving` IS a real disable - that state is transient and
             the Save spinner already explains itself. */}
         <Button
           variant="outline"

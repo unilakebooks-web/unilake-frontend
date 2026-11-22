@@ -42,7 +42,7 @@ export function CountryDeleteDialog({
       await onConfirm(country.id);
       onOpenChange(false);
     } catch (err: any) {
-      // Pricing rules no longer block the delete — they cascade. This is still
+      // Pricing rules no longer block the delete - they cascade. This is still
       // here for genuine failures (network drop, 404 on an already-deleted row).
       setErrorMessage(err?.message || "Failed to delete country");
     } finally {

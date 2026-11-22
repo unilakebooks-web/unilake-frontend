@@ -96,7 +96,7 @@ body {
   --input: oklch(0.922 0 0);
   --ring: oklch(0.708 0 0);
 
-  /* Categorical chart palette — light mode.
+  /* Categorical chart palette, light mode.
    *
    * Replaces shadcn's greyscale placeholders (all `oklch(… 0 0)`, i.e. zero
    * chroma), which rendered every chart in shades of grey next to the brand
@@ -106,15 +106,15 @@ body {
    * one; the rest exist so multi-series charts start from a checked set.
    *
    * VALIDATED, not eyeballed. Every value passed all five checks on the
-   * adjacent-pair basis — the correct standard for bars, stacked bars and
+   * adjacent-pair basis, the correct standard for bars, stacked bars and
    * lines. Worst adjacent pair is teal↔ochre at ΔE 12.5 (protanopia), 21.5
    * normal vision, comfortably above the floors.
    *
    * ⚠️ Assign these IN ORDER and never cycle them. Adjacent pairs are what was
    * validated: chart-2 (ochre) and chart-5 (olive) are NOT separable from each
    * other and must never share a chart. Five mutually-distinct colourblind-safe
-   * hues is not achievable, which is why all-pairs forms — scatter, bubble,
-   * choropleth, small multiples — cap at three series and fold the rest into
+   * hues is not achievable, which is why all-pairs forms, scatter, bubble,
+   * choropleth, small multiples, cap at three series and fold the rest into
    * "Other". A 6th series is never a newly invented hue.
    */
   --chart-1: #914a8c;
@@ -154,10 +154,10 @@ body {
   --input: oklch(1 0 0 / 15%);
   --ring: oklch(0.556 0 0);
 
-  /* Categorical chart palette — dark mode.
+  /* Categorical chart palette, dark mode.
    *
    * SELECTED, not flipped. These are their own steps, validated against the
-   * dark chart surface rather than derived by inverting the light values — the
+   * dark chart surface rather than derived by inverting the light values, the
    * dark lightness band (L 0.48–0.67) is narrower and sits lower than the
    * light one, so the light values do not simply carry over.
    *
@@ -201,7 +201,7 @@ body {
  * An animation rather than a transition on purpose. A transition needs the
  * browser to paint the 0% width BEFORE the value changes to 100%, which means
  * depending on React's effect timing landing in a different frame from the
- * initial paint — when it doesn't, the bar snaps straight to full and never
+ * initial paint, when it doesn't, the bar snaps straight to full and never
  * animates. A keyframe animation always starts from `from`, so it cannot fail
  * that way regardless of when React commits.
  *

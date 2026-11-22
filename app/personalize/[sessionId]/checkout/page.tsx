@@ -8,7 +8,7 @@ import SessionLoadError from "@/components/personalize/SessionLoadError";
 export const metadata: Metadata = {
   title: "Checkout",
   description: "Complete your order to unlock the full story",
-  // A customer's in-progress order is private and session-specific — it must
+  // A customer's in-progress order is private and session-specific - it must
   // never end up in a search index. robots.ts also disallows /personalize; this
   // is the belt-and-braces page-level version.
   robots: { index: false, follow: false },
@@ -27,7 +27,7 @@ export default async function CheckoutRoute({
   }
 
   // `redirect()` works by THROWING a NEXT_REDIRECT error, so it must never sit
-  // inside a try/catch that swallows errors — the catch would eat the redirect
+  // inside a try/catch that swallows errors - the catch would eat the redirect
   // and send everyone to the fallback instead. The fetch's own error handling
   // lives inside the helper, and every redirect() stays outside it.
   //
@@ -35,7 +35,7 @@ export default async function CheckoutRoute({
   // used to throw a customer out of the payment flow onto the homepage.
   const result = await loadSessionWithRetry(sessionId, "checkout");
 
-  // No such session — a real answer, not a blip.
+  // No such session - a real answer, not a blip.
   if (!result.ok && result.reason === "not-found") {
     redirect("/");
   }
@@ -51,7 +51,7 @@ export default async function CheckoutRoute({
     redirect(`/personalize/${sessionId}/preview`);
   }
 
-  // Already past checkout — send them to the preview page to see the full book.
+  // Already past checkout - send them to the preview page to see the full book.
   // AWAITING_PAYMENT is deliberately allowed through: that is the resume case,
   // where the user closed the Razorpay modal and is coming back to finish.
   if (
@@ -62,7 +62,7 @@ export default async function CheckoutRoute({
     redirect(`/personalize/${sessionId}/preview`);
   }
 
-  // Must have a coverType picked — checkout prices off it and cannot proceed without it.
+  // Must have a coverType picked - checkout prices off it and cannot proceed without it.
   if (!snapshot.coverType) {
     redirect(`/personalize/${sessionId}/preview`);
   }

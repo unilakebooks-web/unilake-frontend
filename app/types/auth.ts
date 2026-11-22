@@ -1,4 +1,4 @@
-// ── Role ───────────────────────────────────────────────────────────────────────
+// -- Role -----------------------------------------------------------------------
 export enum UserRole {
     USER = "USER",
     ADMIN = "ADMIN",
@@ -20,7 +20,7 @@ export function isStaff(role: UserRole | undefined): boolean {
     return role === UserRole.ADMIN || role === UserRole.SUB_ADMIN;
 }
 
-// ── User ───────────────────────────────────────────────────────────────────────
+// -- User -----------------------------------------------------------------------
 export interface User {
     id: string;
     name: string;
@@ -29,13 +29,13 @@ export interface User {
     role: UserRole;
 }
 
-// ── Session ────────────────────────────────────────────────────────────────────
+// -- Session --------------------------------------------------------------------
 export interface Session {
     user: User;
     expiresAt: string;
 }
 
-// ── Auth Context ───────────────────────────────────────────────────────────────
+// -- Auth Context ---------------------------------------------------------------
 export interface AuthContextType {
     user: User | null;
     loading: boolean;

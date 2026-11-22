@@ -35,7 +35,7 @@ export default function LatestBlogs({ blogs }: LatestBlogsProps) {
           />
         </svg>
 
-        {/* Text overlay — centered vertically on the band's flat strip
+        {/* Text overlay - centered vertically on the band's flat strip
             (viewBox y 46→240 of 311 → 14.8% top / 22.8% bottom), not the
             whole SVG box, whose flares sit lower and would center it low. */}
         <div className="absolute inset-x-0 top-[14.8%] bottom-[22.8%] flex items-center pointer-events-none">

@@ -70,7 +70,7 @@ export default function SitePageEditorPage({
  *
  * The form is keyed by the row's version so a save (or a refetch that actually
  * changed something) remounts it with fresh initial state. That avoids syncing
- * props into state entirely — and it is also what makes the TipTap editor pick
+ * props into state entirely - and it is also what makes the TipTap editor pick
  * up new content, since it only reads `content` at mount.
  */
 function SitePageLoader({ slug }: { slug: SitePageSlug }) {
@@ -165,7 +165,7 @@ function SitePageEditorForm({
       toast.success(
         isSaved
           ? "Page saved"
-          : "Page created — publish it when you are ready for it to go live"
+          : "Page created. Publish it when you are ready for it to go live"
       );
     } catch (err: unknown) {
       toast.error("Failed to save: " + getErrorMessage(err, "Server error"));

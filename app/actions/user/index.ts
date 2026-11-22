@@ -28,7 +28,7 @@ export async function fetchAdminUsers(
 }
 
 /**
- * Rejects with the backend's message on a refused change — e.g. 409 "You can't
+ * Rejects with the backend's message on a refused change - e.g. 409 "You can't
  * remove your own admin access." or "There must be at least one admin."
  */
 export async function updateUserRole(

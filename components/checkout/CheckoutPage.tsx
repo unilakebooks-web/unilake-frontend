@@ -62,7 +62,7 @@ export default function CheckoutPage({ sessionId, initialSnapshot }: CheckoutPag
   const userId = user?.id ?? null;
 
   // Logged out here means they cancelled the OAuth screen or opened the link
-  // directly. Ask on this page rather than bouncing them back — the popup
+  // directly. Ask on this page rather than bouncing them back - the popup
   // returns them to this same page. Derived, not set from an effect; the only
   // state is whether they closed it.
   const needsLogin = !authLoading && !isAuthenticated;
@@ -87,7 +87,7 @@ export default function CheckoutPage({ sessionId, initialSnapshot }: CheckoutPag
     snapshot.coverType,
   ]);
 
-  // One link attempt per page visit — StrictMode runs effects twice in dev,
+  // One link attempt per page visit - StrictMode runs effects twice in dev,
   // and a second PATCH while the first is in flight is pointless.
   const attachRequestedRef = useRef(false);
 
@@ -112,7 +112,7 @@ export default function CheckoutPage({ sessionId, initialSnapshot }: CheckoutPag
 
   // Make sure the session belongs to the logged-in customer before they fill
   // in an address. The preview page's login popup sends a logged-out customer
-  // straight here after Google/Facebook, so this page — not the preview — is
+  // straight here after Google/Facebook, so this page - not the preview - is
   // where an anonymous session first meets its account. PaymentButton (and the
   // backend's checkout) need `userId` set, so without this Pay would stay
   // disabled with no explanation.
@@ -125,7 +125,7 @@ export default function CheckoutPage({ sessionId, initialSnapshot }: CheckoutPag
       router.replace(`/personalize/${sessionId}/preview`);
     };
 
-    // Already linked — to this customer (nothing to do) or to someone else.
+    // Already linked - to this customer (nothing to do) or to someone else.
     if (snapshot.userId) {
       if (snapshot.userId !== userId) leaveForOtherAccount();
       return;
@@ -153,7 +153,7 @@ export default function CheckoutPage({ sessionId, initialSnapshot }: CheckoutPag
   }, [authLoading, isAuthenticated, userId, snapshot.userId, sessionId, router]);
 
   const handleAddressApplied = async () => {
-    // Re-read the session so `snapshot.shipping*` reflects what was just PATCHed —
+    // Re-read the session so `snapshot.shipping*` reflects what was just PATCHed -
     // PaymentButton gates on those fields, so a stale snapshot leaves Pay disabled.
     //
     // This MUST go through `getSession` (the axios instance), never a bare fetch():

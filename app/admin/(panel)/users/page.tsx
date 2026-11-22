@@ -50,7 +50,7 @@ export default function UsersPage() {
     pageSize: PAGE_SIZE,
   });
 
-  // Stable — UserListFilters lists it in a debounce effect's dependencies.
+  // Stable - UserListFilters lists it in a debounce effect's dependencies.
   const handleFiltersChange = useCallback(
     (next: Omit<AdminUsersFilters, "page" | "pageSize">) => {
       setFilters(next);

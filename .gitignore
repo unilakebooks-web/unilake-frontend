@@ -32,7 +32,7 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
-# …except the template, which holds variable names only — never values.
+# …except the template, which holds variable names only, never values.
 !.env.example
 
 # vercel

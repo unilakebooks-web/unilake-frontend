@@ -41,9 +41,9 @@ interface PreviewViewerProps {
   onRegenerate: (pageNumber: number) => Promise<RegenerateResponse | undefined>;
   /** Checkout started but not paid: preview only, cover locked, payment resumes. */
   isAwaitingPayment?: boolean;
-  /** Payment captured — every page unlocked. */
+  /** Payment captured - every page unlocked. */
   isPaid?: boolean;
-  /** Paid AND sent to print — read-only, printed variants only. */
+  /** Paid AND sent to print - read-only, printed variants only. */
   isSentToPrint?: boolean;
   paidPagesReady?: number;
   totalPaidPages?: number;
@@ -52,7 +52,7 @@ interface PreviewViewerProps {
    * the pages exactly as the customer sees them, but with every action
    * removed: no regenerate (costs RunPod money and uses the customer's
    * variant slots), no change-photo, no checkout, no send-to-print. Browsing
-   * variants still works — that is local to this tab and saves nothing.
+   * variants still works - that is local to this tab and saves nothing.
    */
   adminView?: boolean;
   /** Something drawn under the heading, e.g. the "Share my child's book" button (feature 14). */
@@ -100,13 +100,13 @@ export default function PreviewViewer({
   // surface on their own without ever overwriting a deliberate pick.
   const [overrides, setOverrides] = useState<Map<number, number>>(() => new Map());
 
-  // Stable — PreviewPageCard lists it in an effect's dependencies.
+  // Stable - PreviewPageCard lists it in an effect's dependencies.
   const handleVariantChange = useCallback((pageNumber: number, variantIndex: number) => {
     setOverrides((prev) => new Map(prev).set(pageNumber, variantIndex));
   }, []);
 
   // What a card renders. Honours the override even when it points at a variant
-  // that is still generating — watching a regeneration land is the whole reason
+  // that is still generating - watching a regeneration land is the whole reason
   // pending variants are navigable.
   const displayIndex = (page: SessionPage): number | null =>
     overrides.get(page.pageNumber) ?? newestReadyIndex(page);
@@ -115,7 +115,7 @@ export default function PreviewViewer({
   // exhausted its retries. A page merely still generating has neither, so it is
   // correctly not counted here.
   //
-  // Scoped to preview pages because this gates the pre-payment checkout — locked
+  // Scoped to preview pages because this gates the pre-payment checkout - locked
   // pages have not been generated yet and must not block the sale.
   const failedPreviewPages = useMemo(
     () =>
@@ -141,7 +141,7 @@ export default function PreviewViewer({
   });
 
   // Spread into both the bar and the full section, so they can never drift
-  // apart — there is exactly one prop set.
+  // apart - there is exactly one prop set.
   const pricingProps = {
     locked: checkout.isResume,
     comicId: snapshot.comicId,
@@ -164,7 +164,7 @@ export default function PreviewViewer({
         inFlight = true;
       }
 
-      // Unlike displayIndex, this never resolves to an unfinished variant — the
+      // Unlike displayIndex, this never resolves to an unfinished variant - the
       // backend rejects any selection that isn't SD_READY.
       const override = overrides.get(page.pageNumber);
       const index =
@@ -195,7 +195,7 @@ export default function PreviewViewer({
     isGenerating: isGeneratingPaid || hasInFlight,
   });
 
-  // Which full-size section sits below the last page — and so which floating
+  // Which full-size section sits below the last page - and so which floating
   // bar mirrors it. Null once the book has been sent to print: nothing to do.
   // Also null in the admin view, which takes away both sections, both floating
   // bars and the dialogs they open.
@@ -207,13 +207,13 @@ export default function PreviewViewer({
         ? "print"
         : null;
 
-  // ── Floating bar visibility (checkout before payment, print after) ────────
+  // -- Floating bar visibility (checkout before payment, print after) --------
   //
   // The bar floats at the bottom of the screen only while BOTH hold:
   //   1. the first comic page has come into view (or been scrolled past), so
   //      it never covers the heading and intro at the top, and
   //   2. the full checkout section below the last page is still BELOW the
-  //      screen. Once that section scrolls into view it takes over — the bar
+  //      screen. Once that section scrolls into view it takes over - the bar
   //      slides away and the full section sits in its place. Scrolling back up
   //      pushes the section below the screen again and the bar returns.
   //
@@ -264,7 +264,7 @@ export default function PreviewViewer({
 
   return (
     // Same #F9E3C8 as the preloader and the page wrapper. Left at #F1E0CA this
-    // would just move the seam — the preloader hands over to this view inside
+    // would just move the seam - the preloader hands over to this view inside
     // the same page, so all three have to agree.
     <div className="w-full flex flex-col items-center bg-[#F9E3C8] min-h-screen py-12">
       
@@ -284,7 +284,7 @@ export default function PreviewViewer({
         
         <div className="text-center mb-8 w-full mt-20 relative z-10">
           {/* Comic title. Read from the snapshot rather than comicDetail so it
-              paints with the first render — comicDetail arrives from a separate
+              paints with the first render - comicDetail arrives from a separate
               query and would make the title pop in a beat later. Deliberately
               subordinate to the personalised heading below: the child's name is
               the hook on this page, the book is the context. */}
@@ -306,7 +306,7 @@ export default function PreviewViewer({
 
               Shown in full, no clamp. Safe to render as text: Comic.description
               is plain @db.Text, not the TipTap HTML that blogs and site pages
-              carry — so no sanitiser is involved. whitespace-pre-line keeps any
+              carry - so no sanitiser is involved. whitespace-pre-line keeps any
               paragraph breaks the admin typed. */}
           {comicDetail?.description && (
             <p className={`${hankenGrotesk.className} mt-3 mx-auto max-w-2xl text-sm md:text-base text-gray-600 leading-relaxed whitespace-pre-line`}>
@@ -351,13 +351,13 @@ export default function PreviewViewer({
         )} */}
 
         {/* Sits above the first page and stays visible through every unpaid
-            state, including while generation is running — in that case the
+            state, including while generation is running - in that case the
             button explains itself with a toast rather than navigating.
             Hidden once paid: starting a new session then would abandon the
             order the customer has already bought. */}
         {/* Desktop: a card beside the first comic page that follows the scroll.
 
-            It lives HERE, after the heading, on purpose — a sticky element
+            It lives HERE, after the heading, on purpose - a sticky element
             starts at its normal flow position, so sitting at this point in the
             column is what makes it begin level with the first page rather than
             up beside the title.
@@ -381,7 +381,7 @@ export default function PreviewViewer({
             its parent's box, and this column ends before the Footer. */}
         {/* Also hidden while awaiting payment: a fresh session from here would
             leave the unpaid order behind, and this session's photo is locked.
-            And in the admin view — changing the photo is the customer's call. */}
+            And in the admin view - changing the photo is the customer's call. */}
         {!isPaid && !isAwaitingPayment && !adminView && (
           <div className="hidden lg:block sticky top-24 z-20 h-0 w-full -mb-4 pointer-events-none relative">
             <div className="absolute right-[calc(100%+1.5rem)] xl:right-[calc(100%+2.5rem)] top-0 pointer-events-auto">
@@ -406,7 +406,7 @@ export default function PreviewViewer({
           </div>
         )}
 
-        {/* All pages. Checkout is no longer repeated between them — the
+        {/* All pages. Checkout is no longer repeated between them - the
             floating CheckoutBar covers that while scrolling. */}
         {snapshot.pages.map((page, index) => {
           const comicPageMetadata = comicDetail?.pages.find(p => p.pageNumber === page.pageNumber);
@@ -414,7 +414,7 @@ export default function PreviewViewer({
           return (
             <div
               key={page.pageId}
-              // The first page is the bar's start signal — see the observer.
+              // The first page is the bar's start signal - see the observer.
               ref={index === 0 ? firstPageRef : undefined}
               className="w-full flex flex-col items-center"
             >
@@ -468,7 +468,7 @@ export default function PreviewViewer({
 
       {/* Exactly one, shared by the checkout bar and the full section.
           After login the customer lands straight on the address page instead
-          of back here — the cover is already saved before this opens, and
+          of back here - the cover is already saved before this opens, and
           CheckoutPage links the session to the new account on arrival. */}
       <LoginModal
         isOpen={checkout.showLoginModal}

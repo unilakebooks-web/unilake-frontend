@@ -82,7 +82,7 @@ export default function StoryFilters({ selected, onChange }: StoryFiltersProps) 
     const current = new Set(selected[filter.id] ?? []);
     if (current.has(value)) current.delete(value);
     else current.add(value);
-    // Option order, not click order — keeps the pill label stable.
+    // Option order, not click order - keeps the pill label stable.
     onChange(
       filter.id,
       filter.options.map((o) => o.value).filter((v) => current.has(v))
@@ -118,7 +118,7 @@ export default function StoryFilters({ selected, onChange }: StoryFiltersProps) 
 
         return (
         <div key={filter.id} className="relative">
-          {/* Pill Button — filled once a value is chosen, and shows what is
+          {/* Pill Button - filled once a value is chosen, and shows what is
               applied so the user can see it without opening the dropdown. */}
           <button
             onClick={() => toggleFilter(filter.id)}
@@ -155,7 +155,7 @@ export default function StoryFilters({ selected, onChange }: StoryFiltersProps) 
           {openFilter === filter.id && (
             <div className="absolute top-full mt-2 w-48 rounded-2xl bg-white shadow-xl border border-[#D6CFFF] overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200">
               <div className="py-1 max-h-72 overflow-y-auto">
-                {/* "All" — ticked when nothing is picked; clears the filter. */}
+                {/* "All" - ticked when nothing is picked; clears the filter. */}
                 <button
                   onClick={() => clearFilter(filter.id)}
                   className={`

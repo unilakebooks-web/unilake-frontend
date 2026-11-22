@@ -121,7 +121,7 @@ export default function ImageCropModal({
           className="relative flex-1 min-h-0 w-full flex items-center justify-center bg-[#F3F4F6] overflow-hidden mx-auto p-4 border-y border-gray-100"
         >
           {/* Rendered only once the area is measured, so the photo is never
-              drawn at a size it then has to shrink from — and the crop box
+              drawn at a size it then has to shrink from - and the crop box
               set in onImageLoad is always relative to the final size. */}
           {imageSrc && maxImageHeight !== null && (
             <ReactCrop

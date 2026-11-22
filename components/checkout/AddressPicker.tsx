@@ -58,9 +58,9 @@ interface AddressPickerProps {
 
 /**
  * Which form, if any, replaces the saved-address list:
- *   null   — the list is showing
- *   "add"  — a blank form for a new address
- *   "edit" — the form pre-filled with `editingAddress`
+ *   null   - the list is showing
+ *   "add"  - a blank form for a new address
+ *   "edit" - the form pre-filled with `editingAddress`
  */
 type FormMode = null | "add" | "edit";
 
@@ -95,7 +95,7 @@ export default function AddressPicker({ sessionId, snapshot, onAddressApplied }:
   const autofill = usePincodeAutofill(form);
   const country = useWatch({ control: form.control, name: "country" });
 
-  // useForm reads defaultValues once, on the first render — usually before the
+  // useForm reads defaultValues once, on the first render - usually before the
   // country list has loaded, which left the Country dropdown blank. Fill it in
   // once a country is known, but only while it is still empty, so a country the
   // customer picked (or one loaded for editing) is never overwritten.
@@ -143,7 +143,7 @@ export default function AddressPicker({ sessionId, snapshot, onAddressApplied }:
     }
   };
 
-  // Each saved address carries its own "Use this address" button — there is no
+  // Each saved address carries its own "Use this address" button - there is no
   // separate select-then-confirm step.
   const handleUseAddress = async (addr: SavedAddress) => {
     setApplyingAddressId(addr.id);
@@ -154,7 +154,7 @@ export default function AddressPicker({ sessionId, snapshot, onAddressApplied }:
     }
   };
 
-  // Blank form every time — a previous, abandoned entry must not linger.
+  // Blank form every time - a previous, abandoned entry must not linger.
   const openAddForm = () => {
     // Once payment has started the country is the order's, not the one the store is browsed in.
     form.reset(
@@ -189,7 +189,7 @@ export default function AddressPicker({ sessionId, snapshot, onAddressApplied }:
     }
     setIsApplying(true);
     try {
-      // 1. Save to their address book — a new entry, or the one being edited.
+      // 1. Save to their address book - a new entry, or the one being edited.
       //    An empty label is left out on create and cleared (null) on edit;
       //    the backend rejects null on create.
       const saved =
@@ -216,7 +216,7 @@ export default function AddressPicker({ sessionId, snapshot, onAddressApplied }:
     try {
       await deleteAddressAsync(id);
       if (editingAddress?.id === id) closeForm();
-      // Deleting the last one reveals the add form (see activeFormMode) — make
+      // Deleting the last one reveals the add form (see activeFormMode) - make
       // sure it opens blank rather than holding an earlier entry.
       if (addresses?.length === 1) {
         form.reset(emptyAddressForm(selectedCountry?.code));
@@ -259,7 +259,7 @@ export default function AddressPicker({ sessionId, snapshot, onAddressApplied }:
   const isLocked = !["PREVIEW_READY", "AWAITING_PAYMENT", "FAILED"].includes(snapshot.status);
 
   // The session holds its OWN copy of the address, independent of the address
-  // book — deleting a saved address does not remove it. This card shows that
+  // book - deleting a saved address does not remove it. This card shows that
   // copy, because it is what the order ships to and what Pay Now checks.
   const showAppliedCard = !!hasFullShipping && (isLocked || !isChanging);
 
@@ -338,9 +338,9 @@ export default function AddressPicker({ sessionId, snapshot, onAddressApplied }:
       )}
 
       {/* Toolbar above the list (or the form):
-            left  — "Keep current address": back out of a change without
+            left  - "Keep current address": back out of a change without
                     touching the applied address. Only when one is applied.
-            right — "+ Add new address". Only while the list is showing; the
+            right - "+ Add new address". Only while the list is showing; the
                     form has its own Cancel to get back. */}
       {!showAppliedCard &&
         (hasFullShipping || (activeFormMode === null && hasAddresses)) && (
@@ -375,8 +375,8 @@ export default function AddressPicker({ sessionId, snapshot, onAddressApplied }:
       {!showAppliedCard && activeFormMode === null && hasAddresses && (
         <div className="space-y-4">
           {/* grid-cols-1 = minmax(0, 1fr). A bare `grid` gives an `auto`
-              column, which cannot shrink below its widest unbreakable content —
-              the card's one-line header row — so on a phone the card spilled
+              column, which cannot shrink below its widest unbreakable content -
+              the card's one-line header row - so on a phone the card spilled
               out of this panel and pushed the whole page sideways. */}
           <div className="grid grid-cols-1 gap-3">
             {addresses.map((addr) => {
@@ -440,7 +440,7 @@ export default function AddressPicker({ sessionId, snapshot, onAddressApplied }:
                     <p className="pt-1 text-gray-500">📞 {addr.phone}</p>
                   </div>
 
-                  {/* Bottom row: Edit/Delete on the left (phones only — from
+                  {/* Bottom row: Edit/Delete on the left (phones only - from
                       sm up they sit beside the name) and this card's own
                       "Use this address" pill on the right. flex-wrap so that
                       on the narrowest phones the pill drops to its own line,
@@ -493,7 +493,7 @@ export default function AddressPicker({ sessionId, snapshot, onAddressApplied }:
             </div>
           )}
 
-          {/* No placeholders on any field — sample values like "John Doe" or
+          {/* No placeholders on any field - sample values like "John Doe" or
               "New York" read as pre-filled data. */}
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmitAddress)} className="space-y-4">

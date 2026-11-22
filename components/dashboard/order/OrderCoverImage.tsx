@@ -4,7 +4,7 @@ import { toImageUrl } from "@/lib/imageUrl";
 
 /**
  * The picture on a customer's order: the child's generated page 1, drawn at the
- * page's real shape with its long edge capped at `longEdgePx` — so a landscape
+ * page's real shape with its long edge capped at `longEdgePx` - so a landscape
  * comic shows whole instead of being cropped into a portrait frame.
  *
  * Falls back to the comic's marketing thumbnail (in the old 3:4 portrait box,
@@ -23,7 +23,7 @@ export function OrderCoverImage({
   filesDeleted?: boolean;
   longEdgePx: number;
 }) {
-  // Portrait 3:4 — the box every order image used before this component.
+  // Portrait 3:4 - the box every order image used before this component.
   const fallbackBox = { width: Math.round(longEdgePx * 0.75), height: longEdgePx };
 
   let box = fallbackBox;
@@ -45,7 +45,7 @@ export function OrderCoverImage({
       {url ? (
         <img
           src={toImageUrl(url)}
-          alt={generatedCover ? `${comic.title} — your personalized cover` : ""}
+          alt={generatedCover ? `${comic.title} - your personalized cover` : ""}
           // The generated box already matches the page's ratio, so contain
           // shows the whole page. The fallback thumbnail keeps its old crop.
           className={`w-full h-full ${generatedCover ? "object-contain" : "object-cover"}`}

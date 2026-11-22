@@ -26,12 +26,12 @@ export default async function NewPhotoRoute({
     redirect("/");
   }
 
-  // Retries transient failures — a restarting backend or a database waking from
+  // Retries transient failures - a restarting backend or a database waking from
   // sleep. `redirect()` works by THROWING, so it stays outside the fetch's own
   // error handling, which lives inside the helper.
   const result = await loadSessionWithRetry(sessionId, "new-photo");
 
-  // No such session. A real answer, not a blip — nothing to retry.
+  // No such session. A real answer, not a blip - nothing to retry.
   if (!result.ok && result.reason === "not-found") {
     redirect("/");
   }
@@ -51,7 +51,7 @@ export default async function NewPhotoRoute({
   }
 
   // PREVIEW_READY only. Before that there is nothing to be dissatisfied with
-  // yet, and from AWAITING_PAYMENT onward the customer has committed — letting
+  // yet, and from AWAITING_PAYMENT onward the customer has committed - letting
   // a hand-typed URL start a fresh unpaid session from there would strand the
   // order they already have.
   if (snapshot.status !== "PREVIEW_READY") {
@@ -59,7 +59,7 @@ export default async function NewPhotoRoute({
   }
 
   // An expired session can still be read over REST, but a new session started
-  // from it is fine — only the OLD one is dead. Nothing to guard here; the new
+  // from it is fine - only the OLD one is dead. Nothing to guard here; the new
   // session gets its own 7-day window.
 
   return <NewPhotoPageShell previousSession={snapshot} />;

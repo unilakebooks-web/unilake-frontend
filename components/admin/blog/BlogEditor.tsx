@@ -23,7 +23,7 @@ interface BlogEditorProps {
    *
    * Every current caller passes false. Legal pages (privacy, terms, refund) are
    * prose only and have no site-page upload endpoint to call; blog posts were
-   * switched off deliberately — a post's imagery is its cover, and in-body
+   * switched off deliberately - a post's imagery is its cover, and in-body
    * images were dropped rather than maintained.
    *
    * Note the ImageExtension stays registered either way, so existing content
@@ -170,7 +170,7 @@ export function BlogEditor({
 
     try {
       // Get presigned URL. publicUrl is the resolved absolute R2 URL for this
-      // key — it goes straight into the stored HTML, so it must be absolute.
+      // key - it goes straight into the stored HTML, so it must be absolute.
       const { uploadUrl, publicUrl } = await requestBlogUploadUrl(
         file.name,
         file.type

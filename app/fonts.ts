@@ -18,15 +18,15 @@ export const protestStrike: SelfHostedFont = { className: "ff-protest", variable
 
 // FAQ's & Feedback headings (home + comic page bands) and the
 // "Feedback & Suggestion" sub-heading. Google ships a single 400 weight, so
-// never pair it with font-bold/extrabold — the browser would fake a bold.
+// never pair it with font-bold/extrabold - the browser would fake a bold.
 export const boogaloo: SelfHostedFont = { className: "ff-boogaloo", variable: "ffv-boogaloo" };
 
-// Checkout box on the preview page (PricingSection — the full section and the
+// Checkout box on the preview page (PricingSection - the full section and the
 // floating CheckoutBar). Licensed font, so it is self-hosted from
 // app/fonts/frutiger/ rather than fetched from Google.
 //
 // Two real weights: Regular (400) and Bold (700). Use only font-normal and
-// font-bold with it — medium/semibold/extrabold have no file and the browser
+// font-bold with it - medium/semibold/extrabold have no file and the browser
 // would fake them.
 //
 // Neither file has a ₹ (or €) glyph, and every price in the box carries one.

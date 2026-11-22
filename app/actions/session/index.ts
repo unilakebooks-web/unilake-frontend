@@ -115,7 +115,7 @@ export async function fetchCouponOffers(sessionId: string): Promise<CouponOffer[
   return data.offers;
 }
 
-// Unlike everything else in this file, this one lives under /api/user — it needs
+// Unlike everything else in this file, this one lives under /api/user - it needs
 // the logged-in user for the ownership check, so an expired cookie 401s here.
 export async function sendToPrint(
   sessionId: string,

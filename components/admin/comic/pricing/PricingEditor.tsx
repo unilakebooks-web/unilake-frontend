@@ -28,7 +28,7 @@ export function PricingEditor({ comic }: PricingEditorProps) {
         countryId: pr.countryId,
         coverType: pr.coverType,
         // Rows predating the mrp column come back null. Render them as an empty
-        // input the admin can fill — never the string "null".
+        // input the admin can fill - never the string "null".
         mrp: pr.mrp?.toString() ?? "",
         price: pr.price.toString()
       }));
@@ -47,7 +47,7 @@ export function PricingEditor({ comic }: PricingEditorProps) {
     if (!countries || countries.length === 0) return;
 
     // This endpoint replaces the whole pricing set, so every cell must be
-    // present — an omitted row is a deleted row, not an untouched one.
+    // present - an omitted row is a deleted row, not an untouched one.
     const requiredCells = countries.length * 2;
     const filledCells = values.filter(
       (v) =>

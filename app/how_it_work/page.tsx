@@ -9,7 +9,7 @@ import type { Metadata } from "next";
 import { absoluteUrl } from "@/lib/seo";
 
 const HOW_IT_WORKS_DESCRIPTION =
-  "See how it works — upload a photo, pick a story, and we turn your child into the hero of their own printed comic book.";
+  "See how it works: upload a photo, pick a story, and we turn your child into the hero of their own printed comic book.";
 
 export const metadata: Metadata = {
   title: "How It Works",

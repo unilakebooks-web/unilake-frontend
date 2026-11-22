@@ -45,7 +45,7 @@ export function PageList({ comic }: PageListProps) {
     [comic.pages]
   );
 
-  // Resync local order whenever server data changes — after a save, or after a
+  // Resync local order whenever server data changes - after a save, or after a
   // create/delete elsewhere invalidates the comic query.
   useEffect(() => {
     setOrderedPages(serverPages);
@@ -66,7 +66,7 @@ export function PageList({ comic }: PageListProps) {
       orderedPages.some((p, i) => p.id !== serverPages[i].id)) ||
     !isNumberingContiguous;
 
-  // Backend returns 409 for a published comic — lock the UI instead of letting
+  // Backend returns 409 for a published comic - lock the UI instead of letting
   // the admin drag into an error.
   const isReorderLocked = comic.status === ComicStatus.PUBLISHED;
 
@@ -193,7 +193,7 @@ export function PageList({ comic }: PageListProps) {
           collisionDetection={closestCenter}
           onDragEnd={handleDragEnd}
         >
-          {/* rectSortingStrategy, not vertical — this is a responsive grid. */}
+          {/* rectSortingStrategy, not vertical - this is a responsive grid. */}
           <SortableContext
             items={orderedPages.map((p) => p.id)}
             strategy={rectSortingStrategy}

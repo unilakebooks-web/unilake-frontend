@@ -4,7 +4,7 @@ import type { SiteSetting, UpdateSiteSettingPayload } from "@/app/types/siteSett
 /**
  * Optional URL field.
  *
- * Accepts "" because that is what an empty text input produces — the form works
+ * Accepts "" because that is what an empty text input produces - the form works
  * in empty strings throughout and only converts to null at submit time (see
  * toPayload below). Validating "" as a URL would make every untouched social
  * field a validation error.
@@ -38,7 +38,7 @@ const mapEmbedUrl = z
     },
     {
       message:
-        "Must be an https:// Google Maps link — use the 'Embed a map' option in Google Maps > Share.",
+        "Must be an https:// Google Maps link, use the 'Embed a map' option in Google Maps > Share.",
     }
   );
 
@@ -71,7 +71,7 @@ export const siteSettingFormSchema = z.object({
   mapEmbedUrl,
 
   // SEO
-  // Maxes match the backend, NOT the 60/160 figures shown in the counter —
+  // Maxes match the backend, NOT the 60/160 figures shown in the counter -
   // going past those is a warning the admin is allowed to ignore, so the
   // validator must stay well clear of them.
   metaTitle: z.string().trim().max(120, "Meta title is too long"),
@@ -87,7 +87,7 @@ export const siteSettingFormSchema = z.object({
 
 export type SiteSettingFormValues = z.infer<typeof siteSettingFormSchema>;
 
-/** Every field blank — the state of a fresh install with nothing saved. */
+/** Every field blank - the state of a fresh install with nothing saved. */
 export const EMPTY_FORM_VALUES: SiteSettingFormValues = {
   brandDescription: "",
   headline: "",
@@ -153,7 +153,7 @@ export function toFormValues(setting: SiteSetting | null): SiteSettingFormValues
  *
  * This conversion is not cosmetic. The API rejects empty strings outright and
  * treats null as "clear this column", so submitting the raw form values would
- * fail validation the moment the admin leaves any field blank — which, on a
+ * fail validation the moment the admin leaves any field blank - which, on a
  * form with nineteen optional fields, is always.
  *
  * ⚠️ This form covers the TEXT columns only. `acceptingOrders` is deliberately
@@ -164,8 +164,8 @@ export function toFormValues(setting: SiteSetting | null): SiteSettingFormValues
  *
  * The single cast on the way out is what that guarantee buys: every key of
  * SiteSettingFormValues is a string field, so the built object genuinely is a
- * valid partial payload. Writing through a union-keyed index instead — the
- * payload type is mapped, not a flat Record — is what TypeScript refuses,
+ * valid partial payload. Writing through a union-keyed index instead - the
+ * payload type is mapped, not a flat Record - is what TypeScript refuses,
  * because it cannot know which key it is narrowing to inside the loop.
  */
 export function toPayload(values: SiteSettingFormValues): UpdateSiteSettingPayload {

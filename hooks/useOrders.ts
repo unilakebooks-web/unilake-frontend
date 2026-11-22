@@ -46,7 +46,7 @@ export function useUserOrder(orderId: string) {
 
 /**
  * `enabled` lets the caller skip the request for orders with no shipment to
- * track — awaiting payment or cancelled.
+ * track - awaiting payment or cancelled.
  */
 export function useOrderTracking(orderId: string, enabled: boolean) {
   return useQuery({
@@ -71,7 +71,7 @@ export function useAdminOrder(orderId: string) {
   });
 }
 
-// Every mutation below can move Order.status, which the list renders as a column —
+// Every mutation below can move Order.status, which the list renders as a column -
 // so each invalidates the list as well as the detail it was fired from.
 function useOrderActionInvalidation(orderId: string) {
   const queryClient = useQueryClient();

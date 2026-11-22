@@ -4,7 +4,7 @@ export type GoogleReview = {
   /** Whole stars, 1–5. */
   rating: number;
   reviewText: string;
-  /** Always present — the column is NOT NULL, so cards need no fallback. */
+  /** Always present - the column is NOT NULL, so cards need no fallback. */
   imageUrl: string;
   isActive: boolean;
   createdAt: string;

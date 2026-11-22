@@ -151,7 +151,7 @@ export function TeamMemberModal({
       setUploadState("registering");
 
       if (isEditMode) {
-        // Update payload logic — null clears, omission leaves unchanged
+        // Update payload logic - null clears, omission leaves unchanged
         const payload: UpdateTeamMemberPayload = {
           name: trimmedName !== member.name ? trimmedName : undefined,
           role: trimmedRole !== member.role ? trimmedRole : undefined,
@@ -175,7 +175,7 @@ export function TeamMemberModal({
           await updateTeamMember(member.id, cleanPayload);
         }
       } else {
-        // Create payload logic — omit empty string fields
+        // Create payload logic - omit empty string fields
         const payload: CreateTeamMemberPayload = {
           name: trimmedName,
           role: trimmedRole,

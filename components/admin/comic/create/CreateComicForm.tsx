@@ -37,7 +37,7 @@ export function CreateComicForm() {
     resolver: zodResolver(comicCreateSchema) as any,
     defaultValues: {
       title: "",
-      // Start empty — the admin must pick at least one of each.
+      // Start empty - the admin must pick at least one of each.
       genderTags: [],
       ageGroups: [],
       themeIds: [],

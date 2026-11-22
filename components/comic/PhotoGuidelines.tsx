@@ -99,7 +99,7 @@ export default function PhotoGuidelines({ showImage = true }: PhotoGuidelinesPro
       {/* Text rules */}
       <PhotoRules className={`text-xs ${showImage ? "mb-3" : ""}`} />
 
-      {/* Good/bad examples — one image, full width at its natural aspect ratio. */}
+      {/* Good/bad examples - one image, full width at its natural aspect ratio. */}
       {showImage && (
         <Image
           src={PHOTO_EXAMPLES_IMAGE.src}
@@ -120,7 +120,7 @@ export default function PhotoGuidelines({ showImage = true }: PhotoGuidelinesPro
  * "ⓘ Click here for Photo Guidelines: Important" button that opens the full
  * guidelines (good/bad example image, the rules and the confidentiality note)
  * in a popup. Sits in the personalize form, just above the consent checkbox, on
- * phones and tablets — where the full guidelines card is moved below the form
+ * phones and tablets - where the full guidelines card is moved below the form
  * and would otherwise be out of sight while the parent picks a photo.
  */
 export function PhotoGuidelinesButton({ className = "" }: { className?: string }) {
@@ -138,7 +138,7 @@ export function PhotoGuidelinesButton({ className = "" }: { className?: string }
       </button>
 
       <Dialog open={open} onOpenChange={setOpen}>
-        {/* Wider than the dialog's default sm:max-w-sm — the example image
+        {/* Wider than the dialog's default sm:max-w-sm - the example image
             carries small baked-in labels that need the room to be legible.
             Taller than a phone screen: the content scrolls, and the close
             button sits in the header row above the picture so it stays

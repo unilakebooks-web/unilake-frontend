@@ -22,7 +22,7 @@ function Field({ label, value }: { label: string; value: React.ReactNode }) {
     <div className="flex justify-between gap-4 text-sm">
       <span className="text-neutral-500 shrink-0">{label}</span>
       <span className="font-semibold text-neutral-900 text-right break-all min-w-0">
-        {value ?? <span className="text-neutral-400 font-normal">—</span>}
+        {value ?? <span className="text-neutral-400 font-normal">-</span>}
       </span>
     </div>
   );
@@ -58,8 +58,8 @@ export function ShipmentSection({ order }: { order: AdminOrderDetail }) {
       const result = await retry.mutateAsync();
       toast.success(
         result.recovered
-          ? "Recovered — Shiprocket already had this shipment, our records are now reconciled."
-          : "Shiprocket retry succeeded — the order is ready to ship."
+          ? "Recovered: Shiprocket already had this shipment, our records are now reconciled."
+          : "Shiprocket retry succeeded, the order is ready to ship."
       );
     } catch (err) {
       const { message } = (err ?? {}) as { message?: string };
@@ -82,16 +82,16 @@ export function ShipmentSection({ order }: { order: AdminOrderDetail }) {
       const result = await tracking.mutateAsync();
       setTrackingResult(result);
 
-      // "pending" means Shiprocket has no courier scans yet — normal right after
+      // "pending" means Shiprocket has no courier scans yet - normal right after
       // AWB assignment, so it's a neutral message rather than an error.
       if (result.shiprocket.state === "pending") {
-        toast.info("No courier scans yet — tracking will populate once the parcel moves.");
+        toast.info("No courier scans yet. Tracking will populate once the parcel moves.");
         return;
       }
 
       const changed = Object.values(result.updated).some((v) => v !== null);
       toast.success(
-        changed ? "Tracking refreshed — records updated." : "Tracking refreshed — nothing changed."
+        changed ? "Tracking refreshed, records updated." : "Tracking refreshed, nothing changed."
       );
     } catch (err) {
       const { message } = (err ?? {}) as { message?: string };
@@ -112,7 +112,7 @@ export function ShipmentSection({ order }: { order: AdminOrderDetail }) {
       case "CONFIRMED":
         return "PDF compilation and Shiprocket registration are still in progress.";
       case "CANCELLED":
-        return "This order was cancelled — no shipment actions are available.";
+        return "This order was cancelled. No shipment actions are available.";
       default:
         return "No shipment actions are available for this order right now.";
     }

@@ -14,13 +14,13 @@ interface SendToPrintBarProps {
 
 /**
  * Floats Send to Print at the bottom of the screen while the customer scrolls
- * through their paid book — the post-payment counterpart of CheckoutBar.
+ * through their paid book - the post-payment counterpart of CheckoutBar.
  *
  * Same floating behaviour as CheckoutBar (fixed, slides in/out, `inert` while
  * hidden) and the same card look as the compact checkout section: white,
  * rounded, purple border, offset shadow. PreviewViewer decides `visible` with
- * the same rule — shown while the full SendToPrintSection is still below the
- * screen, gone once it scrolls into view — so the two are never on screen
+ * the same rule - shown while the full SendToPrintSection is still below the
+ * screen, gone once it scrolls into view - so the two are never on screen
  * together.
  *
  * Presentational: the click, the confirm dialog and the login dialog all come

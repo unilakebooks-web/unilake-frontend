@@ -9,7 +9,7 @@ import type { CoverFormat } from "@/hooks/useCheckoutFlow";
  *
  * It has no design of its own: it renders the SAME PricingSection as the full
  * block below the last page, in its `compact` size, so the two always look
- * alike. This component only owns the floating — position, and sliding in and
+ * alike. This component only owns the floating - position, and sliding in and
  * out.
  *
  * PreviewViewer decides `visible`: shown while the full section is still
@@ -29,7 +29,7 @@ interface CheckoutBarProps {
   isUpdating: boolean;
   isCheckoutDisabled: boolean;
   onCheckout: () => void;
-  /** Resuming an unpaid checkout — see PricingSection. */
+  /** Resuming an unpaid checkout - see PricingSection. */
   locked?: boolean;
 }
 

@@ -136,7 +136,7 @@ export function ComicFactsManager({ comic }: ComicFactsManagerProps) {
           {/* <p className="text-sm text-neutral-500 mt-0.5 max-w-2xl">
             Short lines that rotate every few seconds while this comic is being
             made, so the customer has something to read instead of a bare loading
-            bar. Entirely optional — a comic with no facts works exactly as
+            bar. Entirely optional - a comic with no facts works exactly as
             before.
           </p> */}
         </div>

@@ -1,7 +1,7 @@
 /**
  * The four substitution tokens the SD text-stamper replaces at generation time.
  * Must match the Prisma schema comment on Bubble.dialogue exactly.
- * When the backend worker is built, import this (or replicate) — mismatch = silent breakage.
+ * When the backend worker is built, import this (or replicate) - mismatch = silent breakage.
  */
 export const DIALOGUE_TOKENS = [
   "{name}",
@@ -35,7 +35,7 @@ export const SAMPLE_NAMES = {
  * that from reaching print.
  *
  * The backend independently allows up to 50 characters
- * (session.schema.ts) — this is a stricter product rule layered on top, not a
+ * (session.schema.ts) - this is a stricter product rule layered on top, not a
  * mirror of it. Raising this alone will not break anything server-side.
  *
  * Shared by ComicPersonalizeForm and NewPhotoForm, which duplicate each other's
@@ -49,7 +49,7 @@ export const SAMPLE_PRONOUNS: Record<string, string> = {
   "{pronoun_possessive}": "his",
 };
 
-/** Pronoun sets — mirrors PRONOUN_TABLE in the backend's sd/tokens.ts. */
+/** Pronoun sets - mirrors PRONOUN_TABLE in the backend's sd/tokens.ts. */
 export const PRONOUN_TABLE: Record<
   "HE" | "SHE" | "THEY",
   { subject: string; object: string; possessive: string }
@@ -61,7 +61,7 @@ export const PRONOUN_TABLE: Record<
 
 /**
  * One piece of substituted dialogue. `isName` is true only for text that came
- * from a {name} token — what Bubble.nameColor paints.
+ * from a {name} token - what Bubble.nameColor paints.
  */
 export type DialogueSegment = {
   text: string;
@@ -72,7 +72,7 @@ const TOKEN_PATTERN =
   /(\{name\}|\{pronoun_subject\}|\{pronoun_object\}|\{pronoun_possessive\})/;
 
 /**
- * MIRROR of substituteTokensToSegments in the backend's sd/tokens.ts — the
+ * MIRROR of substituteTokensToSegments in the backend's sd/tokens.ts - the
  * canvas and the print renderer must substitute identically. Change both.
  *
  * Substitutes every token but keeps the result as pieces, so the renderer

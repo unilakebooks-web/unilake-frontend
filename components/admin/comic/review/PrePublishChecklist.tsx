@@ -19,11 +19,11 @@ export function PrePublishChecklist({ comic }: PrePublishChecklistProps) {
   // The backend only gates on thumbnails + at least one pricing rule. Every
   // other guarantee below is permanently this screen's responsibility.
   //
-  // Grouped by country — a plain count of pricing rules can be satisfied by
+  // Grouped by country - a plain count of pricing rules can be satisfied by
   // four rules that all belong to one country while another has no price.
   //
   // A rule also has to carry an MRP. Rows created before that column existed
-  // have none, and the storefront silently drops the strike-through for them —
+  // have none, and the storefront silently drops the strike-through for them -
   // so publishing one would ship a comic that quietly looks undiscounted.
   const isRuleComplete = (r: { mrp: string | null }) =>
     r.mrp !== null && parseFloat(r.mrp) > 0;
@@ -106,7 +106,7 @@ export function PrePublishChecklist({ comic }: PrePublishChecklistProps) {
       okText: "Every face page has a mask.",
       failText: `Page(s) ${pagesMissingMask
         .map((p) => p.pageNumber)
-        .join(", ")} have "Has Face" on but no mask — the face will be placed incorrectly.`,
+        .join(", ")} have "Has Face" on but no mask, the face will be placed incorrectly.`,
       blocking: true,
     },
     {
@@ -162,7 +162,7 @@ export function PrePublishChecklist({ comic }: PrePublishChecklistProps) {
     errorText: string;
     isAdvisory?: boolean;
   }) => {
-    // A failed advisory check is amber, not red — it warns without blocking.
+    // A failed advisory check is amber, not red - it warns without blocking.
     const tone = isValid
       ? { box: "bg-emerald-50 border-emerald-200", head: "text-emerald-900", body: "text-emerald-700", icon: "text-emerald-500" }
       : isAdvisory

@@ -9,7 +9,7 @@ import { formatMoneyCompact } from "@/lib/utils";
 /**
  * Best-selling comics for the selected range.
  *
- * Horizontal bars, because the labels are comic titles — vertical columns would
+ * Horizontal bars, because the labels are comic titles - vertical columns would
  * force rotated text or truncation that hides which book is which. The bar is
  * scaled against the top seller rather than the total: the question here is
  * "which is doing best", not "what share of everything".

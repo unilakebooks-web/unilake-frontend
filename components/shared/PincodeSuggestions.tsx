@@ -1,6 +1,6 @@
 /**
  * Small helpers rendered under the address form's fields by usePincodeAutofill.
- * Neutral grey on purpose — they sit inside both the dashboard form (purple)
+ * Neutral grey on purpose - they sit inside both the dashboard form (purple)
  * and the checkout form (indigo), and must not compete with either.
  */
 
@@ -10,7 +10,7 @@ interface PincodeSuggestionsProps {
   onSelect: (value: string) => void;
 }
 
-/** "Also: South East · South" — one tap replaces the field's value. */
+/** "Also: South East · South" - one tap replaces the field's value. */
 export function PincodeSuggestions({ options, onSelect }: PincodeSuggestionsProps) {
   if (options.length === 0) return null;
 
@@ -39,7 +39,7 @@ export function PincodeNotFoundHint({ show }: { show: boolean }) {
 
   return (
     <p className="text-xs text-gray-500">
-      We couldn&apos;t find this pincode — please enter city and state.
+      We couldn&apos;t find this pincode. Please enter city and state.
     </p>
   );
 }

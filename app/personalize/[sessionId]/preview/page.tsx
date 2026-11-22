@@ -60,7 +60,7 @@ export default function PreviewPage({
   // admin order page (`?view=admin`). It only takes effect for an actual admin:
   // a customer who adds the parameter to their own link just sees their normal
   // page. While auth is still loading it is assumed ON, so the action buttons
-  // never flash in front of the admin before their role is known — for anyone
+  // never flash in front of the admin before their role is known - for anyone
   // else they appear a moment later, once auth resolves.
   //
   // This hides buttons; it is not a permission. The backend's own checks are
@@ -123,7 +123,7 @@ export default function PreviewPage({
   );
 
   // The preloader is a deliberate stall, and it renders ahead of every error
-  // branch below — so without this, someone whose session is already dead would
+  // branch below - so without this, someone whose session is already dead would
   // watch a progress bar for 55 seconds before being told so. These are exactly
   // the conditions renderBody() would have rendered an error for.
   //
@@ -144,7 +144,7 @@ export default function PreviewPage({
   // preloader never paints for a frame before the error replaces it.
   //
   // Writing it to state rather than deriving it inline makes the dismissal a
-  // one-way door — otherwise a background refetch that recovered `snapshot`
+  // one-way door - otherwise a background refetch that recovered `snapshot`
   // would flip the condition back and pull the preloader over an error the user
   // had already started reading.
   if (showPreloader && preloaderInterrupted) {
@@ -162,7 +162,7 @@ export default function PreviewPage({
     if (hasNoPreviewPages || isExpired) return;
     // Starting generation is the customer's action, never the admin's. (Orders only
     // exist from checkout onward, so an admin should never land here at
-    // PHOTO_UPLOADED — this is the guard in case one ever does.) Checked against the
+    // PHOTO_UPLOADED - this is the guard in case one ever does.) Checked against the
     // requested view, not `adminView`, so a slow auth load can't let it through.
     if (adminViewRequested) return;
 
@@ -230,8 +230,8 @@ export default function PreviewPage({
       );
     }
 
-    // Checked before anything else about the session, because everything downstream —
-    // live updates, regeneration — depends on a socket that will now be refused (§1.2).
+    // Checked before anything else about the session, because everything downstream -
+    // live updates, regeneration - depends on a socket that will now be refused (§1.2).
     // Not for the admin view: an admin looking into an order (a paid book that
     // failed and later aged past its window, say) needs to see its pages, and the
     // read-only view uses none of what expiry breaks.
@@ -280,7 +280,7 @@ export default function PreviewPage({
           title="This preview has expired"
           // ⚠️ "7 days" repeats the backend preview lifetime (SESSION_LIFETIME_DAYS in services/session.service.ts)
           // and config/dataDeletion.ts, and PHOTO_CONFIDENTIAL_TEXT (components/comic/PhotoGuidelines.tsx). Two repos, change both.
-          message="Previews are kept for 7 days. Please personalize your comic again — it only takes a moment."
+          message="Previews are kept for 7 days. Please personalize your comic again. It only takes a moment."
           note={
             <>
               Photos and previews are deleted after a few days, as described in our <PrivacyPolicyLink />.
@@ -312,7 +312,7 @@ export default function PreviewPage({
 
     // A session-level FAILED that is not an expiry means every preview page
     // exhausted its retries. This used to replace the whole viewer with
-    // "There was an issue with your payment" — wrong on both counts: it is not
+    // "There was an issue with your payment" - wrong on both counts: it is not
     // a payment problem, and FAILED is in the backend's REGENERATABLE_STATUSES,
     // so blocking the viewer removed the one route out. Keep the viewer mounted
     // and say what actually happened.
@@ -323,7 +323,7 @@ export default function PreviewPage({
             <div className="flex items-start gap-2 rounded-2xl bg-[#914A8C]/10 border border-[#914A8C]/30 px-4 py-3 text-sm text-[#5e2f5b]">
               <Eye size={16} className="shrink-0 mt-0.5" />
               <span>
-                <strong>Admin view — read-only.</strong> This is the
+                <strong>Admin view: read-only.</strong> This is the
                 customer&apos;s book exactly as they see it (status:{" "}
                 <span className="font-mono">{status}</span>). Regenerate,
                 checkout and Send to Print are hidden. Browsing versions here
@@ -340,7 +340,7 @@ export default function PreviewPage({
               <span>
                 Our AI server had trouble creating your pages. Hit{" "}
                 <strong>Regenerate</strong> on any page that didn&apos;t come
-                out — your photo and details are still saved.
+                out. Your photo and details are still saved.
               </span>
             </div>
           </div>
@@ -365,13 +365,13 @@ export default function PreviewPage({
           </div>
         )}
 
-        {/* Data is still good — we just couldn't reach the server on the last
+        {/* Data is still good - we just couldn't reach the server on the last
             refresh. Say so quietly rather than replacing the whole preview. */}
         {error && (
           <div className="w-full max-w-2xl mx-auto mt-4 px-4">
             <div className="flex items-center justify-center gap-2 rounded-full bg-amber-50 border border-amber-200 px-4 py-2 text-sm text-amber-800">
               <Loader2 size={14} className="animate-spin" />
-              Having trouble reaching the server — retrying...
+              Having trouble reaching the server. Retrying...
             </div>
           </div>
         )}

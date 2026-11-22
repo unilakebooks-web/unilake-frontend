@@ -17,12 +17,12 @@ export const fontFileQueryKey = (fontId: string) => ["font-file", fontId] as con
  * canvas can draw text with the real glyphs.
  *
  * One query per font. Cached for the whole session and never refetched on its
- * own — a font file does not change unless an admin replaces it, and the font
+ * own - a font file does not change unless an admin replaces it, and the font
  * hooks invalidate this key when that happens. A page reload revalidates
  * through the browser HTTP cache (ETag → 304), so it is cheap.
  *
  * `structuralSharing: false` because the cached value is a parsed opentype.js
- * Font — a large class instance TanStack's JSON-style comparison is not meant
+ * Font - a large class instance TanStack's JSON-style comparison is not meant
  * to walk.
  */
 export function useFontFiles(fonts: Font[], fontIds: string[]): Map<string, FontFileState> {

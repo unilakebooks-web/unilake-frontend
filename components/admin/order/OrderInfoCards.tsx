@@ -44,7 +44,7 @@ function Field({
         {label}
       </span>
       <span className="font-semibold text-neutral-900 text-right break-words min-w-0">
-        {value ?? <span className="text-neutral-400 font-normal">—</span>}
+        {value ?? <span className="text-neutral-400 font-normal">-</span>}
       </span>
     </div>
   );
@@ -70,12 +70,12 @@ export function OrderInfoCards({ order }: { order: AdminOrderDetail }) {
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
       <Card title="Customer" icon={<User className="w-4 h-4" />}>
         <Field label="Notification email" value={customer.notificationEmail} />
-        {/* Who paid, deliberately distinct from who receives — they differ on gifts. */}
+        {/* Who paid, deliberately distinct from who receives - they differ on gifts. */}
         <Field label="Account name" value={customer.user?.name} />
         <Field label="Account email" value={customer.user?.email} />
         {!customer.user && (
           <p className="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 mt-2">
-            No account attached — this session was never linked to a login.
+            No account attached. This session was never linked to a login.
           </p>
         )}
       </Card>
@@ -159,14 +159,14 @@ export function OrderInfoCards({ order }: { order: AdminOrderDetail }) {
       <Card title="Book & child" icon={<Sparkles className="w-4 h-4" />}>
         <div className="flex gap-4 items-start">
           {/*
-            The generated page-1 cover — the personalised page this child's book
+            The generated page-1 cover - the personalised page this child's book
             opens on. Deliberately NOT falling back to comic.coverThumbnailUrls:
             the template thumbnail is identical for every customer, so showing it
             here would look like a generated cover and mislead whoever is
             checking what actually shipped.
 
             No fixed height, and object-contain, because page artwork has no
-            fixed aspect ratio — the image defines its own height rather than
+            fixed aspect ratio - the image defines its own height rather than
             being cropped into a guessed box.
           */}
           <div className="w-36 shrink-0">
@@ -223,7 +223,7 @@ export function OrderInfoCards({ order }: { order: AdminOrderDetail }) {
             ) : (
               // The saved filename ("Aarav_Hardcover_The_Magic_Treehouse_3f6a1c2e.pdf")
               // comes from the Content-Disposition header R2 stores on the PDF at
-              // compile time — not from here. The `download` attribute would not
+              // compile time - not from here. The `download` attribute would not
               // help: browsers ignore it for cross-origin URLs, and R2 is one.
               //
               // target="_blank" stays on purpose. PDFs compiled after the header
@@ -250,7 +250,7 @@ export function OrderInfoCards({ order }: { order: AdminOrderDetail }) {
           <p className="text-sm text-neutral-500">
             {pdf.pdfDeleted
               ? "The PDF was deleted for privacy."
-              : "Not compiled yet — the PDF is built after the customer sends the book to print."}
+              : "Not compiled yet, the PDF is built after the customer sends the book to print."}
           </p>
         )}
         {/* Shown in every state of this card; the control decides what to offer. */}

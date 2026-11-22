@@ -85,7 +85,7 @@ export function RoleChangeDialog({ user, onOpenChange }: RoleChangeDialogProps) 
       onOpenChange(false);
     } catch (err) {
       // Refusals (self-demotion, last Master admin) come back as 409 with a readable
-      // message — show it in place so the admin sees why.
+      // message - show it in place so the admin sees why.
       const message = getErrorMessage(err, "Failed to update role. Please try again.");
       setErrorMessage(message);
       toast.error(message);
@@ -120,7 +120,7 @@ export function RoleChangeDialog({ user, onOpenChange }: RoleChangeDialogProps) 
         </DialogHeader>
 
         <div className="my-4 p-3.5 flex flex-col gap-1 bg-neutral-50 rounded-xl border border-neutral-200 text-neutral-700">
-          <p className="text-sm font-bold break-words">{user.name || "—"}</p>
+          <p className="text-sm font-bold break-words">{user.name || "-"}</p>
           <p className="text-xs text-neutral-500 break-all">{user.email}</p>
         </div>
 

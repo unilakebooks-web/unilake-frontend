@@ -2,7 +2,7 @@ import { z } from "zod";
 import { GenderTag, AgeGroup } from "@/app/types/comic";
 
 /**
- * Genders, age groups and themes are lists — at least one of each. Shared with
+ * Genders, age groups and themes are lists - at least one of each. Shared with
  * the edit form in ComicInfoEditor so both enforce exactly the same rules.
  */
 export const comicTagFields = {

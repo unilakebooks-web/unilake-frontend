@@ -22,7 +22,7 @@ export async function fetchPublicCustomerReviews(): Promise<CustomerReview[]> {
 /**
  * Active Google reviews, newest first.
  *
- * Returns [] on failure, like the other homepage content fetches — a
+ * Returns [] on failure, like the other homepage content fetches - a
  * testimonials section that cannot load should disappear, not take the
  * homepage down with it.
  */
@@ -50,7 +50,7 @@ export async function submitPublicFeedback(payload: SubmitFeedbackPayload): Prom
 
 /**
  * A /contact form submission. Deliberately a different endpoint from
- * submitPublicFeedback — enquiries carry a reply channel and land in their own
+ * submitPublicFeedback - enquiries carry a reply channel and land in their own
  * admin inbox, so the two must never share a destination.
  *
  * Unlike the fetches above, this one lets errors through: a visitor whose
@@ -113,12 +113,12 @@ export async function fetchPublicSiteSetting(): Promise<SiteSetting | null> {
 /**
  * A published legal page.
  *
- * Deliberately does NOT swallow errors — unlike the settings fetch above. The
+ * Deliberately does NOT swallow errors - unlike the settings fetch above. The
  * caller needs the 404 in order to call notFound(); returning null here would
  * force every page to invent its own "missing" state.
  *
  * Errors arrive as { code, message } from the axios interceptor, so callers
- * test `error?.code === "NOT_FOUND"` — there is no `.response` to inspect.
+ * test `error?.code === "NOT_FOUND"` - there is no `.response` to inspect.
  */
 export async function fetchPublicSitePage(
   slug: SitePageSlug

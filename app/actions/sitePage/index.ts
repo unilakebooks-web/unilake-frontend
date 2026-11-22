@@ -2,7 +2,7 @@ import api from "@/app/lib/axios";
 import type { SitePage, SitePageSlug } from "@/app/types/sitePage";
 
 /**
- * Always returns exactly three entries — one per slug — whether or not the
+ * Always returns exactly three entries - one per slug - whether or not the
  * admin has saved them. Unsaved pages come back as placeholders with id: null.
  */
 export async function fetchSitePages(): Promise<SitePage[]> {
@@ -17,7 +17,7 @@ export async function fetchSitePage(slug: SitePageSlug): Promise<SitePage> {
 }
 
 /**
- * Create-or-update. Deliberately cannot change isActive — publishing is the
+ * Create-or-update. Deliberately cannot change isActive - publishing is the
  * status endpoint's job, so saving a draft can never accidentally make it live.
  */
 export async function saveSitePage(
@@ -32,7 +32,7 @@ export async function saveSitePage(
 }
 
 /**
- * Publish / unpublish. Returns 409 if the page has never been saved — callers
+ * Publish / unpublish. Returns 409 if the page has never been saved - callers
  * should keep the control disabled until `id` is non-null rather than relying
  * on the error.
  */

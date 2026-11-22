@@ -29,7 +29,7 @@ const inputClass = `
  * flag. The two look alike but are opposites: feedback is an anonymous
  * suggestion that nobody replies to, an enquiry is a question that someone has
  * to answer. Branching one component on which it is today is precisely how the
- * two ended up sharing an inbox — so they stay apart, and can diverge freely.
+ * two ended up sharing an inbox - so they stay apart, and can diverge freely.
  *
  * Collects name, email, phone and message, all required. The success copy
  * promises a reply because, unlike feedback, this one actually has a channel
@@ -54,13 +54,13 @@ export default function ContactForm({
     const formData = new FormData(form);
 
     // Honeypot check. Stays indistinguishable from success so a bot learns
-    // nothing — but it is logged, because a false positive here silently
+    // nothing - but it is logged, because a false positive here silently
     // destroys a real customer's enquiry. If this ever shows up in a genuine
     // user's console, the honeypot is misfiring again and must be fixed, not
     // tuned.
     if (formData.get("confirm_ref")) {
       console.warn(
-        "Contact form: honeypot tripped — submission was NOT sent. If you are a real user, this is a bug."
+        "Contact form: honeypot tripped, submission was NOT sent. If you are a real user, this is a bug."
       );
       setIsSuccess(true);
       return;
@@ -109,7 +109,7 @@ export default function ContactForm({
             Message sent!
           </h4>
           <p className={`${hankenGrotesk.className} text-neutral-600`}>
-            Thanks for reaching out — we&apos;ll get back to you on the email or
+            Thanks for reaching out! We&apos;ll get back to you on the email or
             number you provided.
           </p>
           <button
@@ -122,13 +122,13 @@ export default function ContactForm({
       ) : (
         <form onSubmit={handleSubmit} className="space-y-4">
           {/*
-            Honeypot. `display: none` on the wrapper, NOT `left: -9999px` —
+            Honeypot. `display: none` on the wrapper, NOT `left: -9999px` -
             that distinction is load-bearing.
 
             An off-screen field is still rendered, so Chrome's profile autofill
             treats it as a real input. This form asks for name, email and phone,
             which makes the browser read it as an address form and fill every
-            field it recognises — including one named "website_url". That
+            field it recognises - including one named "website_url". That
             tripped the check below and silently threw away genuine enquiries.
             `autocomplete="off"` does not prevent this; browsers ignore it for
             profile autofill.
@@ -171,7 +171,7 @@ export default function ContactForm({
             />
           </div>
 
-          {/* Email and phone share a row from sm: up — they are both short
+          {/* Email and phone share a row from sm: up - they are both short
               fields, and stacking all four makes the form look longer than it
               is, which costs completions. */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

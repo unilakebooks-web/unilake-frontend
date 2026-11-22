@@ -12,7 +12,7 @@ import { useCountryStore } from "@/stores/useCountryStore";
  * query is cached by TanStack, so calling this from both costs one request.
  *
  * A rule is undefined when the comic isn't priced for that cover in the
- * selected country — callers show "N/A" and disable that option.
+ * selected country - callers show "N/A" and disable that option.
  */
 export function useCoverPricing(comicId: string) {
   const { data: comicDetail } = usePublicComic(comicId);

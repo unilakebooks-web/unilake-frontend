@@ -22,8 +22,8 @@ export default function SitePagesAdminPage() {
       const updated = await toggleStatus.mutateAsync(slug);
       toast.success(
         updated.isActive
-          ? "Page published — it is now live on the site"
-          : "Page unpublished — visitors will see a not-found page"
+          ? "Page published. It is now live on the site"
+          : "Page unpublished. Visitors will see a not-found page"
       );
     } catch (err: unknown) {
       toast.error(

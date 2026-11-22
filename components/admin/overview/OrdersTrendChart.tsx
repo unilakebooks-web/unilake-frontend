@@ -16,7 +16,7 @@ import { formatMoney, cn } from "@/lib/utils";
 /**
  * Orders / revenue over time.
  *
- * ONE MEASURE AT A TIME, by design. Orders are a count and revenue is money —
+ * ONE MEASURE AT A TIME, by design. Orders are a count and revenue is money -
  * two different scales. Putting both on one plot would need a second y-axis,
  * and a dual-axis chart lets you imply any correlation you like by sliding one
  * scale against the other. The toggle costs a click and cannot lie.
@@ -24,7 +24,7 @@ import { formatMoney, cn } from "@/lib/utils";
  * Single series, so:
  *   - area rather than line (area is the right form for one series over time)
  *   - one hue, from --chart-1 (the brand purple)
- *   - NO legend — the toggle already names what is drawn
+ *   - NO legend - the toggle already names what is drawn
  *
  * Buckets arrive zero-filled from the backend, cut on IST day boundaries, so
  * this component never has to distinguish "no data" from "a quiet day".
@@ -33,13 +33,13 @@ import { formatMoney, cn } from "@/lib/utils";
 type Measure = "orders" | "revenue";
 
 /**
- * Axis ticks only — always compact, never the full figure.
+ * Axis ticks only - always compact, never the full figure.
  *
  * `formatMoneyCompact` deliberately falls back to the full format below
  * ₹1,00,000, which is right for a stat tile and wrong here: "₹12,500.00" is
  * about 80px of text in a 56px gutter, so ticks would clip or shove the plot
  * area around as the data changed. An axis label is a reference point, not a
- * figure to read exactly — the tooltip carries the precise number.
+ * figure to read exactly - the tooltip carries the precise number.
  */
 function axisMoney(value: number, currency: string): string {
   try {
@@ -142,7 +142,7 @@ export function OrdersTrendChart({ data }: { data: StatsTimeseries }) {
             </linearGradient>
           </defs>
 
-          {/* Recessive grid — horizontal only. Vertical rules add ink without
+          {/* Recessive grid - horizontal only. Vertical rules add ink without
               helping anyone read a value off the y-axis. */}
           <CartesianGrid vertical={false} strokeDasharray="3 3" />
 
@@ -168,7 +168,7 @@ export function OrdersTrendChart({ data }: { data: StatsTimeseries }) {
             }
           />
 
-          {/* The hover layer is not optional on a time series — without it the
+          {/* The hover layer is not optional on a time series - without it the
               only way to read a specific day is to squint at the axis. */}
           <ChartTooltip
             content={

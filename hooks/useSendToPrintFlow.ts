@@ -23,7 +23,7 @@ interface UseSendToPrintFlowArgs {
   selections: SendToPrintSelection[];
   /**
    * Pages with no SD_READY variant to print. Only meaningful once generation
-   * has finished — while it runs, a page still being made has no ready variant
+   * has finished - while it runs, a page still being made has no ready variant
    * either, so this list is ignored whenever `isGenerating` is true.
    */
   blockedPages: number[];
@@ -38,8 +38,8 @@ interface UseSendToPrintFlowArgs {
 /**
  * Everything behind the Send to Print button, in ONE place.
  *
- * The button appears twice on the preview page — the full section below the
- * last page and the floating SendToPrintBar — so, exactly like
+ * The button appears twice on the preview page - the full section below the
+ * last page and the floating SendToPrintBar - so, exactly like
  * useCheckoutFlow, this is called once in PreviewViewer and both copies read
  * the same state. That is what makes them agree on what's blocked and what's
  * in flight, and lets a single confirm dialog and a single login dialog serve
@@ -66,7 +66,7 @@ export function useSendToPrintFlow({
 
   // The reason that DISABLES the button, shown in the amber note.
   //
-  // Generation in progress is deliberately NOT one — the button stays
+  // Generation in progress is deliberately NOT one - the button stays
   // clickable and explains itself (see handleClick). Failed pages only count
   // once generation has finished, since until then "no ready image yet" just
   // means "not made yet".
@@ -97,7 +97,7 @@ export function useSendToPrintFlow({
     try {
       await mutateAsync(selections);
 
-      // The session is finished and locked — drop the local copy so the user
+      // The session is finished and locked - drop the local copy so the user
       // isn't pulled back into personalizing a book they've committed to print.
       clearSession(comicId);
       setIsRedirecting(true);
@@ -112,7 +112,7 @@ export function useSendToPrintFlow({
         return;
       }
 
-      // The session moved underneath us — another tab sent it, or the status
+      // The session moved underneath us - another tab sent it, or the status
       // drifted. The backend's message is already written for the customer.
       if (code === "CONFLICT") {
         setErrorMessage(message ?? "This book has already been sent to print.");

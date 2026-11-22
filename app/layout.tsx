@@ -31,7 +31,7 @@ import {
  * `title.template` is what appends " | UniLake" to every page that sets its own
  * title. Pages that set NO title (the homepage) fall through to `title.default`
  * instead, which is why the homepage deliberately declares no metadata of its
- * own — it is meant to show exactly what the admin typed.
+ * own - it is meant to show exactly what the admin typed.
  *
  * getSiteSetting() never throws and is cached for five minutes, so this adds no
  * per-request API call and cannot take a page down when the backend is asleep.

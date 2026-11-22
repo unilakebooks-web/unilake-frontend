@@ -25,7 +25,7 @@ export async function fetchAdminCustomers(
 }
 
 /**
- * Downloads the customer list as a CSV file — every customer matching
+ * Downloads the customer list as a CSV file - every customer matching
  * `search`, not just the visible page.
  *
  * The endpoint returns a raw file, not the JSON envelope, so it is fetched as

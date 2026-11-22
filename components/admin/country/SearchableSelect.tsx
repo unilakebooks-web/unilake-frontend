@@ -70,7 +70,7 @@ export function SearchableSelect({
       >
         <span className={selectedOption ? "" : "text-neutral-500"}>
           {selectedOption
-            ? `${selectedOption.code} — ${selectedOption.name}`
+            ? `${selectedOption.code} - ${selectedOption.name}`
             : placeholder}
         </span>
         <ChevronsUpDown className="w-4 h-4 text-neutral-500 opacity-50" />

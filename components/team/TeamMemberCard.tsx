@@ -19,7 +19,7 @@ interface TeamMemberCardProps {
  * lines; anything longer is read in TeamMemberModal.
  *
  * Both pages rendered an identical copy of this markup before it was extracted
- * here. /team is a server component and this is a client one — that is fine,
+ * here. /team is a server component and this is a client one - that is fine,
  * TeamMember is plain JSON and crosses the boundary without trouble.
  */
 export default function TeamMemberCard({ member }: TeamMemberCardProps) {
@@ -48,7 +48,7 @@ export default function TeamMemberCard({ member }: TeamMemberCardProps) {
 
     // next/font swaps the real webfont in after hydration. Measuring against
     // fallback metrics gives a wrong answer that never self-corrects, because
-    // line-clamp pins clientHeight — the swap moves scrollHeight only, which
+    // line-clamp pins clientHeight - the swap moves scrollHeight only, which
     // the observer below does not report.
     document.fonts?.ready.then(() => {
       if (!cancelled) measure();
@@ -122,7 +122,7 @@ export default function TeamMemberCard({ member }: TeamMemberCardProps) {
             ({member.role})
           </span>
 
-          {/* Description — clamped to 3 lines, with the overflow read in the modal */}
+          {/* Description - clamped to 3 lines, with the overflow read in the modal */}
           {member.description && (
             <div className="w-full max-w-[250px] mb-2">
               <p
@@ -144,7 +144,7 @@ export default function TeamMemberCard({ member }: TeamMemberCardProps) {
             </div>
           )}
 
-          {/* Social Links — renders nothing when the member has none.
+          {/* Social Links - renders nothing when the member has none.
               A fixed mt-auto so it pins to the bottom of the container, preventing it from 
               being pushed off-screen. shrink-0 keeps the row from being
               compressed away when a long name or role pushes the stack. */}

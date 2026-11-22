@@ -33,7 +33,7 @@ export function PageCreateModal({ open, onOpenChange, comic, nextPageNumber }: P
   const [faceDirection, setFaceDirection] = useState<string>("none");
 
   // Page numbers are assigned automatically and reordered from the Pages tab,
-  // so nextPageNumber is read straight from props — holding it in state would
+  // so nextPageNumber is read straight from props - holding it in state would
   // go stale between saves and produce a 409 on the next open.
   const previewCount = comic.pages.filter((p) => p.isPreviewPage).length;
   const previewLimitReached = previewCount >= comic.freePreviewPages;

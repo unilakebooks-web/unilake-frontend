@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   title: "Contact Us",
 };
 
-/** Rendered per request — see the note in app/privacy/page.tsx. */
+/** Rendered per request - see the note in app/privacy/page.tsx. */
 export const dynamic = "force-dynamic";
 
 /** One contact channel. Renders nothing when the admin has not filled it in. */
@@ -54,7 +54,7 @@ function ContactRow({
 }
 
 export default async function ContactPage() {
-  // Never throws — returns null when nothing has been saved yet.
+  // Never throws - returns null when nothing has been saved yet.
   const setting = await fetchPublicSiteSetting();
 
   const addressLines = [
@@ -150,7 +150,7 @@ export default async function ContactPage() {
             </aside>
           )}
 
-          {/* Form — always rendered. On a fresh install with no details saved,
+          {/* Form - always rendered. On a fresh install with no details saved,
               this is the only way for a visitor to reach anyone.
 
               Writes to contact_enquiries, NOT feedbacks: an enquiry here is a

@@ -31,7 +31,7 @@ type SummaryImage = {
  * The picture for the summary: the child's first generated page.
  *
  * "First" is the lowest-numbered page with a finished variant, and of that page
- * the NEWEST finished variant — the same one the preview page shows by default
+ * the NEWEST finished variant - the same one the preview page shows by default
  * (see newestReadyIndex in PreviewViewer). The customer's in-preview pick is not
  * persisted anywhere, so this is the closest match to what they last saw.
  *
@@ -89,7 +89,7 @@ export default function OrderSummary({ snapshot, coupon }: OrderSummaryProps) {
   const currencySymbol = getCurrencySymbol();
   const price = pricingRule ? pricingRule.price : "N/A";
 
-  // Derived from the RULE, not from `price` above — that falls back to the
+  // Derived from the RULE, not from `price` above - that falls back to the
   // string "N/A", which would parse to NaN.
   const { mrp, showMrp } = pricingRule
     ? resolveMrp(pricingRule)
@@ -109,7 +109,7 @@ export default function OrderSummary({ snapshot, coupon }: OrderSummaryProps) {
               src={toImageUrl(summaryImage.url)}
               alt={
                 summaryImage.isGenerated
-                  ? `${comicDetail.title} — personalized for ${snapshot.childName || "your child"}`
+                  ? `${comicDetail.title} - personalized for ${snapshot.childName || "your child"}`
                   : "Comic Cover"
               }
               fill
@@ -133,8 +133,8 @@ export default function OrderSummary({ snapshot, coupon }: OrderSummaryProps) {
           </div>
           
           {/* flex-wrap is the actual overflow guard: when the badge and the
-              price cannot sit side by side — a long currency, a four-figure
-              MRP, a narrow phone — the price group drops to its own line
+              price cannot sit side by side - a long currency, a four-figure
+              MRP, a narrow phone - the price group drops to its own line
               instead of spilling out of the card. */}
           <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 mt-4">
             <span className="px-3 py-1 bg-[#F8E7D2] text-[#914A8C] text-xs font-bold rounded-full uppercase shrink-0">

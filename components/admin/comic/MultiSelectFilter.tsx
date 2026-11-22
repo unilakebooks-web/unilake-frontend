@@ -26,7 +26,7 @@ interface MultiSelectFilterProps {
 }
 
 /**
- * Admin list filter that accepts several values — a comic matches if it has
+ * Admin list filter that accepts several values - a comic matches if it has
  * ANY of them. Ticking an item keeps the menu open (Base UI checkbox items do
  * not close on click), so several can be picked in one go.
  *

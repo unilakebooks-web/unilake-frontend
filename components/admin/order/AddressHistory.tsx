@@ -62,9 +62,9 @@ function changedLines(change: AddressChange) {
   ).map(([key, label]) => (
     <li key={key} className="break-words">
       <span className="text-neutral-500">{label}: </span>
-      <span className="line-through text-neutral-400">{change.before[key] || "—"}</span>
+      <span className="line-through text-neutral-400">{change.before[key] || "-"}</span>
       {" → "}
-      <span className="font-semibold text-neutral-900">{change.after[key] || "—"}</span>
+      <span className="font-semibold text-neutral-900">{change.after[key] || "-"}</span>
     </li>
   ));
 }

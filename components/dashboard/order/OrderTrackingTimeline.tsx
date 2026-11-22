@@ -5,7 +5,7 @@ import { Check, Loader2, Truck } from "lucide-react";
 import type { PublicOrderStatusCode, UserOrderTracking } from "@/app/types/order";
 
 // The four shipping stages a paid order moves through. AWAITING_PAYMENT and
-// CANCELLED aren't points on this line — they're handled separately by the
+// CANCELLED aren't points on this line - they're handled separately by the
 // caller, since neither describes a parcel in motion.
 const STEPS: { code: PublicOrderStatusCode; label: string; blurb: string }[] = [
   { code: "PREPARING", label: "Preparing your book", blurb: "We're putting your story together." },

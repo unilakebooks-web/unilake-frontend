@@ -101,7 +101,7 @@ export default function CreateBlogPage() {
         excerpt: excerpt.trim() || undefined,
         coverImageKey: coverKey,
         tags: tags.length > 0 ? tags : undefined,
-        // undefined (not null) on create — the column simply stays unset, and
+        // undefined (not null) on create - the column simply stays unset, and
         // the post falls back to its own title/excerpt in search results.
         metaTitle: metaTitle.trim() || undefined,
         metaDescription: metaDescription.trim() || undefined,
@@ -171,13 +171,13 @@ export default function CreateBlogPage() {
             </div>
           </div>
 
-          {/* SEO — both optional, blank falls back to title/excerpt */}
+          {/* SEO - both optional, blank falls back to title/excerpt */}
           <div className="pt-6 border-t border-gray-100 space-y-6">
             <div>
               <h3 className="text-sm font-bold text-gray-700">Search &amp; Sharing (SEO)</h3>
               <p className="text-xs text-gray-400 font-medium mt-0.5">
                 What Google shows and what appears when this post is shared. Both
-                optional — blank uses the title and excerpt above.
+                optional, blank uses the title and excerpt above.
               </p>
             </div>
 

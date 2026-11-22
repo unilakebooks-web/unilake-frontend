@@ -18,7 +18,7 @@ interface ChooseStoryProps {
 export default function ChooseStory({ howItWorks }: ChooseStoryProps) {
   const [selectedFilters, setSelectedFilters] = useState<Record<string, string[]>>({});
 
-  // An empty list means no filter — that's what each dropdown's "All …" sends.
+  // An empty list means no filter - that's what each dropdown's "All …" sends.
   const handleFilterChange = (filterId: string, values: string[]) => {
     setSelectedFilters((prev) => ({ ...prev, [filterId]: values }));
   };
@@ -34,7 +34,7 @@ export default function ChooseStory({ howItWorks }: ChooseStoryProps) {
       {/* ===== Purple Wave Banner ===== */}
       <div className="relative w-full overflow-visible mt-20 lg:mt-32">
         {/*
-          Single SVG — flared/curves at both ends to match the reference image.
+          Single SVG - flared/curves at both ends to match the reference image.
           Path uses cubic beziers for smooth organic S-curve transitions.
         */}
         <svg
@@ -51,7 +51,7 @@ export default function ChooseStory({ howItWorks }: ChooseStoryProps) {
         {/* Title + dragon form ONE row that is centered as a group. The
             flame's tip is the very first pixel column of DragonImg.png, so
             placing the dragon's slot directly after the title in the flow
-            makes the flame start exactly at the "Y" — at every width, with
+            makes the flame start exactly at the "Y" - at every width, with
             no measuring. Centering the title alone can't work: on wide
             screens title + dragon don't fit to the right of center, so
             the dragon gets pushed back over the text.
@@ -76,7 +76,7 @@ export default function ChooseStory({ howItWorks }: ChooseStoryProps) {
             Choose Your Story
           </h2>
 
-          {/* Dragon slot — spans the full band height (flex stretch) and
+          {/* Dragon slot - spans the full band height (flex stretch) and
               matches the dragon's width. The flame's tip sits at 53.6% of
               the image's height (measured from the PNG), so centering that
               line on the band puts the flame level with the title at every
@@ -161,7 +161,7 @@ export default function ChooseStory({ howItWorks }: ChooseStoryProps) {
               />
             </svg>
 
-            {/* Text overlay — centered vertically over the SVG.
+            {/* Text overlay - centered vertically over the SVG.
                 The right padding reserves the robot's footprint (its `right`
                 offset + width + a small gap, per breakpoint below), so the
                 title is centered in the space left of the robot. Below 1280px
@@ -169,7 +169,7 @@ export default function ChooseStory({ howItWorks }: ChooseStoryProps) {
                 that footprint; above that the container is centered, so the
                 reservation shrinks by the side gutter `(100vw - 1280px) / 2`.
                 Vertically: centered on the band's flat strip (14.8% top /
-                22.8% bottom), not the whole SVG box — see the banner above. */}
+                22.8% bottom), not the whole SVG box - see the banner above. */}
             <div className="absolute inset-x-0 top-[14.8%] bottom-[22.8%] flex items-center pointer-events-none">
               <div className="max-w-7xl mx-auto w-full relative flex justify-center pl-8 pr-[186px] sm:pr-[262px] md:pr-[348px] lg:pr-[452px] xl:pr-[max(2rem,calc(536px_-_(100vw_-_1280px)/2))]">
                 <h2
@@ -189,7 +189,7 @@ export default function ChooseStory({ howItWorks }: ChooseStoryProps) {
               </div>
             </div>
 
-            {/* Kid + Robot — bottom-anchored with the same overhang below the
+            {/* Kid + Robot - bottom-anchored with the same overhang below the
                 band as before, so the extra size grows upward into the
                 section's top margin instead of down into the steps below. */}
             <div

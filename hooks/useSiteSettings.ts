@@ -2,7 +2,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { fetchSiteSetting, saveSiteSetting } from "@/app/actions/siteSetting";
 import { fetchPublicSiteSetting } from "@/app/actions/public";
 
-/** Admin read — drives the Settings form. */
+/** Admin read - drives the Settings form. */
 export function useSiteSetting() {
   return useQuery({
     queryKey: ["admin-site-settings"],
@@ -17,7 +17,7 @@ export function useSaveSiteSetting() {
     mutationFn: saveSiteSetting,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-site-settings"] });
-      // The Footer and /contact read the public copy — keep them in step so an
+      // The Footer and /contact read the public copy - keep them in step so an
       // admin sees their own edit reflected without a hard reload.
       queryClient.invalidateQueries({ queryKey: ["public-site-settings"] });
     },
@@ -25,7 +25,7 @@ export function useSaveSiteSetting() {
 }
 
 /**
- * Public read — used by the Footer, which mounts on essentially every page.
+ * Public read - used by the Footer, which mounts on essentially every page.
  *
  * The long staleTime is the point: these values change maybe monthly, and
  * without it TanStack would refetch on every client-side navigation just to
@@ -44,7 +44,7 @@ export function usePublicSiteSetting() {
  * True when the store is not accepting orders.
  *
  * Exists so the fail-open rule lives in exactly one place. Two callers need it
- * — the preview page's checkout button and the comic page's banner — and
+ * - the preview page's checkout button and the comic page's banner - and
  * getting `?? true` backwards in either one would hang a "closed" sign on an
  * open store.
  *

@@ -49,7 +49,7 @@ export function OrderListTable({ orders }: { orders: AdminOrderRow[] }) {
                     {/*
                       The generated page-1 cover. object-contain rather than
                       object-cover because page artwork has no fixed aspect
-                      ratio — cropping a landscape cover to a portrait box would
+                      ratio - cropping a landscape cover to a portrait box would
                       cut the child's face out of the one image that exists to
                       show it. pointer-events-none keeps the whole row clickable.
                     */}
@@ -80,10 +80,10 @@ export function OrderListTable({ orders }: { orders: AdminOrderRow[] }) {
                 </td>
                 <td className="px-6 py-3 hidden md:table-cell">
                   <div className="font-semibold text-neutral-900 truncate max-w-[180px]">
-                    {order.customerName ?? "—"}
+                    {order.customerName ?? "-"}
                   </div>
                   <div className="text-xs text-neutral-500 truncate max-w-[180px]">
-                    {order.customerEmail ?? order.customerPhone ?? "—"}
+                    {order.customerEmail ?? order.customerPhone ?? "-"}
                   </div>
                 </td>
                 <td className="px-6 py-3">
@@ -111,11 +111,11 @@ export function OrderListTable({ orders }: { orders: AdminOrderRow[] }) {
                         {order.awbNumber}
                       </div>
                       <div className="text-xs text-neutral-500 truncate max-w-[150px]">
-                        {order.courierName ?? "—"}
+                        {order.courierName ?? "-"}
                       </div>
                     </div>
                   ) : (
-                    <span className="text-neutral-400">—</span>
+                    <span className="text-neutral-400">-</span>
                   )}
                 </td>
                 <td className="px-6 py-3 text-right whitespace-nowrap font-semibold text-neutral-900">

@@ -59,11 +59,11 @@ export default function CountriesPage() {
   const handleDelete = async (id: string) => {
     const { deletedPricingRules } = await deleteMutation.mutateAsync(id);
 
-    // Name the cascade when there was one — the admin just destroyed pricing
+    // Name the cascade when there was one - the admin just destroyed pricing
     // for every comic sold in that country and should see it confirmed.
     toast.success(
       deletedPricingRules > 0
-        ? `Country deleted — ${deletedPricingRules} pricing rule${
+        ? `Country deleted, ${deletedPricingRules} pricing rule${
             deletedPricingRules === 1 ? "" : "s"
           } also removed`
         : "Country deleted successfully"

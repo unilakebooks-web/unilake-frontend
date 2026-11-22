@@ -25,7 +25,7 @@ import { cn } from "@/lib/utils";
  *      mean the same thing here as they do on the orders table.
  *
  * Every card deep-links to the pre-filtered orders list. That only works
- * because the orders page reads `?status=` out of the URL — see the
+ * because the orders page reads `?status=` out of the URL - see the
  * searchParams handling there.
  */
 
@@ -52,7 +52,7 @@ type AttentionItem = {
   href: string;
 };
 
-// Ordered by urgency — a failed shipment is a paid customer whose book is
+// Ordered by urgency - a failed shipment is a paid customer whose book is
 // stuck, an open feedback message is not. Enquiries sit above feedback for the
 // same reason: someone is waiting on a reply, where feedback expects none.
 const ITEMS: AttentionItem[] = [

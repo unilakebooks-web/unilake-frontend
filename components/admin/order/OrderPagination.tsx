@@ -6,7 +6,7 @@ import type { AdminOrdersPagination } from "@/app/types/order";
  * Server-paginated: totals come straight off the API response rather than being
  * derived from a client-side array length.
  *
- * Also used by the admin Users list, which has the same pagination shape —
+ * Also used by the admin Users list, which has the same pagination shape -
  * `itemLabel` names what is being counted ("… of 45 users").
  */
 export function OrderPagination({

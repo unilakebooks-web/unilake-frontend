@@ -43,7 +43,7 @@ export function toFixed(value: number, precision: number = 4): number {
 
 // Bubble.fontSize is a fraction of the artwork's HEIGHT, never a pixel value.
 // These bounds mirror MIN/MAX/DEFAULT_FONT_SIZE in the backend's
-// src/config/generation.ts — sending anything outside them returns a 400.
+// src/config/generation.ts - sending anything outside them returns a 400.
 export const MIN_FONT_SIZE = 0.005;
 export const MAX_FONT_SIZE = 0.25;
 export const DEFAULT_FONT_SIZE = 0.02;
@@ -59,10 +59,10 @@ export function pxToFontSize(px: number, artworkHeight: number): number {
   return Math.min(Math.max(raw, MIN_FONT_SIZE), MAX_FONT_SIZE);
 }
 
-// ── Bubble text colour ────────────────────────────────────────────────────────
+// -- Bubble text colour --------------------------------------------------------
 // Mirrors DEFAULT_FONT_COLOR / FONT_COLOR_PATTERN in the backend's
 // src/config/generation.ts. Exactly one form is accepted end to end: "#rrggbb".
-// No 3-digit shorthand, no 8-digit alpha, no CSS colour names — anything else is
+// No 3-digit shorthand, no 8-digit alpha, no CSS colour names - anything else is
 // a 400. The native <input type="color"> emits precisely this form, so the
 // picker and the API agree without conversion.
 export const DEFAULT_FONT_COLOR = "#000000";
@@ -78,7 +78,7 @@ export function normalizeFontColor(value: string): string {
   return value.trim().toLowerCase();
 }
 
-// ── Bubble text placement and casing ──────────────────────────────────────────
+// -- Bubble text placement and casing ------------------------------------------
 // Mirrors DEFAULT_TEXT_ALIGN / DEFAULT_TEXT_VERTICAL_ALIGN / DEFAULT_TEXT_CASE
 // in the backend's src/config/generation.ts. The defaults are what the renderer
 // did unconditionally before these fields existed, so an untouched bubble looks
@@ -114,7 +114,7 @@ export const TEXT_CASE_OPTIONS: { value: TextCase; label: string }[] = [
 /**
  * Apply a bubble's casing for preview purposes.
  *
- * Must stay in step with applyTextCase() in the backend's textStamp.ts — this
+ * Must stay in step with applyTextCase() in the backend's textStamp.ts - this
  * is what makes the sidebar preview and the canvas agree with the printed page.
  */
 export function applyTextCase(text: string, textCase: TextCase): string {
@@ -159,7 +159,7 @@ export function relativeLuminance(hex: string): number {
 export const LOW_CONTRAST_LUMINANCE = 0.6;
 
 /**
- * Advisory only — the admin panel warns, it never blocks the save, and the API
+ * Advisory only - the admin panel warns, it never blocks the save, and the API
  * accepts any valid hex. The server cannot see the artwork behind a bubble, so
  * a hard rule would be guesswork; the person looking at the page decides.
  */
@@ -184,7 +184,7 @@ export interface NormalizedRect {
  *   0 <= x, 0 <= y, x + width <= 1, y + height <= 1
  *
  * Size is clamped and rounded FIRST, then the position limit is derived from
- * the rounded size — so `x + width` can never round its way past 1 and trip the
+ * the rounded size - so `x + width` can never round its way past 1 and trip the
  * server's bounds check.
  */
 export function clampRect(rect: NormalizedRect): NormalizedRect {

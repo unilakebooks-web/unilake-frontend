@@ -42,7 +42,7 @@ export function ComicInfoEditor({ comic }: ComicInfoEditorProps) {
     resolver: zodResolver(comicUpdateSchema)as any,
     defaultValues: {
       title: comic.title,
-      // May be empty on comics saved before multi-select — saving then
+      // May be empty on comics saved before multi-select - saving then
       // requires the admin to pick at least one.
       genderTags: comic.genderTags,
       pageCount: comic.pageCount,
@@ -57,7 +57,7 @@ export function ComicInfoEditor({ comic }: ComicInfoEditorProps) {
   const onSubmit = async (data: ComicUpdateFormValues) => {
     const flaggedPages = comic.pages.filter((p) => p.isPreviewPage).length;
 
-    // The limit can't drop below the number of pages already flagged — those
+    // The limit can't drop below the number of pages already flagged - those
     // have to be un-flagged on the Pages tab first. Raising it stays allowed,
     // since the limit must go up before more pages can be flagged.
     if (data.freePreviewPages < flaggedPages) {

@@ -19,7 +19,7 @@ export const DEFAULT_DIMENSIONS = {
 } as const;
 
 // The inputs register with `valueAsNumber`, so these receive real numbers (NaN
-// when the field is blank) — no z.coerce, which would widen the schema's input
+// when the field is blank) - no z.coerce, which would widen the schema's input
 // type to `unknown` and break react-hook-form's resolver generics.
 const dimension = (field: string) =>
   z

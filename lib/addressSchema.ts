@@ -3,11 +3,11 @@ import * as z from "zod";
 /**
  * Form validation for a saved address. Shared by the checkout address picker
  * and the dashboard address form, so the two can never disagree about what a
- * valid address is — they used to be two hand-kept copies.
+ * valid address is - they used to be two hand-kept copies.
  *
  * Mirrors the backend's createAddressSchema. Address line 2 is required (the
  * backend enforces it too). Label is the only optional field; left empty it is
- * dropped from the request by `toCreateAddressInput`, never sent as null — the
+ * dropped from the request by `toCreateAddressInput`, never sent as null - the
  * backend rejects a null label on create.
  */
 export const addressFormSchema = z.object({
@@ -23,7 +23,7 @@ export const addressFormSchema = z.object({
 }).superRefine((values, ctx) => {
   // Indian pincodes are exactly 6 digits. Every other country keeps the loose
   // rule above, since postal formats differ (UK, Canada carry letters). The
-  // backend does not enforce this — frontend only, by decision.
+  // backend does not enforce this - frontend only, by decision.
   if (values.country === "IN" && !/^\d{6}$/.test(values.zip.trim())) {
     ctx.addIssue({
       code: "custom",
@@ -42,7 +42,7 @@ export function emptyAddressForm(country = ""): AddressFormValues {
 
 /**
  * An existing address as form values. Old addresses may have no line 2 (saved
- * before it became required) — it loads as empty and must be filled to save.
+ * before it became required) - it loads as empty and must be filled to save.
  */
 export function addressToForm(address: {
   label: string | null;

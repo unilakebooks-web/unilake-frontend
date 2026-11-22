@@ -44,7 +44,7 @@ export function ComicFactModal({
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState("");
 
-  // Re-seed each time the dialog opens — the same component instance is reused
+  // Re-seed each time the dialog opens - the same component instance is reused
   // for every row, so stale text would otherwise carry over between edits.
   //
   // Done during render on the open/close transition rather than in an effect:
@@ -100,8 +100,8 @@ export function ComicFactModal({
             {mode === "create" ? "Add a fact" : "Edit fact"}
           </DialogTitle>
           <DialogDescription className="text-sm text-neutral-500">
-            Shown on {PLACEMENT_COPY[placement]}. Keep it to one short sentence —
-            it is on screen for about five seconds.
+            Shown on {PLACEMENT_COPY[placement]}. Keep it to one short sentence.
+            It is on screen for about five seconds.
           </DialogDescription>
         </DialogHeader>
 

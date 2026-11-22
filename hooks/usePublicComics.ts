@@ -26,7 +26,7 @@ export function useLatestPublicComics(excludeComicId?: string, count = 4) {
 
   // Derive: exclude current comic, take the first `count`. The API already
   // follows the admin's Arrange Books order (a bestseller badge does not move a
-  // book) — so despite the hook's name these are the top picks, not strictly the latest.
+  // book) - so despite the hook's name these are the top picks, not strictly the latest.
   const comics = query.data
     ?.filter((c) => c.id !== excludeComicId)
     .slice(0, count) ?? [];

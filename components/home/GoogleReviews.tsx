@@ -19,7 +19,7 @@ export default function GoogleReviews() {
 
   const visibleReviews = allReviews.slice(0, visibleCount);
 
-  // Nothing to show — render nothing at all rather than the purple
+  // Nothing to show - render nothing at all rather than the purple
   // "Excellent On Google" banner sitting above an empty grid. The banner is
   // part of this component, so hiding the section hides both.
   //
@@ -48,8 +48,8 @@ export default function GoogleReviews() {
             the title, so the beam's tip lands on the "E" at every width. */}
         {/* Leftward nudge is capped per breakpoint by the spare room beside
             the group, so the UFO never gets clipped at the viewport edge.
-            None on mobile — the row already nearly fills the screen there.
-            Vertically the row spans only the band's flat strip — viewBox y
+            None on mobile - the row already nearly fills the screen there.
+            Vertically the row spans only the band's flat strip - viewBox y
             46→240 of 311, i.e. 14.8% from the top and 22.8% from the bottom.
             The flares make the SVG box taller below the strip than above it,
             so centering on the whole box sat the title visibly low. The UFO
@@ -57,7 +57,7 @@ export default function GoogleReviews() {
             Title sizes are capped per breakpoint so title + UFO still fit
             the screen width (the UFO takes most of it). */}
         <div className="absolute inset-x-0 top-[14.8%] bottom-[22.8%] max-w-7xl mx-auto w-full px-4 sm:px-8 flex justify-center pointer-events-none sm:-translate-x-4 md:-translate-x-6 lg:-translate-x-8 xl:-translate-x-12 2xl:-translate-x-24">
-          {/* UFO slot — full band height (flex stretch), UFO width.
+          {/* UFO slot - full band height (flex stretch), UFO width.
               Measured from ufoImg.png: the beam tip is 86.4% down the image
               and 2.9% short of its right edge (transparent margin). Centering
               that tip on the band and nudging the image right by the margin
@@ -150,7 +150,7 @@ export default function GoogleReviews() {
                     />
                   </div>
 
-                  {/* Stars Row — fills `rating` stars and greys out the rest.
+                  {/* Stars Row - fills `rating` stars and greys out the rest.
                       Previously hardcoded to five filled stars, which would
                       have shown every review as 5/5 regardless of its rating. */}
                   <div

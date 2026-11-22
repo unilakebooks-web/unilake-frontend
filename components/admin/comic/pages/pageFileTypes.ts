@@ -3,7 +3,7 @@ import { PageFileExtension } from "@/app/types/comic";
 /**
  * The backend signs each presigned URL with these exact content types, and the
  * S3 signature COVERS the Content-Type header. Deriving it from the extension
- * here — rather than trusting the browser's file.type — is what stops the PUT
+ * here - rather than trusting the browser's file.type - is what stops the PUT
  * being rejected by Cloudflare with an opaque 403 and an XML body.
  *
  * Mirrors the contentTypeMap in backend/src/services/page.service.ts.
@@ -22,7 +22,7 @@ export const PAGE_FILE_ERROR =
  * Returns the file's extension if the backend accepts it, otherwise null.
  *
  * Uses a regex rather than split(".").pop() because a file with no extension
- * would otherwise yield the whole filename — "artwork" would be sent as the
+ * would otherwise yield the whole filename - "artwork" would be sent as the
  * extension.
  */
 export function getPageExtension(file: File): PageFileExtension | null {

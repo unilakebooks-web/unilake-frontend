@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 
 /**
  * READY_TO_SHIP and SHIPROCKET_FAILED are the two states that need an admin to do
- * something, so they get the loudest colours — everything else is progression.
+ * something, so they get the loudest colours - everything else is progression.
  */
 const STATUS_STYLES: Record<OrderStatus, { label: string; className: string }> = {
   CREATED: { label: "AWAITING PAYMENT", className: "bg-neutral-100 text-neutral-600 border-neutral-200" },

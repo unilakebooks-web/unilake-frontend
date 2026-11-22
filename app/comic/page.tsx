@@ -13,7 +13,7 @@ import { usePublicComics } from "@/hooks/usePublicComics";
 export default function ComicIndexPage() {
   const [selectedFilters, setSelectedFilters] = useState<Record<string, string[]>>({});
 
-  // An empty list means no filter — that's what each dropdown's "All …" sends.
+  // An empty list means no filter - that's what each dropdown's "All …" sends.
   const handleFilterChange = (filterId: string, values: string[]) => {
     setSelectedFilters((prev) => ({ ...prev, [filterId]: values }));
   };

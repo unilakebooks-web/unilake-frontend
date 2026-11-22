@@ -4,7 +4,7 @@ import type { SVGProps } from "react";
  * Official brand marks for the social links.
  *
  * These are inline SVG rather than icon-library imports because lucide-react
- * removed every brand/logo icon in v1 for trademark reasons — `Linkedin`,
+ * removed every brand/logo icon in v1 for trademark reasons - `Linkedin`,
  * `Instagram` and `Twitter` simply do not exist in the installed 1.23.0. The
  * team cards were standing in generic lucide shapes (a briefcase, a camera, a
  * speech bubble), which is why they did not look like anything recognisable.
@@ -34,7 +34,7 @@ export function InstagramIcon(props: SVGProps<SVGSVGElement>) {
 }
 
 /**
- * X, formerly Twitter. The underlying field is still `twitterUrl` — only the
+ * X, formerly Twitter. The underlying field is still `twitterUrl` - only the
  * presentation changed, so no schema or API work is implied by this name.
  */
 export function XIcon(props: SVGProps<SVGSVGElement>) {

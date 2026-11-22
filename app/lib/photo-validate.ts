@@ -73,12 +73,12 @@ export async function checkPhoto(blob: Blob): Promise<PhotoCheck> {
 
   if (box) {
     // Face size: the threshold is per-edge, NOT area (§5.2). A face 20% wide by 25%
-    // tall is perfectly usable but only 5% of the image by area — comparing areas
+    // tall is perfectly usable but only 5% of the image by area - comparing areas
     // against 0.15 warns on almost every normal photo.
     const widthRatio = box.width / img.width;
     const heightRatio = box.height / img.height;
     if (widthRatio < 0.15 || heightRatio < 0.15) {
-      warnings.push("The face looks small — a closer photo usually works better.");
+      warnings.push("The face looks small. A closer photo usually works better.");
     }
 
     // Off-centre on either axis, not just horizontally.

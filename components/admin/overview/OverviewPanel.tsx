@@ -10,7 +10,7 @@ import { cn, getErrorMessage } from "@/lib/utils";
  * The card every overview band sits in, plus its loading and error states.
  *
  * Exists because the page runs three independent queries and each band has to
- * handle its own failure — without a shared shell that is the same twenty lines
+ * handle its own failure - without a shared shell that is the same twenty lines
  * of skeleton-and-retry markup repeated five times, drifting apart on the first
  * edit.
  *
@@ -33,7 +33,7 @@ export function OverviewPanel({
 }: {
   title?: string;
   icon?: LucideIcon;
-  /** Rendered at the right of the header — a toggle, a "View all" link. */
+  /** Rendered at the right of the header - a toggle, a "View all" link. */
   action?: React.ReactNode;
   isLoading?: boolean;
   error?: unknown;

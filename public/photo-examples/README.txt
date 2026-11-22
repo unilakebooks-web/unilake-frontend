@@ -1,7 +1,7 @@
 Example photos for the "upload another photo" guidance panel
 (components/personalize/NewPhotoForm.tsx).
 
-Drop the real images in here using these exact filenames — no code change is
+Drop the real images in here using these exact filenames - no code change is
 needed, the component already references them:
 
   smiling.jpg      (good example)

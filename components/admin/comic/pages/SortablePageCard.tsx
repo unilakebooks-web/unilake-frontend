@@ -8,7 +8,7 @@ import { PageCard } from "./PageCard";
 
 interface SortablePageCardProps {
   page: PageWithBubbles;
-  /** Prospective position (1-based) — drives the badge while an order is unsaved. */
+  /** Prospective position (1-based) - drives the badge while an order is unsaved. */
   displayNumber: number;
   /** True when the comic is PUBLISHED; hides the grip and locks dragging. */
   disabled?: boolean;

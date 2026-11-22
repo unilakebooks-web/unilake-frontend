@@ -58,7 +58,7 @@ export default function OrderDetailPage({
   if (error || !order) {
     const code = (error as { code?: string })?.code;
     // A 403 is a genuinely different situation from a bad id and shouldn't read
-    // like one — this order exists, it just isn't theirs.
+    // like one - this order exists, it just isn't theirs.
     const isForbidden = code === "FORBIDDEN";
     const isNotFound = code === "NOT_FOUND";
 
@@ -119,8 +119,8 @@ export default function OrderDetailPage({
           </button>
         </div>
       ) : statusCode === "AWAITING_SELECTION" ? (
-        // Deliberately renders nothing. The timeline is wrong here — there is
-        // no parcel yet — and the call to action lives in the "Your book" card below,
+        // Deliberately renders nothing. The timeline is wrong here - there is
+        // no parcel yet - and the call to action lives in the "Your book" card below,
         // so a banner at the top would just duplicate it.
         null
       ) : statusCode === "CANCELLED" ? (

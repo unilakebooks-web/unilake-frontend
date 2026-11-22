@@ -1,4 +1,4 @@
-// ─────────────────────────────────────────────────────────────────────────────
+// -----------------------------------------------------------------------------
 // ⚠️ THIS FILE IS A COPY OF THE BACKEND'S PRINT RENDERER LAYOUT.
 //
 //    backend/src/jobs/workers/sd/textStamp.ts
@@ -6,17 +6,17 @@
 // The bubble-mapper canvas draws text with this so the admin sees EXACTLY what
 // prints: same font, same line breaks, same auto-shrink, same alignment, same
 // name colour. That only holds while the two files agree. If you change how the
-// backend measures, wraps, fits, aligns, cases or colours text — change it here
+// backend measures, wraps, fits, aligns, cases or colours text - change it here
 // too, in the same way, or the canvas silently starts lying to the admin.
 //
 // Constants mirrored here: LINE_HEIGHT_FACTOR, MIN_FONT_SIZE (via
 // bubbleCoordinates), SHAPING_PROBE_TEXT, the token/pronoun table (via
 // dialogueTokens), and every error message.
 //
-// Output is in ARTWORK pixels, relative to the bubble box's top-left corner —
+// Output is in ARTWORK pixels, relative to the bubble box's top-left corner -
 // the same coordinate space as the backend's per-bubble SVG. The canvas scales
 // it to screen size when drawing.
-// ─────────────────────────────────────────────────────────────────────────────
+// -----------------------------------------------------------------------------
 
 import { parse, type Font, type Glyph, type PathCommand } from "opentype.js";
 import type { TextAlign, TextCase, TextVerticalAlign } from "@/app/types/comic";
@@ -42,7 +42,7 @@ const SHAPING_PROBE_SIZE_PX = 100;
 
 /**
  * A parsed font plus whether opentype.js's shaper can handle it. Decided once
- * at load time — see LoadedFont in textStamp.ts for why measure and draw must
+ * at load time - see LoadedFont in textStamp.ts for why measure and draw must
  * both read the same flag.
  */
 export type LoadedFont = {
@@ -95,7 +95,7 @@ export function loadFont(
 // MEASURING & DRAWING (mirrors textStamp.ts)
 // ============================================================
 
-/** Mirrors layoutUnshaped in textStamp.ts — per-glyph layout without the shaper. */
+/** Mirrors layoutUnshaped in textStamp.ts - per-glyph layout without the shaper. */
 function layoutUnshaped(
   font: Font,
   text: string,
@@ -121,7 +121,7 @@ function layoutUnshaped(
   return penXPx;
 }
 
-/** Mirrors assertGlyphCoverage — returns the message instead of throwing. */
+/** Mirrors assertGlyphCoverage - returns the message instead of throwing. */
 function findMissingGlyphs(loaded: LoadedFont, text: string): string | null {
   const missing = new Set<string>();
 
@@ -134,7 +134,7 @@ function findMissingGlyphs(loaded: LoadedFont, text: string): string | null {
 
   return (
     `Font "${loaded.name}" has no glyphs for: ${[...missing].join(" ")}. ` +
-    `The dialogue (or the child's name) uses characters this font does not contain — ` +
+    `The dialogue (or the child's name) uses characters this font does not contain, ` +
     `they would render as blank or as empty boxes. Use a font that covers this text.`
   );
 }
@@ -161,7 +161,7 @@ function measureWidth(loaded: LoadedFont, text: string, fontSizePx: number): num
 /**
  * Glyph outline commands for one run of text with its left edge at `xPx` and
  * baseline at `baselineYPx`. Mirrors buildLinePathData, but returns the raw
- * commands — the canvas draws them directly, so there is no SVG serialising
+ * commands - the canvas draws them directly, so there is no SVG serialising
  * step (and so none of the NaN-rounding hazard that step had in the backend).
  */
 function buildLineCommands(
@@ -215,7 +215,7 @@ type StyledText = {
   nameMask: boolean[];
 };
 
-/** Mirrors buildStyledText — casing per segment, then trim both arrays alike. */
+/** Mirrors buildStyledText - casing per segment, then trim both arrays alike. */
 function buildStyledText(
   segments: DialogueSegment[],
   textCase: TextCase,
@@ -321,7 +321,7 @@ type FittedText = {
   fitted: boolean;
 };
 
-/** Mirrors fitTextToBox — largest size, down in 1px steps, never below the floor. */
+/** Mirrors fitTextToBox - largest size, down in 1px steps, never below the floor. */
 function fitTextToBox(
   loaded: LoadedFont,
   styled: StyledText,
@@ -369,7 +369,7 @@ export type BubbleLayoutInput = {
   dialogue: string;
   childName: string;
   pronounKey: "HE" | "SHE" | "THEY";
-  /** Normalized 0–1, as stored. Only size matters here — position never changes layout. */
+  /** Normalized 0–1, as stored. Only size matters here - position never changes layout. */
   width: number;
   height: number;
   /** Fraction of artwork height, as stored. */
@@ -387,7 +387,7 @@ export type BubbleLayoutInput = {
 };
 
 export type BubbleLayout =
-  /** Nothing to draw — the backend skips these bubbles too. */
+  /** Nothing to draw - the backend skips these bubbles too. */
   | { status: "empty" }
   /** The backend would fail the page with this same message. */
   | { status: "error"; message: string }
@@ -407,7 +407,7 @@ export type BubbleLayout =
       boxHeightPx: number;
     };
 
-/** Mirrors resolveNameFill — null when unset or the same colour as the text. */
+/** Mirrors resolveNameFill - null when unset or the same colour as the text. */
 function resolveNameFill(fontColor: string, nameColor: string | null): string | null {
   const name = nameColor?.toLowerCase() ?? null;
   if (!name || name === fontColor.toLowerCase()) return null;
@@ -440,7 +440,7 @@ export function layoutBubble(input: BubbleLayoutInput): BubbleLayout {
       status: "error",
       message:
         "This bubble has dialogue but no font assigned. " +
-        "Assign a font to this bubble — there is no fallback font.",
+        "Assign a font to this bubble, there is no fallback font.",
     };
   }
 
@@ -514,7 +514,7 @@ export function layoutBubble(input: BubbleLayoutInput): BubbleLayout {
     return {
       status: "error",
       message:
-        "Text rendering produced an invalid coordinate — this bubble cannot be drawn safely.",
+        "Text rendering produced an invalid coordinate, this bubble cannot be drawn safely.",
     };
   }
 

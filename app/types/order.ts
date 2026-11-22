@@ -37,7 +37,7 @@ export interface AdminOrdersFilters {
 }
 
 /**
- * The personalised page-1 image for one order — the cover this child's book
+ * The personalised page-1 image for one order - the cover this child's book
  * actually opens on, as opposed to `comic.coverThumbnailUrls`, which is the
  * marketing thumbnail of the template and is identical for every customer.
  */
@@ -46,7 +46,7 @@ export interface GeneratedCover {
   imageUrl: string;
   variantIndex: number;
   /**
-   * True once the customer sent the book to print — then this is literally the
+   * True once the customer sent the book to print - then this is literally the
    * cover that was printed. False means generation finished but the customer
    * has not confirmed their pick yet, so it can still change.
    */
@@ -59,7 +59,7 @@ export interface AdminOrderRow {
   customerName: string | null;
   customerEmail: string | null;
   customerPhone: string | null;
-  /** Prisma Decimal serialised — a string, never a number. */
+  /** Prisma Decimal serialised - a string, never a number. */
   amount: string;
   currency: string;
   /** The coupon used, if any. `amount` is what was actually paid. */
@@ -76,7 +76,7 @@ export interface AdminOrderRow {
   sentToPrinterAt: string | null;
   childName: string | null;
   comicTitle: string;
-  /** Null when page 1 has not generated yet or the files were deleted — render a placeholder, not the template art. */
+  /** Null when page 1 has not generated yet or the files were deleted - render a placeholder, not the template art. */
   coverImageUrl: string | null;
   /** Automatic data deletion; `undefined` (a backend that predates it) is read as false. */
   photoDeleted?: boolean;
@@ -103,7 +103,7 @@ export type PublicOrderStatusCode =
   | "PREPARING"
   /**
    * Paid, every page generated, waiting on the customer to pick variants and
-   * send to print. Nothing is happening server-side — the UI must prompt them.
+   * send to print. Nothing is happening server-side - the UI must prompt them.
    */
   | "AWAITING_SELECTION"
   | "PROCESSING"
@@ -156,13 +156,13 @@ export interface AdminOrderDetail {
   };
 
   /**
-   * Bill of Supply. Null when the order has none — non-INR orders, and orders
+   * Bill of Supply. Null when the order has none - non-INR orders, and orders
    * paid before billing existed. The download is only offered when set.
    */
   bill: {
     /** e.g. "BOS-26-00001" (printed with a leading "#"). */
     billNumber: string;
-    /** The payment time — the bill's Date of Issue. */
+    /** The payment time - the bill's Date of Issue. */
     billIssuedAt: string;
   } | null;
 
@@ -188,7 +188,7 @@ export interface AdminOrderDetail {
     awbNumber: string | null;
     courierId: number | null;
     courierName: string | null;
-    /** Raw Shiprocket string — admin-only, never shown to customers. */
+    /** Raw Shiprocket string - admin-only, never shown to customers. */
     trackingStatus: string | null;
     trackingUrl: string | null;
     trackingUpdatedAt: string | null;
@@ -223,7 +223,7 @@ export interface AdminOrderDetail {
     comic: { id: string; title: string; coverThumbnailUrls: string[] };
   };
 
-  /** Null when page 1 has not generated yet — an order at CREATED, or a failed page 1. */
+  /** Null when page 1 has not generated yet - an order at CREATED, or a failed page 1. */
   generatedCover: GeneratedCover | null;
 
   webhookEvents: WebhookEvent[];
@@ -323,7 +323,7 @@ export interface MarkAddressSyncedResponse {
 //
 // The API also sends `trackingStatus` (raw Shiprocket text) on the list and
 // detail responses, and `awbNumber` on the detail response. The backend
-// designates both admin-only — getTrackingForUser says so explicitly and omits
+// designates both admin-only - getTrackingForUser says so explicitly and omits
 // them, while these two endpoints send them anyway. They are deliberately
 // absent from the types below so rendering one is a compile error rather than
 // a judgement call.
@@ -353,7 +353,7 @@ export interface UserOrderRow {
    */
   sessionId: string;
   comic: OrderComicSummary;
-  /** Null until page 1 has generated — fall back to comic.coverThumbnailUrls. */
+  /** Null until page 1 has generated - fall back to comic.coverThumbnailUrls. */
   generatedCover: UserGeneratedCover | null;
   coverType: "HARDCOVER" | "SOFTCOVER";
   amount: string;
@@ -372,7 +372,7 @@ export interface UserOrderDetail {
   id: string;
   sessionId: string;
   comic: OrderComicSummary;
-  /** Null until page 1 has generated — fall back to comic.coverThumbnailUrls. */
+  /** Null until page 1 has generated - fall back to comic.coverThumbnailUrls. */
   generatedCover: UserGeneratedCover | null;
   coverType: "HARDCOVER" | "SOFTCOVER";
   amount: string;
@@ -411,7 +411,7 @@ export interface UserOrderTracking {
   shippedAt: string | null;
   deliveredAt: string | null;
   pickupScheduledDate: string | null;
-  /** Internal bookkeeping — fetched but never shown to the customer. */
+  /** Internal bookkeeping - fetched but never shown to the customer. */
   trackingUpdatedAt: string | null;
 }
 
@@ -456,7 +456,7 @@ export interface SetSentToPrinterResponse {
 
 export interface RefreshTrackingResponse {
   shiprocket: {
-    /** "pending" means no courier scans yet — normal right after AWB assignment. */
+    /** "pending" means no courier scans yet - normal right after AWB assignment. */
     state: "pending" | "tracked";
     currentStatus: string;
     courierName: string;

@@ -65,7 +65,7 @@ function ColorField({
   const [draft, setDraft] = useState(value);
   const [committed, setCommitted] = useState(value);
 
-  // Adjusting state during render — React's documented alternative to a
+  // Adjusting state during render - React's documented alternative to a
   // resync effect (react.dev/learn/you-might-not-need-an-effect). Keeps the hex
   // text in step when the swatch commits, without a cascading re-render.
   if (value !== committed) {
@@ -127,10 +127,10 @@ function ColorField({
         </p>
       )}
 
-      {/* Advisory only — saving is never blocked on this. */}
+      {/* Advisory only - saving is never blocked on this. */}
       {draftIsValid && isLowContrast(draft) && (
         <div className="rounded-lg border border-amber-200 bg-amber-50 px-2.5 py-1.5 text-[10px] text-amber-700">
-          ⚠ Very light — this may be hard to read on the artwork. You can still save it.
+          ⚠ Very light: this may be hard to read on the artwork. You can still save it.
         </div>
       )}
     </div>
@@ -157,7 +157,7 @@ interface BubbleSidebarProps {
   fonts: FontWithCount[];
   /**
    * Whether previews use the long sample name. Owned by the page rather than
-   * this component so the canvas renders the same name the sidebar shows —
+   * this component so the canvas renders the same name the sidebar shows -
    * one toggle, both surfaces.
    */
   previewLongName: boolean;
@@ -314,7 +314,7 @@ export function BubbleSidebar({
                 <p className="text-sm text-neutral-800 line-clamp-2 leading-tight">
                   {bubble.dialogue?.trim() || (
                     <span className="text-red-500 italic font-medium">
-                      Empty dialogue — add text or delete
+                      Empty dialogue, add text or delete
                     </span>
                   )}
                 </p>
@@ -329,7 +329,7 @@ export function BubbleSidebar({
 
         Scrolls internally rather than overflowing the sidebar. The panel is
         taller than the space available on short viewports, so it is capped and
-        given its own scrollbar — otherwise the last field (Text Colour) renders
+        given its own scrollbar - otherwise the last field (Text Colour) renders
         off-screen with no way to reach it.
       */}
       {selectedBubble ? (
@@ -509,14 +509,14 @@ export function BubbleSidebar({
                 }
               />
 
-              {/* Advisory, never enforced — same posture as the low-contrast
+              {/* Advisory, never enforced - same posture as the low-contrast
                   colour warning. Capitals run wider than mixed case, and the
                   renderer silently clips anything that overflows its box, so
                   this is the one place an admin can be told to look. */}
               {(selectedBubble.textCase ?? DEFAULT_TEXT_CASE) === "UPPERCASE" && (
                 <div className="text-[10px] text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-2.5 py-1.5">
                   ⚠ Capitals are wider than normal text. Check the preview still
-                  fits inside the bubble — text that overflows is cut off without
+                  fits inside the bubble, text that overflows is cut off without
                   a warning.
                 </div>
               )}

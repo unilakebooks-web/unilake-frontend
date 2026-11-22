@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils";
  * than a reuse of it: that one is 11px type built for a cramped sidebar and
  * requires a `label`, both of which read as undersized next to a KPI row.
  *
- * Drives two of the page's three queries — content-health has no range and must
+ * Drives two of the page's three queries - content-health has no range and must
  * not refetch when this changes.
  */
 export function RangeSelector({

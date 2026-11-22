@@ -1,13 +1,13 @@
 /**
  * Indian pincode → city/state lookup, backed by data/pincodes.json (generated
- * by scripts/build-pincodes.mjs — see that file for the encoded shape).
+ * by scripts/build-pincodes.mjs - see that file for the encoded shape).
  *
  * The data is loaded with a dynamic import, so Next.js ships it as its own
  * content-hashed chunk: nobody downloads it until they actually type a pincode,
  * it is cached immutably after that, and a regenerated file busts the cache on
  * its own. The import promise is memoised, so it is fetched at most once.
  *
- * "City" is the source's district — the file has no city column.
+ * "City" is the source's district - the file has no city column.
  */
 
 type PincodeData = {
@@ -32,7 +32,7 @@ function loadData(): Promise<PincodeData> {
     dataPromise = import("@/data/pincodes.json")
       .then((mod) => mod.default as unknown as PincodeData)
       .catch((err) => {
-        // Don't memoise a failure — let the next keystroke retry the download.
+        // Don't memoise a failure - let the next keystroke retry the download.
         dataPromise = null;
         throw err;
       });

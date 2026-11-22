@@ -49,7 +49,7 @@ export default function HappyCustomers({ reviews }: HappyCustomersProps) {
           />
         </svg>
 
-        {/* Text overlay — centered vertically over the SVG.
+        {/* Text overlay - centered vertically over the SVG.
             The left padding reserves the dino's footprint (its right edge
             plus a small gap, per breakpoint below), so the title is centered
             in the space beside the dino and never runs into it as it grows.
@@ -79,7 +79,7 @@ export default function HappyCustomers({ reviews }: HappyCustomersProps) {
           </div>
         </div>
 
-        {/* Dino Image — Top-Left, sitting above the bar */}
+        {/* Dino Image - Top-Left, sitting above the bar */}
         <div
           className="
             absolute
@@ -122,7 +122,7 @@ export default function HappyCustomers({ reviews }: HappyCustomersProps) {
       <section className="bg-[#F8E7D2] pb-20 pt-10 md:pt-16 relative">
         <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
 
-          {/* Video Grid — 3 columns */}
+          {/* Video Grid - 3 columns */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10">
             {visibleVideos.map((review) => (
               <VideoCard

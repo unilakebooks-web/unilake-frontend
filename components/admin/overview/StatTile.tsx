@@ -13,7 +13,7 @@ import { cn } from "@/lib/utils";
  * nothing a reader can use.
  *
  * `tone="alert"` is reserved for the needs-attention tile and only when the
- * count is non-zero — a permanently red tile stops meaning anything.
+ * count is non-zero - a permanently red tile stops meaning anything.
  */
 export function StatTile({
   icon: Icon,
@@ -68,7 +68,7 @@ export function StatTile({
         </>
       ) : (
         <>
-          {/* Text wears text tokens, never a series colour — the icon above
+          {/* Text wears text tokens, never a series colour - the icon above
               carries the identity. */}
           <div
             className={cn(

@@ -21,7 +21,7 @@ import {
  *
  * NOTE: this fixes the <title> and the WhatsApp/Facebook preview card, which
  * are served in the initial HTML. It does NOT make the comic's body content
- * server-rendered — that page still fetches its data in the browser. Making the
+ * server-rendered - that page still fetches its data in the browser. Making the
  * content itself crawlable is a separate, larger change that was deliberately
  * deferred.
  */
@@ -56,7 +56,7 @@ export async function generateMetadata({
       ) ?? DEFAULT_DESCRIPTION;
 
     // The first thumbnail is the primary cover by contract, and is already a
-    // full public R2 URL — so comic share cards need no extra upload.
+    // full public R2 URL - so comic share cards need no extra upload.
     const coverImage = toImageUrl(comic.coverThumbnailUrls?.[0]);
 
     return {

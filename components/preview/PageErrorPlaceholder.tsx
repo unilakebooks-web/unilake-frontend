@@ -8,8 +8,8 @@ import { chauPhilomeneOne, hankenGrotesk } from "@/app/fonts";
  * broken: the page IS retryable via the regenerate slide, so this is a nudge,
  * not a failure notice.
  *
- * The raw `errorMessage` is never rendered here. It is backend text — RunPod
- * status codes, stack fragments — and means nothing to a parent buying a
+ * The raw `errorMessage` is never rendered here. It is backend text - RunPod
+ * status codes, stack fragments - and means nothing to a parent buying a
  * comic. It goes to the console in useSessionPreview instead.
  *
  * Mirrors GeneratingPlaceholder's positioning exactly so swapping between the

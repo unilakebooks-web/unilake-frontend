@@ -21,8 +21,8 @@ interface TeamMemberModalProps {
  * The full, unclamped bio for one team member.
  *
  * Opened from TeamMemberCard's "Read more" button, which only appears when the
- * card's 3-line clamp actually cut the text off. Mirrors the card's content —
- * avatar, name, role, bio, socials — so the modal reads as the same card
+ * card's 3-line clamp actually cut the text off. Mirrors the card's content -
+ * avatar, name, role, bio, socials - so the modal reads as the same card
  * opened up rather than a different view of the person.
  */
 export default function TeamMemberModal({
@@ -56,7 +56,7 @@ export default function TeamMemberModal({
             )}
           </div>
 
-          {/* DialogTitle, not a plain heading — it is what labels the dialog
+          {/* DialogTitle, not a plain heading - it is what labels the dialog
               for assistive tech. */}
           <DialogTitle
             className={`${hankenGrotesk.className} text-[#914B8C] font-extrabold text-2xl mt-4`}

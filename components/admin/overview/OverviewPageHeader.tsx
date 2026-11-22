@@ -1,7 +1,7 @@
 import { LayoutDashboard } from "lucide-react";
 
 /**
- * Same shape as OrderListPageHeader — purple icon tile, black uppercase title,
+ * Same shape as OrderListPageHeader - purple icon tile, black uppercase title,
  * one muted line underneath.
  */
 export function OverviewPageHeader({ subtitle }: { subtitle?: string }) {

@@ -53,10 +53,10 @@ export default function ComicFaq({ faqs }: ComicFaqProps) {
                   {/* Toggle Icon */}
                   <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center">
                     {isExpanded ? (
-                      /* Horizontal line — purple */
+                      /* Horizontal line - purple */
                       <div className="w-6 h-[3px] bg-[#3F3C95] rounded-full" />
                     ) : (
-                      /* Plus symbol — black */
+                      /* Plus symbol - black */
                       <svg
                         viewBox="0 0 24 24"
                         className="w-6 h-6 text-black fill-none stroke-current stroke-[3]"

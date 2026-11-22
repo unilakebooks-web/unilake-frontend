@@ -34,7 +34,7 @@ export async function deleteFont(fontId: string): Promise<void> {
  *
  * Uses plain axios (same base URL, same cookies), NOT the shared `api`
  * instance: on failure the error body arrives as an ArrayBuffer, which the
- * shared interceptor cannot read — it would replace it with a bare "Request
+ * shared interceptor cannot read - it would replace it with a bare "Request
  * failed with status code 404" and drop the response. Here the body is decoded
  * so the backend's real message ("Font file is missing from storage…") reaches
  * the admin.
@@ -61,7 +61,7 @@ function readFontFileError(error: unknown): string {
         const parsed = JSON.parse(new TextDecoder().decode(body));
         if (typeof parsed?.error?.message === "string") return parsed.error.message;
       } catch {
-        // Not JSON — fall through to the generic message.
+        // Not JSON - fall through to the generic message.
       }
     }
 

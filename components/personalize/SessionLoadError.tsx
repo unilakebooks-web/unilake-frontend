@@ -8,7 +8,7 @@ import { AlertTriangle, Loader2, RotateCcw } from "lucide-react";
 import { chauPhilomeneOne, hankenGrotesk } from "@/app/fonts";
 
 interface SessionLoadErrorProps {
-  /** Shown under the heading. Keep it plain — a customer is reading this. */
+  /** Shown under the heading. Keep it plain - a customer is reading this. */
   message?: string;
 }
 
@@ -18,8 +18,8 @@ interface SessionLoadErrorProps {
  * Exists so a transient backend hiccup no longer silently redirects a customer
  * to the homepage mid-flow. Their place is kept; the work is one click away.
  *
- * Retry is `router.refresh()`, which re-runs the server component — including
- * its retries — without a full page reload and without losing history.
+ * Retry is `router.refresh()`, which re-runs the server component - including
+ * its retries - without a full page reload and without losing history.
  */
 export default function SessionLoadError({ message }: SessionLoadErrorProps) {
   const router = useRouter();
@@ -54,8 +54,8 @@ export default function SessionLoadError({ message }: SessionLoadErrorProps) {
       </h1>
 
       <p className="text-gray-600 max-w-md mb-2">
-        We couldn&apos;t load your book just now. This is usually temporary —
-        please try again.
+        We couldn&apos;t load your book just now. This is usually temporary.
+        Please try again.
       </p>
 
       {message && (

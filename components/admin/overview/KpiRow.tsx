@@ -11,7 +11,7 @@ import { StatTile } from "./StatTile";
  * `revenue` is an array because totals are never summed across currencies. Only
  * INR is active today so this almost always has one entry, but when a second
  * market is switched on the busiest currency leads and the rest move to the
- * supporting line — which is honest, where an added-together number would not be.
+ * supporting line - which is honest, where an added-together number would not be.
  */
 function primaryBucket<T extends { orderCount: number }>(
   buckets: T[]
@@ -75,7 +75,7 @@ export function KpiRow({
         isLoading={isLoading}
         icon={IndianRupee}
         label="Revenue"
-        value={revenue ? formatMoneyCompact(revenue.total, revenue.currency) : "—"}
+        value={revenue ? formatMoneyCompact(revenue.total, revenue.currency) : "-"}
         sub={
           otherCurrencies
             ? `plus ${otherCurrencies}`
@@ -102,7 +102,7 @@ export function KpiRow({
         value={
           revenue && revenue.orderCount > 0
             ? formatMoney(revenue.averageOrderValue, revenue.currency)
-            : "—"
+            : "-"
         }
         sub={
           hardcoverShare !== null

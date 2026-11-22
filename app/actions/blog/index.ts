@@ -42,7 +42,7 @@ export async function updateBlog(
     title: string;
     body: string;
     // Nullable: null is how the API clears the column. It was typed as a plain
-    // string, which quietly endorsed sending "" — and "" fails validation.
+    // string, which quietly endorsed sending "" - and "" fails validation.
     excerpt: string | null;
     coverImageKey: string | null;
     tags: string[];

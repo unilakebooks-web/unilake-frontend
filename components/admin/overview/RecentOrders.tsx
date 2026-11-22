@@ -10,7 +10,7 @@ import { OrderStatusBadge } from "@/components/admin/order/OrderStatusBadge";
 /**
  * The last handful of orders, newest first.
  *
- * Always current regardless of the selected range — this is the "what just
+ * Always current regardless of the selected range - this is the "what just
  * happened" list, not a report. Reuses OrderStatusBadge so a status reads
  * identically here and on the orders table.
  *

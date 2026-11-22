@@ -87,7 +87,7 @@ export class SessionWebSocket {
 
   private handleReconnect() {
     if (this.reconnectAttempts >= this.maxReconnectAttempts) {
-      console.error("WebSocket max reconnect attempts reached — giving up");
+      console.error("WebSocket max reconnect attempts reached, giving up");
 
       // Nothing is coming. Release any waiters so callers stop blocking on us and
       // fall back to polling GET /sessions/:id (§6.2).
@@ -139,7 +139,7 @@ export class SessionWebSocket {
    * face finish in 1–2 seconds and their events are never replayed (§13.8), so firing
    * /generate on a still-connecting socket loses them outright.
    *
-   * The timeout is deliberate — a socket that will not open must never block generation.
+   * The timeout is deliberate - a socket that will not open must never block generation.
    * A `false` result is not fatal, it just means the caller should rely on polling.
    */
   public waitUntilOpen(timeoutMs = 3000): Promise<boolean> {

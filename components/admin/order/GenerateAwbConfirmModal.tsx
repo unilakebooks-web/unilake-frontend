@@ -71,7 +71,7 @@ export function GenerateAwbConfirmModal({
         <div className="flex gap-2.5 p-3 bg-amber-50 border border-amber-200 rounded-xl text-amber-900 text-xs font-semibold">
           <TriangleAlert className="w-4 h-4 shrink-0 mt-0.5" />
           <span>
-            This can only be done once — the AWB cannot be regenerated from here afterwards.
+            This can only be done once. The AWB cannot be regenerated from here afterwards.
             Double-check the weight before confirming.
           </span>
         </div>

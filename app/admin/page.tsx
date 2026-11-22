@@ -6,7 +6,7 @@ import { useAuth } from "@/app/hooks/useAuth";
 import { UserRole } from "@/app/types/auth";
 import { toast } from "sonner";
 
-// ── LoadingScreen ──────────────────────────────────────────────────────────────
+// -- LoadingScreen --------------------------------------------------------------
 function LoadingScreen() {
     return (
         <div className="min-h-screen bg-[#3F3C95] flex items-center justify-center">
@@ -27,7 +27,7 @@ function LoadingScreen() {
     );
 }
 
-// ── Admin Traffic Router ────────────────────────────────────────────────────────
+// -- Admin Traffic Router --------------------------------------------------------
 export default function AdminPage() {
     const { user, isAuthenticated, loading } = useAuth();
     const router = useRouter();
