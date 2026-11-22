@@ -2,7 +2,6 @@ import api from "@/app/lib/axios";
 import type { Comic, UpdateComicSeoPayload } from "@/app/types/comic";
 import type { HeroImage } from "@/app/types/heroimage";
 import type { BlogUploadUrlResponse } from "@/app/types/blog";
-import type { GoogleReview } from "@/app/types/googleReview";
 import type { PageSeo, PageSeoPayload, PageSeoSlug } from "@/app/types/seo";
 
 /**
@@ -65,15 +64,4 @@ export function requestPageSeoUploadUrl(
   contentType: string
 ): Promise<BlogUploadUrlResponse> {
   return requestUploadUrl("/api/admin/page-seo/upload-url", fileName, contentType);
-}
-
-/** Edits the alt text of an existing Google review photo. Null or an empty string clears it. */
-export async function updateGoogleReviewAlt(
-  id: string,
-  imageAlt: string | null
-): Promise<GoogleReview> {
-  const { data } = await api.patch<GoogleReview>(`/api/admin/google-reviews/${id}`, {
-    imageAlt,
-  });
-  return data;
 }

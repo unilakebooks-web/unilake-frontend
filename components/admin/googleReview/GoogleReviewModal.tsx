@@ -152,6 +152,8 @@ export function GoogleReviewModal({
           rating,
           reviewText: trimmedText,
           ...(imageKey ? { imageKey } : {}),
+          // Always sent in edit mode: a replaced photo must not keep the old photo's description unseen.
+          imageAlt: imageAlt.trim(),
         };
         await updateReview.mutateAsync({ id: review.id, payload });
         toast.success("Review updated");
@@ -264,26 +266,24 @@ export function GoogleReviewModal({
             )}
           </div>
 
-          {/* Image description (alt text). Edited for existing reviews from the list. */}
-          {!isEditMode && (
-            <div className="space-y-2">
-              <label
-                htmlFor="review-image-alt"
-                className="text-sm font-semibold text-neutral-900"
-              >
-                Image description
-              </label>
-              <Input
-                id="review-image-alt"
-                value={imageAlt}
-                onChange={(e) => setImageAlt(e.target.value)}
-                maxLength={200}
-                placeholder="Image description (alt text), optional"
-                disabled={isBusy}
-                className="h-11 rounded-xl bg-white"
-              />
-            </div>
-          )}
+          {/* Image description (alt text). */}
+          <div className="space-y-2">
+            <label
+              htmlFor="review-image-alt"
+              className="text-sm font-semibold text-neutral-900"
+            >
+              Image description
+            </label>
+            <Input
+              id="review-image-alt"
+              value={imageAlt}
+              onChange={(e) => setImageAlt(e.target.value)}
+              maxLength={200}
+              placeholder="Image description (alt text), optional"
+              disabled={isBusy}
+              className="h-11 rounded-xl bg-white"
+            />
+          </div>
 
           {/* Rating */}
           <div className="space-y-2">

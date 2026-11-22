@@ -4,21 +4,22 @@ import { useState } from "react";
 import { Loader2, Save } from "lucide-react";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
-import { useUpdateGoogleReviewAlt } from "@/hooks/useSeo";
+import { useUpdateGoogleReview } from "@/hooks/useGoogleReviews";
 import { getErrorMessage } from "@/lib/utils";
 import type { GoogleReview } from "@/app/types/googleReview";
 
 /** Inline edit of a review photo's description (alt text); an empty value clears it. */
 export function GoogleReviewAltEdit({ review }: { review: GoogleReview }) {
-  const updateAlt = useUpdateGoogleReviewAlt();
+  const updateAlt = useUpdateGoogleReview();
   const [altText, setAltText] = useState(review.imageAlt ?? "");
   const altDirty = altText.trim() !== (review.imageAlt ?? "");
 
   const handleSave = async () => {
     try {
+      // An empty string clears the description (the API stores it as none).
       await updateAlt.mutateAsync({
         id: review.id,
-        imageAlt: altText.trim() || null,
+        payload: { imageAlt: altText.trim() },
       });
       toast.success("Image description saved");
     } catch (err: unknown) {
