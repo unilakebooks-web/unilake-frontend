@@ -168,10 +168,10 @@ export default function Header({ topOffset = 0, hideBulbForced = false, flatBack
             </li>
           ))}
           {/* Staff only (Master admin or sub-admin), and only once the sign-in check has finished. It is placed to the right of the row, out of the
-              flow, so its arrival does not move the links the visitor may already be aiming at. Below xl there is no
+              flow, so its arrival does not move the links the visitor may already be aiming at. Below 2xl there is no
               room beside the icons on the right, so the profile menu has the same link there. */}
           {!loading && isStaff(user?.role) && (
-            <li className={`${isActive("/admin") ? "text-[#FFD54A]" : "hover:text-[#FFD54A]"} cursor-pointer transition-colors duration-200 hidden xl:block absolute left-full top-1/2 -translate-y-1/2 ml-8 2xl:ml-10`}>
+            <li className={`${isActive("/admin") ? "text-[#FFD54A]" : "hover:text-[#FFD54A]"} cursor-pointer transition-colors duration-200 hidden 2xl:block absolute left-full top-1/2 -translate-y-1/2 ml-10`}>
               <Link href="/admin">Dashboard</Link>
             </li>
           )}
@@ -227,7 +227,7 @@ export default function Header({ topOffset = 0, hideBulbForced = false, flatBack
                         setIsProfileOpen(false);
                         router.push("/admin");
                       }}
-                      className="xl:hidden w-full flex items-center gap-3 px-4 py-2.5 text-left text-sm hover:bg-white/15 transition-colors text-[#FFD54A] cursor-pointer"
+                      className="2xl:hidden w-full flex items-center gap-3 px-4 py-2.5 text-left text-sm hover:bg-white/15 transition-colors text-[#FFD54A] cursor-pointer"
                     >
                       <Settings size={16} />
                       <span className="font-medium flex-1">Admin Dashboard</span>
