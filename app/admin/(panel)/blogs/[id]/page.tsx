@@ -162,7 +162,7 @@ export default function EditBlogPage({ params }: { params: Promise<{ id: string 
         coverImageAlt: coverImageAlt.trim() || null,
         // The whole ordered list replaces the saved one; an empty list clears it.
         featuredComicIds,
-        // Blank clears: the post then shows the author from the settings.
+        // Blank clears. A blank name: the post shows the author from the settings, with that author's links.
         authorName: authorName.trim() || null,
         authorInstagramUrl: authorInstagramUrl.trim() || null,
         authorLinkedinUrl: authorLinkedinUrl.trim() || null,
