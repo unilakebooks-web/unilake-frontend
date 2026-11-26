@@ -77,10 +77,11 @@ export function OrderCard({ order }: { order: UserOrderRow }) {
 
         <div className="flex-1 min-w-0 space-y-2">
           {/* Wraps: on a narrow phone card a long title and the status pill do not fit side by side,
-              and the pill (it never breaks) used to stick out past the card's edge. */}
+              and the pill used to stick out past the card's edge. The pill's own text may wrap too
+              ("Awaiting your selection" is wider than the column at 320px), as on the order page. */}
           <div className="flex flex-wrap items-start justify-between gap-x-3 gap-y-2">
             <h3 className="min-w-0 break-words font-bold text-gray-900 leading-tight">{order.comic.title}</h3>
-            <OrderStatusPill status={order.publicStatus} />
+            <OrderStatusPill status={order.publicStatus} className="max-w-full whitespace-normal" />
           </div>
 
           <div className="text-sm text-gray-500">
