@@ -288,8 +288,9 @@ export default function ComicThumbnailCarousel({
                   }}
                 />
 
-                {/* bottom-14: the seek bar sits above the mute button in the corner. */}
-                {isVideoActive && <VideoSeekBar videoRef={videoRef} position="bottom-14" />}
+                {/* On the bottom edge, like a YouTube player; the mute button sits in the top corner so
+                    the two never overlap (the same layout as the review videos on the home page). */}
+                {isVideoActive && <VideoSeekBar videoRef={videoRef} />}
 
                 {isVideoActive && !isPlaying && (
                   <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
@@ -305,7 +306,7 @@ export default function ComicThumbnailCarousel({
                       e.stopPropagation();
                       handleToggleMute();
                     }}
-                    className="absolute bottom-3 right-3 w-9 h-9 bg-black/60 hover:bg-black/80 text-white rounded-full flex items-center justify-center transition-colors z-10"
+                    className="absolute top-3 right-3 w-9 h-9 bg-black/60 hover:bg-black/80 text-white rounded-full flex items-center justify-center transition-colors z-10"
                     aria-label={isMuted ? "Unmute video" : "Mute video"}
                   >
                     {isMuted ? <VolumeX size={18} /> : <Volume2 size={18} />}
