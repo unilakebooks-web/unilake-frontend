@@ -76,8 +76,10 @@ export function OrderCard({ order }: { order: UserOrderRow }) {
         />
 
         <div className="flex-1 min-w-0 space-y-2">
-          <div className="flex items-start justify-between gap-3">
-            <h3 className="font-bold text-gray-900 leading-tight">{order.comic.title}</h3>
+          {/* Wraps: on a narrow phone card a long title and the status pill do not fit side by side,
+              and the pill (it never breaks) used to stick out past the card's edge. */}
+          <div className="flex flex-wrap items-start justify-between gap-x-3 gap-y-2">
+            <h3 className="min-w-0 break-words font-bold text-gray-900 leading-tight">{order.comic.title}</h3>
             <OrderStatusPill status={order.publicStatus} />
           </div>
 
