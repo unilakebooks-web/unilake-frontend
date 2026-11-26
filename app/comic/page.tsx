@@ -1,19 +1,13 @@
 import ComicIndex from "@/components/comic/ComicIndex";
-import SeedAllBooks from "@/components/home/SeedAllBooks";
 
 /**
- * Rendered per request: the "All our books" list at the bottom of the page is loaded here from the live
- * catalogue, and a build-time copy would freeze it until the next deploy (see app/page.tsx).
+ * Rendered per request: the page's search title and description come from the admin's SEO text (see
+ * layout.tsx), and a build-time copy would freeze them until the next deploy.
  *
- * The catalogue itself is a client component (filters and cards load in the browser); this server page only
- * adds the first-HTML list of book links.
+ * The catalogue itself is a client component (filters and cards load in the browser).
  */
 export const dynamic = "force-dynamic";
 
 export default function ComicIndexPage() {
-  return (
-    <SeedAllBooks>
-      <ComicIndex />
-    </SeedAllBooks>
-  );
+  return <ComicIndex />;
 }

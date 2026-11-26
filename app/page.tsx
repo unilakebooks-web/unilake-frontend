@@ -9,11 +9,8 @@ import HomeFaq from "@/components/home/HomeFaq";
 import LatestBlogs from "@/components/home/LatestBlogs";
 import FeedbackForm from "@/components/home/FaqFeedback";
 import Footer from "@/components/home/Footer";
-import AllBooksList from "@/components/home/AllBooksList";
-import SeedAllBooks from "@/components/home/SeedAllBooks";
 import JsonLd from "@/components/seo/JsonLd";
 
-import { fetchPublicComics } from "@/app/actions/comic";
 import { fetchPublicCustomerReviews, fetchPublicTeamMembers, fetchPublicHowItWorks, fetchPublicFaqs, fetchPublicBlogs } from "@/app/actions/public";
 import { getPublicHeroImages } from "@/app/actions/heroimage";
 import { fetchPublicAnnouncements } from "@/app/actions/announcement";
@@ -35,11 +32,6 @@ export async function generateMetadata(): Promise<Metadata> {
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
-  // Started first, before anything is awaited, so the comics load alongside the settings and the batch below.
-  const comicsPromise = fetchPublicComics();
-  // A rejection before SeedAllBooks awaits it must not surface as unhandled; SeedAllBooks still sees it.
-  comicsPromise.catch(() => {});
-
   const setting = await getSiteSetting();
   // Only addresses the admin actually saved: the footer's built-in fallback links are not the brand's pages.
   const sameAs = [setting?.instagramUrl, setting?.facebookUrl, setting?.twitterUrl, setting?.youtubeUrl, setting?.linkedinUrl]
@@ -121,9 +113,6 @@ export default async function Home() {
       <HomeFaq faqs={homeFaqs} />
       <FeedbackForm />
       <LatestBlogs blogs={blogs} />
-      <SeedAllBooks comics={comicsPromise}>
-        <AllBooksList />
-      </SeedAllBooks>
       <Footer />
 
     </main>

@@ -11,7 +11,7 @@ export function usePublicComics(filters?: ComicTagFilters) {
   });
 }
 
-/** Every published book, under the key SeedAllBooks fills on the server. */
+/** Every published book, unfiltered (the books list at the end of a blog post). */
 export function useAllBooks() {
   return useQuery({
     queryKey: ALL_BOOKS_QUERY_KEY,
