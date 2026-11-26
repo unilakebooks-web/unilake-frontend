@@ -34,8 +34,8 @@ export default function BlogAuthor({ author }: { author: ResolvedBlogAuthor | nu
   ].filter((link) => link.url);
 
   return (
-    <div className={`${hankenGrotesk.className} flex items-center justify-center gap-3 mb-4 text-[#555555] font-medium`}>
-      <span>
+    <div className={`${hankenGrotesk.className} flex flex-wrap items-center justify-center gap-3 mb-4 text-[#555555] font-medium`}>
+      <span className="min-w-0 break-words">
         Author: <span className="font-bold text-[#222222]">{name}</span>
       </span>
       {links.map(({ url, Icon, label }) => (

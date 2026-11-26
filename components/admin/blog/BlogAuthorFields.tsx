@@ -85,9 +85,18 @@ export function BlogAuthorFields({
         </div>
       </div>
 
-      <p className="text-xs text-gray-400 font-medium">
-        The links are used only with this post&apos;s own author name.
-      </p>
+      {/* The post's links are shown only with its own name (never mixed with the Settings author), so
+          links typed without a name would be saved and silently not shown. */}
+      {!authorName.trim() && (authorInstagramUrl.trim() || authorLinkedinUrl.trim()) ? (
+        <p className="text-xs text-amber-700 font-medium">
+          Add an author name: without one, the post shows the author from Settings with that author&apos;s
+          links, not these.
+        </p>
+      ) : (
+        <p className="text-xs text-gray-400 font-medium">
+          The links are used only with this post&apos;s own author name.
+        </p>
+      )}
     </div>
   );
 }
