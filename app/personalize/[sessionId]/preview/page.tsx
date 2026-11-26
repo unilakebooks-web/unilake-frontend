@@ -317,10 +317,8 @@ export default function PreviewPage({
     // a payment problem, and FAILED is in the backend's REGENERATABLE_STATUSES,
     // so blocking the viewer removed the one route out. Keep the viewer mounted
     // and say what actually happened.
-    // pt-[86px]: the header is fixed and 86px tall, so without it the first thing here (the progress bar
-    // while pages are generating, or a notice) sat behind the header. Same as the dashboard layout.
     return (
-      <div className="w-full flex flex-col items-center pt-[86px]">
+      <>
         {adminView && (
           <div className="w-full max-w-2xl mx-auto mt-4 px-4">
             <div className="flex items-start gap-2 rounded-2xl bg-[#914A8C]/10 border border-[#914A8C]/30 px-4 py-3 text-sm text-[#5e2f5b]">
@@ -397,7 +395,7 @@ export default function PreviewPage({
             ) : undefined
           }
         />
-      </div>
+      </>
     );
   };
 
@@ -409,7 +407,12 @@ export default function PreviewPage({
       {/* Header stays hidden on upward scroll here and only returns at the top,
           so it never slides in over the comic pages while browsing variants. */}
       <HomeHeaderSection showOnlyAtTop />
-      <main className="grow flex flex-col items-center justify-center">{renderBody()}</main>
+      {/* pt-[86px]: the header is fixed and 86px tall, so without it the first thing on the page (the
+          progress bar, a notice, or an error or loading message) sat behind it. Same as the dashboard
+          layout. Not while the preloader shows: it already leaves room for the header itself. */}
+      <main className={`grow flex flex-col items-center justify-center ${showPreloader ? "" : "pt-[86px]"}`}>
+        {renderBody()}
+      </main>
       <Footer />
     </div>
   );
