@@ -230,8 +230,8 @@ export default function PricingSection({
               // The box is 104px wide at most (full section), 44–84px in the
               // floating bar; this lets the optimizer serve a sharp 2x copy.
               sizes="104px"
-              // Blurred copy until the picture arrives; eager so the floating bar's
-              // pictures are not queued behind the comic pages as lazy ones.
+              // Blurred copy until the picture arrives, so the box is never blank;
+              // eager so the request is not held back by the lazy-loading check.
               placeholder="blur"
               loading="eager"
               className="object-cover"
