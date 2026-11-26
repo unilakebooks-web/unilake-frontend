@@ -1,19 +1,36 @@
 import { InstagramIcon, LinkedInIcon } from "@/components/icons/BrandIcons";
 import { hankenGrotesk } from "@/app/fonts";
+import type { Blog } from "@/app/types/blog";
 import type { SiteSetting } from "@/app/types/siteSetting";
 
+export type ResolvedBlogAuthor = { name: string; instagramUrl?: string; linkedinUrl?: string };
+
 /**
- * The author line at the top of a blog post: the one site-wide author from the settings, with small links to
- * their Instagram and LinkedIn when saved. Renders nothing at all until the admin has typed a name, so a post
- * never shows an empty "Author:" line or an unnamed link row.
+ * Who wrote a post: its own author when the admin named one on the post (a guest author), otherwise the
+ * site-wide author from the settings. The links always belong to the same author as the name, never mixed:
+ * a guest author without links shows no links rather than the site author's. Null when neither has a name.
  */
-export default function BlogAuthor({ setting }: { setting: SiteSetting | null }) {
-  const name = setting?.blogAuthorName?.trim();
+export function resolveBlogAuthor(blog: Blog, setting: SiteSetting | null): ResolvedBlogAuthor | null {
+  const own = blog.authorName?.trim();
+  const name = own || setting?.blogAuthorName?.trim();
   if (!name) return null;
+  const instagramUrl = (own ? blog.authorInstagramUrl : setting?.blogAuthorInstagramUrl)?.trim();
+  const linkedinUrl = (own ? blog.authorLinkedinUrl : setting?.blogAuthorLinkedinUrl)?.trim();
+  return { name, ...(instagramUrl && { instagramUrl }), ...(linkedinUrl && { linkedinUrl }) };
+}
+
+/**
+ * The author line at the top of a blog post (see resolveBlogAuthor), with small links to their Instagram and
+ * LinkedIn when saved. Renders nothing at all when there is no author, so a post never shows an empty
+ * "Author:" line or an unnamed link row.
+ */
+export default function BlogAuthor({ author }: { author: ResolvedBlogAuthor | null }) {
+  if (!author) return null;
+  const { name } = author;
 
   const links = [
-    { url: setting?.blogAuthorInstagramUrl?.trim(), Icon: InstagramIcon, label: "Instagram" },
-    { url: setting?.blogAuthorLinkedinUrl?.trim(), Icon: LinkedInIcon, label: "LinkedIn" },
+    { url: author.instagramUrl, Icon: InstagramIcon, label: "Instagram" },
+    { url: author.linkedinUrl, Icon: LinkedInIcon, label: "LinkedIn" },
   ].filter((link) => link.url);
 
   return (

@@ -329,7 +329,7 @@ export function SiteSettingForm({ setting }: SiteSettingFormProps) {
 
       <Section
         title="Blog author"
-        description="The one author shown on every blog post and in its search markup. Leave blank to show no author."
+        description="The author shown on every blog post that has no author of its own (a post can name its own author in the blog editor), and in its search markup. Leave blank to show no author on those posts."
       >
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
           <Field label="Author name" error={errors.blogAuthorName?.message}>
