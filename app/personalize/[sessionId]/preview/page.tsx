@@ -317,10 +317,12 @@ export default function PreviewPage({
     // a payment problem, and FAILED is in the backend's REGENERATABLE_STATUSES,
     // so blocking the viewer removed the one route out. Keep the viewer mounted
     // and say what actually happened.
+    // pt-[86px]: the header is fixed and 86px tall, so without it the first thing here (the progress bar
+    // while pages are generating, or a notice) sat behind the header. Same as the dashboard layout.
     return (
-      <>
+      <div className="w-full flex flex-col items-center pt-[86px]">
         {adminView && (
-          <div className="w-full max-w-2xl mx-auto mt-24 px-4">
+          <div className="w-full max-w-2xl mx-auto mt-4 px-4">
             <div className="flex items-start gap-2 rounded-2xl bg-[#914A8C]/10 border border-[#914A8C]/30 px-4 py-3 text-sm text-[#5e2f5b]">
               <Eye size={16} className="shrink-0 mt-0.5" />
               <span>
@@ -349,7 +351,7 @@ export default function PreviewPage({
 
         {/* Customer-facing: its button goes to the viewer's OWN orders. */}
         {isSentToPrint && !adminView && (
-          <div className="w-full max-w-2xl mx-auto mt-24 px-4">
+          <div className="w-full max-w-2xl mx-auto mt-4 px-4">
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 rounded-2xl bg-emerald-50 border border-emerald-200 px-4 py-3 text-sm text-emerald-900">
               <CheckCircle2 size={18} className="shrink-0 text-emerald-600" />
               <span className="flex-1">
@@ -395,7 +397,7 @@ export default function PreviewPage({
             ) : undefined
           }
         />
-      </>
+      </div>
     );
   };
 

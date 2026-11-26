@@ -282,7 +282,7 @@ export default function PreviewViewer({
 
       <div className="w-full max-w-4xl px-4 flex flex-col items-center gap-4">
         
-        <div className="text-center mb-8 w-full mt-20 relative z-10">
+        <div className="text-center mb-8 w-full relative z-10">
           {/* Comic title. Read from the snapshot rather than comicDetail so it
               paints with the first render - comicDetail arrives from a separate
               query and would make the title pop in a beat later. Deliberately
