@@ -1,5 +1,5 @@
 import api from "@/app/lib/axios";
-import type { Blog, BlogListItem, BlogSharePayload, BlogUploadUrlResponse } from "@/app/types/blog";
+import type { Blog, BlogAuthorPayload, BlogListItem, BlogSharePayload, BlogUploadUrlResponse } from "@/app/types/blog";
 
 export async function fetchBlogs(isActive?: boolean): Promise<BlogListItem[]> {
   const url = isActive !== undefined ? `/api/admin/blogs?isActive=${isActive}` : "/api/admin/blogs";
@@ -31,7 +31,7 @@ export async function createBlog(payload: {
   tags?: string[];
   metaTitle?: string | null;
   metaDescription?: string | null;
-} & BlogSharePayload): Promise<Blog> {
+} & BlogSharePayload & BlogAuthorPayload): Promise<Blog> {
   const { data } = await api.post<Blog>("/api/admin/blogs", payload);
   return data;
 }
@@ -48,7 +48,7 @@ export async function updateBlog(
     tags: string[];
     metaTitle: string | null;
     metaDescription: string | null;
-  }> & BlogSharePayload
+  }> & BlogSharePayload & BlogAuthorPayload
 ): Promise<Blog> {
   const { data } = await api.patch<Blog>(`/api/admin/blogs/${id}`, payload);
   return data;

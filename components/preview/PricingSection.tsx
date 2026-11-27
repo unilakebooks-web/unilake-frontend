@@ -3,6 +3,8 @@
 import { useCoverPricing } from "@/hooks/useCoverPricing";
 import { frutiger, poppins } from "@/app/fonts";
 import Image from "next/image";
+import softcoverPicture from "@/public/assets/home_page/new_softcover.png";
+import hardcoverPicture from "@/public/assets/home_page/hardcover.jpeg";
 
 import { Check, Loader2 } from "lucide-react";
 import { resolveMrp } from "@/lib/utils";
@@ -29,17 +31,21 @@ import type { CoverFormat } from "@/hooks/useCheckoutFlow";
  * ⚠️ new_softcover.png is actually a JPEG despite its extension. Browsers and
  * the Next.js image optimizer detect the real format from the file, so it
  * works as-is; just don't rely on the extension if processing it elsewhere.
+ *
+ * Imported rather than given as paths, so the build embeds a tiny blurred copy
+ * of each that shows at once: on a slow phone connection, while the comic pages
+ * download, the real pictures can take a while and the boxes used to sit empty.
  */
 const COVER_OPTIONS = {
   SOFTCOVER: {
     name: "Softcover",
     tagline: "Lightweight",
-    src: "/assets/home_page/new_softcover.png", // 615x307
+    src: softcoverPicture, // 615x307
   },
   HARDCOVER: {
     name: "Hardcover",
     tagline: "Long Lasting",
-    src: "/assets/home_page/hardcover.jpeg", // 750x375
+    src: hardcoverPicture, // 750x375
   },
 } as const;
 
@@ -224,6 +230,10 @@ export default function PricingSection({
               // The box is 104px wide at most (full section), 44–84px in the
               // floating bar; this lets the optimizer serve a sharp 2x copy.
               sizes="104px"
+              // Blurred copy until the picture arrives, so the box is never blank;
+              // eager so the request is not held back by the lazy-loading check.
+              placeholder="blur"
+              loading="eager"
               className="object-cover"
             />
           </div>

@@ -8,7 +8,6 @@ import HomeHeaderSection from "@/components/home/HomeHeaderSection";
 import Footer from "@/components/home/Footer";
 import StoryFilters from "@/components/home/StoryFilters";
 import StoryCard from "@/components/home/StoryCard";
-import AllBooksList from "@/components/home/AllBooksList";
 import { usePublicComics } from "@/hooks/usePublicComics";
 
 export default function ComicIndexPage() {
@@ -84,8 +83,6 @@ export default function ComicIndexPage() {
           )}
         </div>
       </div>
-
-      <AllBooksList />
 
       <Footer />
     </main>

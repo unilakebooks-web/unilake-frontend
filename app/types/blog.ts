@@ -31,6 +31,10 @@ export type Blog = BlogListItem & {
   ogDescription: string | null;
   ogImageUrl: string | null;
   coverImageAlt: string | null;
+  /** This post's own author (a guest author). Null name: the post shows the site-wide author from the settings. */
+  authorName?: string | null;
+  authorInstagramUrl?: string | null;
+  authorLinkedinUrl?: string | null;
   /** Public detail only: the published books chosen for the end of the post, in the admin's order. */
   featuredComics?: BlogFeaturedComic[];
   /** Admin detail only: the chosen comic ids in order. */
@@ -66,4 +70,11 @@ export type BlogSharePayload = {
   coverImageAlt?: string | null;
   /** At most 6 published comics, in the order shown; the whole list replaces the saved one. */
   featuredComicIds?: string[];
+};
+
+/** The post's own author, sent on create and update. A null clears; a cleared name means the site-wide author. */
+export type BlogAuthorPayload = {
+  authorName?: string | null;
+  authorInstagramUrl?: string | null;
+  authorLinkedinUrl?: string | null;
 };

@@ -320,7 +320,7 @@ export default function PreviewPage({
     return (
       <>
         {adminView && (
-          <div className="w-full max-w-2xl mx-auto mt-24 px-4">
+          <div className="w-full max-w-2xl mx-auto mt-4 px-4">
             <div className="flex items-start gap-2 rounded-2xl bg-[#914A8C]/10 border border-[#914A8C]/30 px-4 py-3 text-sm text-[#5e2f5b]">
               <Eye size={16} className="shrink-0 mt-0.5" />
               <span>
@@ -349,7 +349,7 @@ export default function PreviewPage({
 
         {/* Customer-facing: its button goes to the viewer's OWN orders. */}
         {isSentToPrint && !adminView && (
-          <div className="w-full max-w-2xl mx-auto mt-24 px-4">
+          <div className="w-full max-w-2xl mx-auto mt-4 px-4">
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 rounded-2xl bg-emerald-50 border border-emerald-200 px-4 py-3 text-sm text-emerald-900">
               <CheckCircle2 size={18} className="shrink-0 text-emerald-600" />
               <span className="flex-1">
@@ -407,7 +407,12 @@ export default function PreviewPage({
       {/* Header stays hidden on upward scroll here and only returns at the top,
           so it never slides in over the comic pages while browsing variants. */}
       <HomeHeaderSection showOnlyAtTop />
-      <main className="grow flex flex-col items-center justify-center">{renderBody()}</main>
+      {/* pt-[86px]: the header is fixed and 86px tall, so without it the first thing on the page (the
+          progress bar, a notice, or an error or loading message) sat behind it. Same as the dashboard
+          layout. Not while the preloader shows: it already leaves room for the header itself. */}
+      <main className={`grow flex flex-col items-center justify-center ${showPreloader ? "" : "pt-[86px]"}`}>
+        {renderBody()}
+      </main>
       <Footer />
     </div>
   );

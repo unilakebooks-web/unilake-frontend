@@ -7,8 +7,6 @@ const clock = (seconds: number) =>
 
 interface VideoSeekBarProps {
   videoRef: RefObject<HTMLVideoElement | null>;
-  /** Where the bar sits inside the video's box; the default is the bottom edge. */
-  position?: string;
 }
 
 /**
@@ -17,10 +15,7 @@ interface VideoSeekBarProps {
  * hide the browser's own controls, so this is how a visitor goes back or forward.
  * Clicks on the bar do not reach the player behind it (a click there would pause the video).
  */
-export function VideoSeekBar({
-  videoRef,
-  position = "bottom-0",
-}: VideoSeekBarProps) {
+export function VideoSeekBar({ videoRef }: VideoSeekBarProps) {
   const [time, setTime] = useState(0);
   const [duration, setDuration] = useState(0);
 
@@ -52,7 +47,7 @@ export function VideoSeekBar({
 
   return (
     <div
-      className={`pointer-events-none absolute inset-x-0 ${position} z-30 bg-gradient-to-t from-black/50 to-transparent px-3 pb-2 pt-5`}
+      className="pointer-events-none absolute inset-x-0 bottom-0 z-30 bg-gradient-to-t from-black/50 to-transparent px-3 pb-2 pt-5"
       onClick={(e) => e.stopPropagation()}
     >
       <input

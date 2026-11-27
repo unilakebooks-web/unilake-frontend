@@ -13,6 +13,7 @@ import { BlogEditor } from "@/components/admin/blog/BlogEditor";
 import { BlogTagInput } from "@/components/admin/blog/BlogTagInput";
 import { BlogShareFields } from "@/components/admin/blog/BlogShareFields";
 import { FeaturedComicsPicker } from "@/components/admin/blog/FeaturedComicsPicker";
+import { BlogAuthorFields } from "@/components/admin/blog/BlogAuthorFields";
 import {
   CharCounter,
   SEO_TITLE_LIMIT,
@@ -36,6 +37,9 @@ export default function CreateBlogPage() {
   const [ogDescription, setOgDescription] = useState("");
   const [coverImageAlt, setCoverImageAlt] = useState("");
   const [featuredComicIds, setFeaturedComicIds] = useState<string[]>([]);
+  const [authorName, setAuthorName] = useState("");
+  const [authorInstagramUrl, setAuthorInstagramUrl] = useState("");
+  const [authorLinkedinUrl, setAuthorLinkedinUrl] = useState("");
 
   // Share image: a local preview and the key to save; undefined means none chosen.
   const [ogImageUrl, setOgImageUrl] = useState<string | null>(null);
@@ -120,6 +124,9 @@ export default function CreateBlogPage() {
         ogImageKey,
         coverImageAlt: coverImageAlt.trim() || undefined,
         featuredComicIds: featuredComicIds.length > 0 ? featuredComicIds : undefined,
+        authorName: authorName.trim() || undefined,
+        authorInstagramUrl: authorInstagramUrl.trim() || undefined,
+        authorLinkedinUrl: authorLinkedinUrl.trim() || undefined,
       });
 
       toast.success("Blog post created successfully! (Saved as draft)");
@@ -337,6 +344,19 @@ export default function CreateBlogPage() {
             <p className="text-xs text-gray-500 mb-4">Add tags to help users find this post.</p>
             <BlogTagInput tags={tags} onChange={setTags} />
           </div>
+        </div>
+
+        {/* Author */}
+        <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-200">
+          <BlogAuthorFields
+            authorName={authorName}
+            onAuthorNameChange={setAuthorName}
+            authorInstagramUrl={authorInstagramUrl}
+            onAuthorInstagramUrlChange={setAuthorInstagramUrl}
+            authorLinkedinUrl={authorLinkedinUrl}
+            onAuthorLinkedinUrlChange={setAuthorLinkedinUrl}
+            disabled={isSaving}
+          />
         </div>
 
         {/* Featured books */}

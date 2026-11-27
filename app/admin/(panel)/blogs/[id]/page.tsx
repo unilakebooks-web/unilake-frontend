@@ -13,6 +13,7 @@ import { BlogEditor } from "@/components/admin/blog/BlogEditor";
 import { BlogTagInput } from "@/components/admin/blog/BlogTagInput";
 import { BlogShareFields } from "@/components/admin/blog/BlogShareFields";
 import { FeaturedComicsPicker } from "@/components/admin/blog/FeaturedComicsPicker";
+import { BlogAuthorFields } from "@/components/admin/blog/BlogAuthorFields";
 import { Switch } from "@/components/ui/switch";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -43,6 +44,9 @@ export default function EditBlogPage({ params }: { params: Promise<{ id: string 
   const [ogDescription, setOgDescription] = useState("");
   const [coverImageAlt, setCoverImageAlt] = useState("");
   const [featuredComicIds, setFeaturedComicIds] = useState<string[]>([]);
+  const [authorName, setAuthorName] = useState("");
+  const [authorInstagramUrl, setAuthorInstagramUrl] = useState("");
+  const [authorLinkedinUrl, setAuthorLinkedinUrl] = useState("");
 
   // Share image: the saved URL or a local preview. Key: undefined = unchanged, null = remove, string = new upload.
   const [ogImageUrl, setOgImageUrl] = useState<string | null>(null);
@@ -74,6 +78,9 @@ export default function EditBlogPage({ params }: { params: Promise<{ id: string 
       setOgDescription(blog.ogDescription || "");
       setCoverImageAlt(blog.coverImageAlt || "");
       setFeaturedComicIds(blog.featuredComicIds || []);
+      setAuthorName(blog.authorName || "");
+      setAuthorInstagramUrl(blog.authorInstagramUrl || "");
+      setAuthorLinkedinUrl(blog.authorLinkedinUrl || "");
       setOgImageUrl(blog.ogImageUrl);
       setOgImageKey(undefined);
       setIsInitialized(true);
@@ -155,6 +162,10 @@ export default function EditBlogPage({ params }: { params: Promise<{ id: string 
         coverImageAlt: coverImageAlt.trim() || null,
         // The whole ordered list replaces the saved one; an empty list clears it.
         featuredComicIds,
+        // Blank clears. A blank name: the post shows the author from the settings, with that author's links.
+        authorName: authorName.trim() || null,
+        authorInstagramUrl: authorInstagramUrl.trim() || null,
+        authorLinkedinUrl: authorLinkedinUrl.trim() || null,
       };
 
       if (ogImageKey !== undefined) {
@@ -442,6 +453,19 @@ export default function EditBlogPage({ params }: { params: Promise<{ id: string 
             <p className="text-xs text-gray-500 mb-4">Add tags to help users find this post.</p>
             <BlogTagInput tags={tags} onChange={setTags} />
           </div>
+        </div>
+
+        {/* Author */}
+        <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-200">
+          <BlogAuthorFields
+            authorName={authorName}
+            onAuthorNameChange={setAuthorName}
+            authorInstagramUrl={authorInstagramUrl}
+            onAuthorInstagramUrlChange={setAuthorInstagramUrl}
+            authorLinkedinUrl={authorLinkedinUrl}
+            onAuthorLinkedinUrlChange={setAuthorLinkedinUrl}
+            disabled={isSaving}
+          />
         </div>
 
         {/* Featured books */}

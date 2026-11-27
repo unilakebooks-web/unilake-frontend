@@ -3,7 +3,7 @@ import HomeHeaderSection from "@/components/home/HomeHeaderSection";
 import Footer from "@/components/home/Footer";
 import BlogBodyRenderer from "@/components/blog/BlogBodyRenderer";
 import { loadBlog } from "@/components/blog/loadBlog";
-import BlogAuthor from "@/components/blog/BlogAuthor";
+import BlogAuthor, { resolveBlogAuthor } from "@/components/blog/BlogAuthor";
 import ExploreOurBooks from "@/components/blog/ExploreOurBooks";
 import JsonLd from "@/components/seo/JsonLd";
 import { chauPhilomeneOne, hankenGrotesk } from "@/app/fonts";
@@ -132,13 +132,13 @@ export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
       year: "numeric"
     });
   const url = absoluteUrl(`/blog/${blog.slug}`);
-  const authorName = setting?.blogAuthorName?.trim();
-  const authorProfiles = [setting?.blogAuthorInstagramUrl?.trim(), setting?.blogAuthorLinkedinUrl?.trim()].filter(
+  const postAuthor = resolveBlogAuthor(blog, setting);
+  const authorProfiles = [postAuthor?.instagramUrl, postAuthor?.linkedinUrl].filter(
     (profile): profile is string => !!profile,
   );
-  const author = authorName && {
+  const author = postAuthor && {
     "@type": "Person",
-    name: authorName,
+    name: postAuthor.name,
     ...(authorProfiles.length > 0 && { sameAs: authorProfiles }),
   };
   const { description: seoDescription, shareImage } = blogSeoParts(blog);
@@ -195,7 +195,7 @@ export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
             {blog.title}
           </h1>
           
-          <BlogAuthor setting={setting} />
+          <BlogAuthor author={postAuthor} />
 
           <p className={`${hankenGrotesk.className} text-[#555555] font-medium`}>
             Published on {formatDate(publishedDate)}
